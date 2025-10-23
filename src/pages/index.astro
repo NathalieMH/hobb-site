@@ -1,20 +1,21 @@
 ---
 import WelcomeLayout from "../layouts/WelcomeLayout.astro";
-const base = import.meta.env.BASE_URL; // works on GitHub Pages subpaths too
+const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpaths
 ---
 <WelcomeLayout title="HoBB">
   <div class="wrap">
     <div class="frame">
       <div class="frame-inner">
         <div class="content">
-          <!-- LOGO image -->
+          <!-- Logo from /public -->
           <img
             class="logo-img"
-            src={`${base}logo.png`}        /* uses /public/logo.png */
+            src={`${base}logo_noborders.png`}
             alt="HoBB"
             decoding="async"
           />
 
+          <!-- Centered rule -->
           <hr class="rule" />
 
           <!-- Right-aligned taglines -->
@@ -24,7 +25,7 @@ const base = import.meta.env.BASE_URL; // works on GitHub Pages subpaths too
           </div>
         </div>
 
-        <!-- Elegant bordered button -->
+        <!-- Outlined button -->
         <a class="cta" href={`${base}home/`} aria-label="Enter HoBB">
           enter HoBB
         </a>
@@ -66,9 +67,7 @@ const base = import.meta.env.BASE_URL; // works on GitHub Pages subpaths too
       gap: clamp(0.8rem, 2.2vw, 1.5rem);
     }
 
-    /* Responsive logo sizing
-       - scales with viewport but never overflows the frame
-       - respects both width and height so it "fits the poster" */
+    /* Logo scales to fit the poster */
     .logo-img {
       max-width: min(78vw, 980px);
       max-height: min(36vh, 420px);
@@ -78,19 +77,20 @@ const base = import.meta.env.BASE_URL; // works on GitHub Pages subpaths too
       display: block;
     }
 
+    /* Centered rule under logo */
     .rule {
       width: min(78%, 720px);
       height: 3px;
       background: #fff;
       border: 0;
-      margin: 0;
-      margin-inline: auto 0; /* make the line align to the right edge */
+      margin: 0 auto; /* center horizontally */
     }
 
+    /* Right-aligned text block */
     .taglines {
       width: min(78%, 720px);
-      margin-inline: auto 0;  /* right align block */
-      text-align: right;      /* right align text */
+      margin-inline: auto 0;  /* stick to right edge of content area */
+      text-align: right;
     }
     .tagline {
       margin: .35rem 0;
@@ -99,18 +99,19 @@ const base = import.meta.env.BASE_URL; // works on GitHub Pages subpaths too
       white-space: nowrap;
     }
 
+    /* Outlined CTA button (centered near bottom) */
     .cta {
       justify-self: center;
       margin: 1.25rem 0 1.75rem;
-      font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+      font-size: clamp(.95rem, 1.6vw, 1.1rem);
       text-decoration: none;
       padding: .65rem 1.1rem;
       border: 2px solid #fff;
       border-radius: 4px;
       display: inline-block;
-      transition: background-color .2s ease, color .2s ease, opacity .2s ease;
       color: #fff;
       background: transparent;
+      transition: background-color .2s ease, color .2s ease, opacity .2s ease;
     }
     .cta:hover,
     .cta:focus-visible {

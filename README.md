@@ -283,7 +283,5 @@ The new room will now automatically appear on that apartment’s page.
 ---
 
 ## 🧩 Future Improvements (Optional)
-
-- Add a small CMS like **DecapCMS** for visual editing.
+- Add a working contact form
 - Add a “currently available rooms” tag auto-filter.
-- Add a gallery layout for rooms.
