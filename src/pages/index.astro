@@ -1,24 +1,32 @@
 ---
 import WelcomeLayout from "../layouts/WelcomeLayout.astro";
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL; // works on GitHub Pages subpaths too
 ---
 <WelcomeLayout title="HoBB">
   <div class="wrap">
     <div class="frame">
       <div class="frame-inner">
         <div class="content">
-          <h1 class="logo">
-            H<span class="small-o">o</span>BB
-          </h1>
+          <!-- LOGO image -->
+          <img
+            class="logo-img"
+            src={`${base}logo.png`}        /* uses /public/logo.png */
+            alt="HoBB"
+            decoding="async"
+          />
 
           <hr class="rule" />
 
-          <p class="tagline de">Studenten-Wohngemeinschaften bei der FU</p>
-          <p class="tagline en">Student Shared Apartments close to FU</p>
+          <!-- Right-aligned taglines -->
+          <div class="taglines">
+            <p class="tagline de">Studenten-Wohngemeinschaften bei der FU</p>
+            <p class="tagline en">Student Shared Apartments close to FU</p>
+          </div>
         </div>
 
+        <!-- Elegant bordered button -->
         <a class="cta" href={`${base}home/`} aria-label="Enter HoBB">
-          &gt; click here
+          enter HoBB
         </a>
       </div>
     </div>
@@ -34,7 +42,7 @@ const base = import.meta.env.BASE_URL;
       font-family: ui-serif, "Playfair Display", Georgia, "Times New Roman", serif;
     }
 
-    /* double border using two nested frames for pixel-perfect control */
+    /* double border frame */
     .frame {
       width: min(92vw, 1050px);
       height: min(86vh, 640px);
@@ -52,32 +60,38 @@ const base = import.meta.env.BASE_URL;
 
     .content {
       align-self: center;
-      text-align: center;
-      padding-inline: 2rem;
+      padding: 0 2rem;
+      display: grid;
+      justify-items: center;
+      gap: clamp(0.8rem, 2.2vw, 1.5rem);
     }
 
-    .logo {
-      margin: 0;
-      font-weight: 400;
-      letter-spacing: .02em;
-      font-size: clamp(3.5rem, 10vw, 11rem);
-      line-height: 1;
-    }
-    .logo .small-o {
-      font-size: .48em;              /* clearly smaller than the caps */
-      display: inline-block;
-      transform: translateY(.08em);  /* sit a touch lower, like the mock */
-      font-weight: 400;
+    /* Responsive logo sizing
+       - scales with viewport but never overflows the frame
+       - respects both width and height so it "fits the poster" */
+    .logo-img {
+      max-width: min(78vw, 980px);
+      max-height: min(36vh, 420px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
     }
 
     .rule {
       width: min(78%, 720px);
-      border: none;
       height: 3px;
       background: #fff;
-      margin: clamp(1.2rem, 3vw, 2rem) auto;
+      border: 0;
+      margin: 0;
+      margin-inline: auto 0; /* make the line align to the right edge */
     }
 
+    .taglines {
+      width: min(78%, 720px);
+      margin-inline: auto 0;  /* right align block */
+      text-align: right;      /* right align text */
+    }
     .tagline {
       margin: .35rem 0;
       font-size: clamp(.9rem, 1.6vw, 1.05rem);
@@ -88,25 +102,29 @@ const base = import.meta.env.BASE_URL;
     .cta {
       justify-self: center;
       margin: 1.25rem 0 1.75rem;
-      font-size: clamp(.95rem, 1.6vw, 1.1rem);
+      font-size: clamp(0.95rem, 1.6vw, 1.1rem);
       text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: border-color .2s ease, opacity .2s ease;
-      opacity: .9;
+      padding: .65rem 1.1rem;
+      border: 2px solid #fff;
+      border-radius: 4px;
+      display: inline-block;
+      transition: background-color .2s ease, color .2s ease, opacity .2s ease;
+      color: #fff;
+      background: transparent;
     }
     .cta:hover,
     .cta:focus-visible {
-      border-bottom-color: #fff;
-      opacity: 1;
+      background: #fff;
+      color: #000;
       outline: none;
     }
 
-    /* keep things legible on very small heights */
+    /* small/short screens */
     @media (max-height: 560px) {
       .frame { height: 82vh; }
       .rule { height: 2px; }
+      .logo-img { max-height: 32vh; }
     }
-
     @media (prefers-reduced-motion: reduce) {
       .cta { transition: none; }
     }
