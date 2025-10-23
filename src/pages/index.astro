@@ -12,7 +12,7 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
           class="logo-img"
           src={`${base}logo_noborders.png`}
           alt="HoBB"
-          width="2123" height="656"          <!-- TODO LOGO – add width + height here – intrinsic size to avoid CLS -->
+          width="2123" height="656"          <!-- intrinsic size to avoid CLS -->
           loading="eager"                    <!-- fetch now (default for above-the-fold) -->
           fetchpriority="high"               <!-- tell the browser it’s top priority -->
           decoding="async"                   <!-- decode off the main thread -->
@@ -49,60 +49,49 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
 
     /* --- DOUBLE BORDER BOX ---------------------------------------------- */
     .frame {
-      /* Overall poster size */
       width: min(92vw, 1100px);
       height: min(86vh, 640px);
-
-      /* Outer border */
-      border: 3px solid #fff;
-
-      /* Double-border gap and content gutter */
-      --border-gap: 10px;                     /* space between the two borders */
-      --gutter: clamp(24px, 5vw, 56px);       /* space from inner border to content */
-
+      border: 3px solid #fff; /* outer border */
+      --border-gap: 10px;     /* space between the two borders */
+      --gutter: clamp(24px, 5vw, 56px); /* equal space from inner border to content */
       position: relative;
     }
 
-    /* Inner border (never drifts) */
     .frame::before {
       content: "";
       position: absolute;
       inset: var(--border-gap);
-      border: 3px solid #fff;
+      border: 3px solid #fff; /* inner border */
       pointer-events: none;
     }
 
     /* --- CONTENT BOX ("canvas") ----------------------------------------- */
-    /* This is the abstract box inset from the INNER border by --gutter on all sides. */
     .canvas {
       position: absolute;
       inset:
-        calc(var(--border-gap) + var(--gutter))   /* top */
-        calc(var(--border-gap) + var(--gutter))   /* right */
-        calc(var(--border-gap) + var(--gutter))   /* bottom */
-        calc(var(--border-gap) + var(--gutter));  /* left */
-
+        calc(var(--border-gap) + var(--gutter))
+        calc(var(--border-gap) + var(--gutter))
+        calc(var(--border-gap) + var(--gutter))
+        calc(var(--border-gap) + var(--gutter));
       display: grid;
-      justify-items: center;   /* center logo & rule horizontally */
-      align-content: center;   /* vertically center the content block */
+      justify-items: center;
+      align-content: center;
       gap: clamp(0.9rem, 2.4vw, 1.6rem);
     }
 
-    /* The bottom gutter area (for the button) is exactly the --gutter space */
+    /* --- BOTTOM GUTTER --------------------------------------------------- */
     .bottom-gutter {
       position: absolute;
       left: calc(var(--border-gap) + var(--gutter));
       right: calc(var(--border-gap) + var(--gutter));
-      bottom: calc(var(--border-gap));
-      height: calc(var(--gutter) + clamp(6px, 1vh, 16px));
-
+      bottom: var(--border-gap);
+      height: calc(var(--gutter) + clamp(20px, 2vh, 28px)); /* extra whitespace below button */
       display: grid;
       place-items: center;
-      pointer-events: none; /* so the area doesn't block; the button re-enables pointer */
+      pointer-events: none;
     }
 
     /* --- LOGO (≈80% of prior cap) -------------------------------------- */
-    /* Previously max ~78vw/980px × 36vh/420px; now 80% of that. */
     .logo-img {
       max-width: min(62.4vw, 784px);
       max-height: min(28.8vh, 336px);
@@ -113,7 +102,6 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
     }
 
     /* --- RULE + TAGLINES ------------------------------------------------ */
-    /* Centered line */
     .rule {
       width: min(82%, 820px);
       height: 3px;
@@ -122,23 +110,27 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       margin: 0 auto;
     }
 
-    /* Taglines use the same width and centering as the rule;
-       text is right-aligned so its right edge = rule's right edge. */
+    /* Taglines now scale dynamically with container query units */
     .taglines {
       width: min(82%, 820px);
       margin: 0 auto;
       text-align: right;
+      container-type: inline-size; /* enable container query units */
     }
+
     .tagline {
       margin: .35rem 0;
-      font-size: clamp(.92rem, 1.6vw, 1.06rem);
+      /* Dynamically scale with width of the centered rule */
+      font-size: clamp(0.78rem, 3.5cqi, 1.06rem);
       opacity: .95;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* --- CTA ------------------------------------------------------------ */
     .cta {
-      pointer-events: auto; /* re-enable clicking inside bottom-gutter */
+      pointer-events: auto;
       font-size: clamp(.95rem, 1.6vw, 1.1rem);
       text-decoration: none;
       padding: .65rem 1.1rem;
@@ -149,6 +141,7 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       background: transparent;
       transition: background-color .2s ease, color .2s ease, opacity .2s ease;
     }
+
     .cta:hover,
     .cta:focus-visible {
       background: #fff;
@@ -156,12 +149,13 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       outline: none;
     }
 
-    /* Short screens: preserve proportions & spacing */
+    /* Short screens */
     @media (max-height: 560px) {
       .frame { height: 82vh; }
       .rule { height: 2px; }
       .logo-img { max-height: min(26vh, 300px); }
     }
+
     @media (prefers-reduced-motion: reduce) {
       .cta { transition: none; }
     }
