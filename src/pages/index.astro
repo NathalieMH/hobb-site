@@ -5,41 +5,36 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
 <WelcomeLayout title="HoBB">
   <div class="page">
     <div class="frame">
-      <div class="frame-inner">
-        <!-- top spacer establishes the top/side/bottom gutter -->
-        <div class="top-pad" />
+      <!-- The inner border is drawn by ::before. -->
+      <!-- This absolutely positioned box is our content area ("canvas") -->
+      <div class="canvas">
+        <img
+          class="logo-img"
+          src={`${base}logo_noborders.png`}
+          alt="HoBB"
+          decoding="async"
+        />
 
-        <!-- main content -->
-        <div class="content">
-          <!-- LOGO (80% of previous size) -->
-          <img
-            class="logo-img"
-            src={`${base}logo_noborders.png`}
-            alt="HoBB"
-            decoding="async"
-          />
+        <hr class="rule" />
 
-          <!-- centered line -->
-          <hr class="rule" />
-
-          <!-- taglines: same width & centering as the rule; text right-aligned -->
-          <div class="taglines">
-            <p class="tagline de">Studenten-Wohngemeinschaften bei der FU</p>
-            <p class="tagline en">Student Shared Apartments close to FU</p>
-          </div>
+        <!-- right-aligned taglines; width matches the rule -->
+        <div class="taglines">
+          <p class="tagline de">Studenten-Wohngemeinschaften bei der FU</p>
+          <p class="tagline en">Student Shared Apartments close to FU</p>
         </div>
+      </div>
 
-        <!-- bottom gutter that matches the top gutter; button sits inside it -->
-        <div class="bottom-pad">
-          <a class="cta" href={`${base}home/`} aria-label="Enter HoBB">
-            enter HoBB
-          </a>
-        </div>
+      <!-- Button inside the bottom gutter, centered -->
+      <div class="bottom-gutter">
+        <a class="cta" href={`${base}home/`} aria-label="Enter HoBB">
+          enter HoBB
+        </a>
       </div>
     </div>
   </div>
 
   <style>
+    /* Page baseline */
     .page {
       min-height: 100vh;
       display: grid;
@@ -49,66 +44,83 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       font-family: ui-serif, "Playfair Display", Georgia, "Times New Roman", serif;
     }
 
-    /* outer/inner double frame */
+    /* --- DOUBLE BORDER BOX ---------------------------------------------- */
     .frame {
+      /* Overall poster size */
       width: min(92vw, 1100px);
       height: min(86vh, 640px);
+
+      /* Outer border */
       border: 3px solid #fff;
-      display: grid;
-      place-items: center;
+
+      /* Double-border gap and content gutter */
+      --border-gap: 10px;                     /* space between the two borders */
+      --gutter: clamp(24px, 5vw, 56px);       /* space from inner border to content */
+
+      position: relative;
     }
 
-    /* GUTTER SYSTEM:
-       - left/right padding = --gutter
-       - top = first row (var(--gutter))
-       - bottom = last row (var(--gutter)) where the button lives
-    */
-    .frame-inner {
-      --gutter: clamp(24px, 5vw, 56px);
-      width: calc(100% - 26px);
-      height: calc(100% - 26px);
+    /* Inner border (never drifts) */
+    .frame::before {
+      content: "";
+      position: absolute;
+      inset: var(--border-gap);
       border: 3px solid #fff;
-      display: grid;
-      grid-template-rows: var(--gutter) 1fr var(--gutter);
-      padding-inline: var(--gutter);
+      pointer-events: none;
     }
 
-    .top-pad { /* empty spacer to enforce top gutter */ }
-    .bottom-pad {
-      display: grid;
-      place-items: center; /* centers the button inside the bottom gutter */
-    }
+    /* --- CONTENT BOX ("canvas") ----------------------------------------- */
+    /* This is the abstract box inset from the INNER border by --gutter on all sides. */
+    .canvas {
+      position: absolute;
+      inset:
+        calc(var(--border-gap) + var(--gutter))   /* top */
+        calc(var(--border-gap) + var(--gutter))   /* right */
+        calc(var(--border-gap) + var(--gutter))   /* bottom */
+        calc(var(--border-gap) + var(--gutter));  /* left */
 
-    /* main content area */
-    .content {
-      width: 100%;
       display: grid;
-      justify-items: center;
+      justify-items: center;   /* center logo & rule horizontally */
+      align-content: center;   /* vertically center the content block */
       gap: clamp(0.9rem, 2.4vw, 1.6rem);
     }
 
-    /* LOGO at 80% of the previous caps */
-    /* (previous: max-width: 78vw/980px; max-height: 36vh/420px) */
+    /* The bottom gutter area (for the button) is exactly the --gutter space */
+    .bottom-gutter {
+      position: absolute;
+      left: calc(var(--border-gap) + var(--gutter));
+      right: calc(var(--border-gap) + var(--gutter));
+      bottom: calc(var(--border-gap));
+      height: var(--gutter);
+
+      display: grid;
+      place-items: center;
+      pointer-events: none; /* so the area doesn't block; the button re-enables pointer */
+    }
+
+    /* --- LOGO (≈80% of prior cap) -------------------------------------- */
+    /* Previously max ~78vw/980px × 36vh/420px; now 80% of that. */
     .logo-img {
-      max-width: min(62.4vw, 784px);  /* 80% of 78vw / 980px */
-      max-height: min(28.8vh, 336px); /* 80% of 36vh / 420px */
+      max-width: min(62.4vw, 784px);
+      max-height: min(28.8vh, 336px);
       width: auto;
       height: auto;
       object-fit: contain;
       display: block;
     }
 
-    /* Centered rule under logo */
+    /* --- RULE + TAGLINES ------------------------------------------------ */
+    /* Centered line */
     .rule {
       width: min(82%, 820px);
       height: 3px;
       background: #fff;
       border: 0;
-      margin: 0 auto; /* centered */
+      margin: 0 auto;
     }
 
-    /* Taglines share the same width & centering as the rule, text right-aligned.
-       => Right edge of text aligns exactly with the right edge of the line. */
+    /* Taglines use the same width and centering as the rule;
+       text is right-aligned so its right edge = rule's right edge. */
     .taglines {
       width: min(82%, 820px);
       margin: 0 auto;
@@ -121,8 +133,9 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       white-space: nowrap;
     }
 
-    /* Elegant outlined CTA button (unchanged behavior) */
+    /* --- CTA ------------------------------------------------------------ */
     .cta {
+      pointer-events: auto; /* re-enable clicking inside bottom-gutter */
       font-size: clamp(.95rem, 1.6vw, 1.1rem);
       text-decoration: none;
       padding: .65rem 1.1rem;
@@ -140,13 +153,11 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       outline: none;
     }
 
-    /* short screens */
+    /* Short screens: preserve proportions & spacing */
     @media (max-height: 560px) {
       .frame { height: 82vh; }
       .rule { height: 2px; }
-      .logo-img {
-        max-height: min(26vh, 300px); /* keep headroom on very short viewports */
-      }
+      .logo-img { max-height: min(26vh, 300px); }
     }
     @media (prefers-reduced-motion: reduce) {
       .cta { transition: none; }
