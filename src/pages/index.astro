@@ -19,52 +19,49 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
           <!-- centered line -->
           <hr class="rule" />
 
-          <!-- right-aligned taglines -->
+          <!-- taglines: same width as the rule, centered block, text right-aligned -->
           <div class="taglines">
             <p class="tagline de">Studenten-Wohngemeinschaften bei der FU</p>
             <p class="tagline en">Student Shared Apartments close to FU</p>
           </div>
         </div>
+
+        <!-- Elegant button (unchanged) -->
+        <a class="cta" href={`${base}home/`} aria-label="Enter HoBB">
+          enter HoBB
+        </a>
       </div>
     </div>
-
-    <!-- centered, simple link BELOW the frame -->
-    <a class="cta-out" href={`${base}home/`} aria-label="Enter HoBB">
-      &gt; click here
-    </a>
   </div>
 
   <style>
-    /* page layout: frame + small spacer + link */
     .page {
       min-height: 100vh;
       display: grid;
       place-items: center;
-      grid-template-rows: auto auto;
-      row-gap: clamp(14px, 2.6vh, 28px);
       background: #000;
       color: #fff;
       font-family: ui-serif, "Playfair Display", Georgia, "Times New Roman", serif;
     }
 
-    /* double-border frame, sized like the mock */
+    /* double-border frame */
     .frame {
       width: min(92vw, 1100px);
       height: min(86vh, 640px);
-      border: 3px solid #fff;            /* thin elegant border */
-      display: grid;
-      place-items: center;
-    }
-    .frame-inner {
-      /* inner border inset to create the double frame */
-      width: calc(100% - 26px);
-      height: calc(100% - 26px);
       border: 3px solid #fff;
       display: grid;
       place-items: center;
     }
+    .frame-inner {
+      width: calc(100% - 26px);
+      height: calc(100% - 26px);
+      border: 3px solid #fff;
+      display: grid;
+      grid-template-rows: 1fr auto; /* content then button */
+    }
 
     .content {
+      align-self: center;
       width: 100%;
       padding: 0 clamp(16px, 3vw, 40px);
       display: grid;
@@ -72,7 +69,7 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       gap: clamp(0.9rem, 2.4vw, 1.6rem);
     }
 
-    /* logo scales to fit the poster proportionally */
+    /* Responsive logo fit */
     .logo-img {
       max-width: min(78vw, 980px);
       max-height: min(36vh, 420px);
@@ -82,20 +79,21 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       display: block;
     }
 
-    /* centered rule under the logo */
+    /* Centered rule under logo */
     .rule {
-      width: min(82%, 820px);  /* a touch wider like the mock */
+      width: min(82%, 820px);
       height: 3px;
       background: #fff;
       border: 0;
-      margin: 0 auto;          /* center horizontally */
+      margin: 0 auto; /* centered */
     }
 
-    /* right-aligned two-line tagline block */
+    /* IMPORTANT: taglines share width AND centering with the rule.
+       This makes the taglines' right edge align with the rule's right edge. */
     .taglines {
       width: min(82%, 820px);
-      margin-inline: auto 0;   /* pin to right edge of this width */
-      text-align: right;
+      margin: 0 auto;     /* center the block, same as .rule */
+      text-align: right;  /* right-align within that centered block */
     }
     .tagline {
       margin: .35rem 0;
@@ -104,30 +102,35 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       white-space: nowrap;
     }
 
-    /* simple centered link below the frame (no box) */
-    .cta-out {
-      font-size: clamp(1rem, 1.8vw, 1.25rem);
+    /* Elegant outlined CTA button (unchanged) */
+    .cta {
+      justify-self: center;
+      margin: 1.25rem 0 1.75rem;
+      font-size: clamp(.95rem, 1.6vw, 1.1rem);
       text-decoration: none;
+      padding: .65rem 1.1rem;
+      border: 2px solid #fff;
+      border-radius: 4px;
+      display: inline-block;
       color: #fff;
-      opacity: .95;
-      border-bottom: 1px solid transparent;
-      transition: opacity .2s ease, border-color .2s ease;
+      background: transparent;
+      transition: background-color .2s ease, color .2s ease, opacity .2s ease;
     }
-    .cta-out:hover,
-    .cta-out:focus-visible {
-      opacity: 1;
-      border-bottom-color: #fff;
+    .cta:hover,
+    .cta:focus-visible {
+      background: #fff;
+      color: #000;
       outline: none;
     }
 
-    /* short screens (landscape phones, compact laptops) */
+    /* Small/short screens */
     @media (max-height: 560px) {
       .frame { height: 82vh; }
       .rule { height: 2px; }
       .logo-img { max-height: 32vh; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .cta-out { transition: none; }
+      .cta { transition: none; }
     }
   </style>
 </WelcomeLayout>
