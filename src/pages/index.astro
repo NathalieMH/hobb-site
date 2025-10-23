@@ -12,7 +12,10 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
           class="logo-img"
           src={`${base}logo_noborders.png`}
           alt="HoBB"
-          decoding="async"
+          width="2123" height="656"          <!-- TODO LOGO – add width + height here – intrinsic size to avoid CLS -->
+          loading="eager"                    <!-- fetch now (default for above-the-fold) -->
+          fetchpriority="high"               <!-- tell the browser it’s top priority -->
+          decoding="async"                   <!-- decode off the main thread -->
         />
 
         <hr class="rule" />
@@ -91,7 +94,7 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       left: calc(var(--border-gap) + var(--gutter));
       right: calc(var(--border-gap) + var(--gutter));
       bottom: calc(var(--border-gap));
-      height: var(--gutter);
+      height: calc(var(--gutter) + clamp(6px, 1vh, 16px));
 
       display: grid;
       place-items: center;
