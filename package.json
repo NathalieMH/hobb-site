@@ -1,11 +1,13 @@
 {
   "name": "hobb-site",
   "private": true,
+  "type": "module",
   "scripts": {
+    "dev": "astro dev",
     "build": "astro build",
-    "dev": "astro dev"
+    "preview": "astro preview"
   },
-  "devDependencies": {
+  "dependencies": {
     "astro": "^4.0.0"
   }
 }
