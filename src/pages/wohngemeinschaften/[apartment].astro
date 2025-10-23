@@ -1,17 +1,25 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+
+// Tell Astro which apartment pages to build (one per content file).
+export async function getStaticPaths() {
+  const apartments = await getCollection("apartments");
+  return apartments.map(({ slug }) => ({ params: { apartment: slug } }));
+}
+
 const { apartment } = Astro.params;              // e.g., "wohnung-3"
-const [apt] = (await getCollection("apartments", a => a.data.slug === apartment));
-const aptNo = apartment?.split("-")[1];
+const apartments = await getCollection("apartments");
+const apt = apartments.find(a => a.slug === apartment);
+const aptNo = apartment?.split("-")[1];          // "3" from "wohnung-3"
 const rooms = await getCollection("rooms", r => r.data.apartment === aptNo);
 ---
 <Layout title={apt?.data.title ?? "Wohngemeinschaft"}>
   <h1>{apt?.data.title ?? "Wohngemeinschaft"}</h1>
   <h2>Zimmer</h2>
   <ul>
-    {rooms.map(({ data }) => (
-      <li><a href={`/zimmer/${data.slug}/`}>{data.title}</a>{data.teaser ? ` — ${data.teaser}` : ""}</li>
+    {rooms.map(({ data, slug }) => (
+      <li><a href={`/zimmer/${slug}/`}>{data.title}</a>{data.teaser ? ` — ${data.teaser}` : ""}</li>
     ))}
   </ul>
 </Layout>
