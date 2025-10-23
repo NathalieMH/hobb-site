@@ -1,7 +1,12 @@
 ---
 import WelcomeLayout from "../layouts/WelcomeLayout.astro";
+const base = import.meta.env.BASE_URL;
 ---
-<WelcomeLayout title="Home">
-  <h1>HoBB</h1>
-  <p>Startseite — Inhalte folgen.</p>
+<WelcomeLayout title="HoBB">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#000;">
+    <a href={`${base}home/`}
+       style="color:#fff;text-decoration:none;font-size:2rem;border:2px solid #fff;padding:.75rem 1.25rem;border-radius:4px;">
+      enter hobb
+    </a>
+  </div>
 </WelcomeLayout>

@@ -1,0 +1,20 @@
+---
+import Layout from "../layouts/Layout.astro";
+const base = import.meta.env.BASE_URL;
+---
+<Layout title="HoBB – Home">
+  <h1>HoBB</h1>
+  <p>Startseite – Inhalte folgen.</p>
+
+  <!-- Minimal scaffold matching your home sections; fill in later -->
+  <section>
+    <h2>Das HoBB</h2>
+    <p>Teasertext (DE/EN)…</p>
+  </section>
+
+  <nav style="margin-top:2rem">
+    <p><a href={`${base}wohngemeinschaften/`}>&gt; die Wohngemeinschaften</a></p>
+    <p><a href={`${base}lage/`}>&gt; die Lage / location</a></p>
+    <p><a href={`${base}haus/`}>&gt; das Haus / house</a></p>
+  </nav>
+</Layout>
