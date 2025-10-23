@@ -1,9 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL; // "/" locally, "/hobb-site/" on Pages
 ---
 <Layout title="HoBB – Home">
-
   <!-- Two-column intro text -->
   <section class="intro">
     <div class="col">
@@ -18,9 +17,9 @@ const base = import.meta.env.BASE_URL;
     <div class="col">
       <p>
         HoBB is a beautiful old building from the 1920s with an annex and offers
-        a total of 4 shared apartments for students with 21 rooms, shared kitchens,
-        bathrooms, living-dining rooms, and a garden. The rent is all-inclusive—
-        and, of course, there’s community between the different shared apartments.
+        4 shared apartments for students with 21 rooms, shared kitchens, bathrooms,
+        living-dining rooms, and a garden. The rent is all-inclusive—and there’s
+        community between the different shared apartments.
       </p>
     </div>
   </section>
@@ -28,69 +27,35 @@ const base = import.meta.env.BASE_URL;
   <!-- Three image tiles linking to sections -->
   <section class="tiles">
     <a class="tile" href={`${base}wohngemeinschaften/`}>
-      <img src={`${base}wohngemeinschaften.jpg`} alt="die Wohngemeinschaften" />
+      <img src={`${base}home-wohngemeinschaften.png`} alt="die Wohngemeinschaften" loading="lazy" />
       <span>&gt; die Wohngemeinschaften</span>
     </a>
 
     <a class="tile" href={`${base}lage/`}>
-      <img src={`${base}lage.jpg`} alt="die Lage / location" />
+      <img src={`${base}home-lage.jpg`} alt="die Lage / location" loading="lazy" />
       <span>&gt; die Lage / location</span>
     </a>
 
     <a class="tile" href={`${base}haus/`}>
-      <img src={`${base}dashaus.jpg`} alt="das Haus / house" />
+      <img src={`${base}home-dashaus.png`} alt="das Haus / house" loading="lazy" />
       <span>&gt; das Haus / house</span>
     </a>
   </section>
-
 </Layout>
 
 <style>
-/* container widths + spacing */
-.intro, .tiles {
-  max-width: 1100px;
-  margin: 2rem auto;
-  padding: 0 1.5rem;
-}
+/* container width + spacing */
+.intro, .tiles { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
 
-/* two-column intro */
-.intro {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  line-height: 1.6;
-}
+/* two-column intro (stacks on small screens) */
+.intro { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; line-height: 1.6; }
 
 /* image tiles */
-.tiles {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin-bottom: 4rem;
-}
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 4rem; }
+.tile { text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; }
+.tile img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border: 3px solid #d9d9d9; box-shadow: 0 2px 6px rgba(0,0,0,.08); }
+.tile span { margin-top: .75rem; font-size: .95rem; }
 
-.tile {
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.tile img {
-  width: 100%;
-  aspect-ratio: 4 / 3;      /* consistent tile size */
-  object-fit: cover;
-  border: 3px solid #d9d9d9;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
-
-.tile span {
-  margin-top: .75rem;
-  font-size: 0.95rem;
-}
-
-/* responsive: stack on small screens */
 @media (max-width: 900px) {
   .intro { grid-template-columns: 1fr; }
   .tiles { grid-template-columns: 1fr; }
