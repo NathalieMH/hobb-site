@@ -8,14 +8,16 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       <!-- The inner border is drawn by ::before. -->
       <!-- This absolutely positioned box is our content area ("canvas") -->
       <div class="canvas">
+        <!-- hero logo -->
         <img
           class="logo-img"
           src={`${base}logo_noborders.png`}
           alt="HoBB"
-          width="2123" height="656"          <!-- intrinsic size to avoid CLS -->
-          loading="eager"                    <!-- fetch now (default for above-the-fold) -->
-          fetchpriority="high"               <!-- tell the browser it’s top priority -->
-          decoding="async"                   <!-- decode off the main thread -->
+          width="2123"
+          height="656"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
         />
 
         <hr class="rule" />
@@ -56,7 +58,6 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       --gutter: clamp(24px, 5vw, 56px); /* equal space from inner border to content */
       position: relative;
     }
-
     .frame::before {
       content: "";
       position: absolute;
@@ -88,6 +89,7 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       height: calc(var(--gutter) + clamp(20px, 2vh, 28px)); /* extra whitespace below button */
       display: grid;
       place-items: center;
+      padding-bottom: clamp(8px, 1.6vh, 22px); /* even more extra whitespace below button */
       pointer-events: none;
     }
 
@@ -110,7 +112,7 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       margin: 0 auto;
     }
 
-    /* Taglines now scale dynamically with container query units */
+    /* Taglines share width/centering with the rule */
     .taglines {
       width: min(82%, 820px);
       margin: 0 auto;
@@ -120,12 +122,13 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
 
     .tagline {
       margin: .35rem 0;
-      /* Dynamically scale with width of the centered rule */
-      font-size: clamp(0.78rem, 3.5cqi, 1.06rem);
+      /* Fluid with container width; the script below will shrink further if needed */
+      font-size: clamp(0.7rem, 3.5cqi, 1.06rem);
       opacity: .95;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: nowrap;   /* keep on one line */
+      /* REMOVE ellipsis so we can always show the full line */
+      overflow: visible;
+      text-overflow: clip;
     }
 
     /* --- CTA ------------------------------------------------------------ */
@@ -141,7 +144,6 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       background: transparent;
       transition: background-color .2s ease, color .2s ease, opacity .2s ease;
     }
-
     .cta:hover,
     .cta:focus-visible {
       background: #fff;
@@ -155,9 +157,49 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       .rule { height: 2px; }
       .logo-img { max-height: min(26vh, 300px); }
     }
-
     @media (prefers-reduced-motion: reduce) {
       .cta { transition: none; }
     }
   </style>
+
+  <!-- Always-fit script: shrinks tagline font until each line fits its container -->
+  <script is:inline>
+    const box = document.querySelector('.taglines');
+    if (box) {
+      const lines = box.querySelectorAll('.tagline');
+
+      function fits(el) { return el.scrollWidth <= box.clientWidth; }
+
+      function fitLine(el) {
+        // Start from computed size; shrink down to minPx as needed
+        let hi = parseFloat(getComputedStyle(el).fontSize) || 16; // px
+        let lo = 6; // minimum readable size in px (adjust if you want smaller)
+        // If it already fits, keep CSS-driven size
+        if (fits(el)) return;
+
+        // Binary search down until it fits
+        for (let i = 0; i < 20 && hi - lo > 0.25; i++) {
+          const mid = (hi + lo) / 2;
+          el.style.fontSize = mid + 'px';
+          if (fits(el)) {
+            hi = mid;
+          } else {
+            lo = mid;
+          }
+        }
+        el.style.fontSize = hi + 'px';
+      }
+
+      function fitAll() {
+        // Reset to CSS (so cqi scaling can increase size on wider screens)
+        lines.forEach(el => el.style.fontSize = '');
+        lines.forEach(fitLine);
+      }
+
+      // Run on load and whenever viewport/container changes
+      const ro = new ResizeObserver(fitAll);
+      ro.observe(document.documentElement);
+      window.addEventListener('load', fitAll);
+    }
+  </script>
 </WelcomeLayout>
