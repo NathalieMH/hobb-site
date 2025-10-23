@@ -1,0 +1,14 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+const apartments = (await getCollection("apartments"))
+  .sort((a,b) => (a.data.order ?? 0) - (b.data.order ?? 0));
+---
+<Layout title="Die Wohngemeinschaften">
+  <h1>Die Wohngemeinschaften</h1>
+  <ul>
+    {apartments.map(({ data }) => (
+      <li><a href={`/wohngemeinschaften/${data.slug}/`}>{data.title}</a></li>
+    ))}
+  </ul>
+</Layout>
