@@ -1,5 +1,5 @@
 ---
-title: "7 Zimmer / Wohnung 3"
+title: "4 Zimmer / Wohnung 2"
 shared_spaces: ["Bad 1","Bad 2","Küche","Esszimmer","Balkon","Laundry"]
 order: 10
 ---

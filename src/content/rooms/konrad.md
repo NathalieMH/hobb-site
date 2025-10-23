@@ -1,10 +1,10 @@
 ---
 title: "X.X Zimmername"
-apartment: "apartment-X"  # e.g., "apartment-3"
-size_m2: 18
-cold_rent_eur: 520
+apartment: "apartment-1"  # e.g., "apartment-3"
+size_m2: 21
+cold_rent_eur: 3400
 available_from: "2025-12"
 teaser: "Kurzbeschreibung"
-images: ["/rooms/beispiel-1.jpg"]
+images: []
 ---
 Ausführliche Beschreibung des Zimmers …
