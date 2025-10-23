@@ -1,4 +1,123 @@
-# 🏠 HoBB Site — Astro Static Website
+# 🏡 Anleitung für das Bearbeiten der HoBB-Website (für Mama & Papa)
+
+Diese Anleitung erklärt einfach, wie ihr neue Apartments oder Zimmer hinzufügen, bestehende Einträge löschen oder anpassen könnt – ganz ohne Programmierkenntnisse.  
+Alles funktioniert direkt über die GitHub-Webseite. Sobald ihr eine Änderung speichert (Commit), aktualisiert sich die Webseite automatisch.
+
+---
+
+## 🧱 Grundprinzip
+Die Webseite zieht alle Informationen automatisch aus sogenannten **Markdown-Dateien (.md)**.  
+Jede Datei steht für **ein Apartment** oder **ein Zimmer**.
+
+- Apartments liegen in: `src/content/apartments/`
+- Zimmer liegen in: `src/content/rooms/`
+- Fotos liegen in: `public/rooms/`
+
+---
+
+## 🏢 1. Neues Apartment hinzufügen
+
+1. Öffne auf GitHub den Ordner:  
+   `src/content/apartments/`
+2. Klicke oben rechts auf **“Add file” → “Create new file”**.
+3. Gib der Datei einen Namen, z. B.:  
+   ```
+   apartment-3.md
+   ```
+4. Kopiere diesen Inhalt in die Datei und passe ihn an:
+   ```yaml
+   ---
+   title: "5 Zimmer / Wohnung 3"
+   shared_spaces: ["Bad 1", "Bad 2", "Küche", "Esszimmer", "Balkon", "Laundry"]
+   order: 10
+   ---
+   Kurze Beschreibung der Wohnung …
+   ```
+   - `title` = Überschrift der Seite  
+   - `shared_spaces` = geteilte Räume  
+   - `order` = Reihenfolge (kleinere Zahl = weiter oben)
+   - Der Text unter den Strichen ist die Beschreibung.
+5. Klicke unten auf **“Commit changes”**.
+
+👉 Fertig! Das neue Apartment erscheint automatisch auf der Seite  
+`/wohngemeinschaften/`.
+
+---
+
+## 🚪 2. Neues Zimmer hinzufügen
+
+1. Öffne den Ordner:  
+   `src/content/rooms/`
+2. Klicke auf **“Add file → Create new file”**.
+3. Gib der Datei einen Namen, z. B.:  
+   ```
+   albert.md
+   ```
+4. Kopiere diesen Inhalt und passe ihn an:
+   ```yaml
+   ---
+   title: "3.1 Albert"
+   apartment: "apartment-3"      # muss dem Dateinamen des Apartments entsprechen!
+   size_m2: 18
+   cold_rent_eur: 520
+   available_from: "2025-12"
+   teaser: "Größtes Zimmer im 1. OG mit Ausblick."
+   images:
+     - "/rooms/albert1.jpg"
+     - "/rooms/albert2.jpg"
+   ---
+   Ausführliche Beschreibung des Zimmers …
+   ```
+   - `apartment` = Verknüpft das Zimmer mit einem Apartment (z. B. apartment-3)
+   - `images` = Liste der Fotos (siehe unten)
+5. **Fotos hochladen:**  
+   Gehe zu `public/rooms/` → **“Add file → Upload files”** → wähle die Bilder (z. B. `albert1.jpg`, `albert2.jpg`).
+
+👉 Nach dem Speichern (Commit) erscheint das Zimmer automatisch unter dem richtigen Apartment.
+
+---
+
+## 🧹 3. Apartment oder Zimmer entfernen
+
+1. Gehe in den entsprechenden Ordner (`apartments/` oder `rooms/`).
+2. Klicke auf die Datei, die du löschen möchtest.
+3. Oben rechts auf das Mülleimer-Symbol klicken → **“Delete this file”** → Commit.
+
+Die Seite wird beim nächsten Deployment automatisch ohne diesen Eintrag neu erstellt.
+
+---
+
+## ✏️ 4. Inhalte ändern
+
+### 4.1 Text oder Daten anpassen
+1. Öffne die Datei des Apartments oder Zimmers, das du bearbeiten möchtest.
+2. Klicke auf das **Stift-Symbol (Edit)**.
+3. Ändere Text, Zahlen oder Daten (z. B. Miete, Beschreibung, Titel).
+4. Klicke auf **“Commit changes”**.
+
+### 4.2 Neues Bild hinzufügen
+1. Lade das Foto hoch in:  
+   `public/rooms/`  
+   → z. B. `zimmer3b.jpg`
+2. Öffne die zugehörige `.md`-Datei des Zimmers.
+3. Füge den Dateinamen in der Bildliste hinzu:
+   ```yaml
+   images:
+     - "/rooms/zimmer3a.jpg"
+     - "/rooms/zimmer3b.jpg"
+   ```
+4. **Commit changes**.  
+   Nach dem nächsten Deployment ist das neue Foto sichtbar.
+
+---
+
+💡 **Tipp:**  
+Ihr könnt Änderungen jederzeit rückgängig machen – GitHub speichert automatisch alte Versionen.
+
+---
+---
+
+# 🏠 HoBB Site – Developer Details — Astro Static Website
 
 This project is a minimal static website for the HoBB student house. It is built with **[Astro](https://astro.build)**, deployed automatically using **GitHub Actions**, and hosted on **GitHub Pages**.
 
