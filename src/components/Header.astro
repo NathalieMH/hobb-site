@@ -1,6 +1,5 @@
 ---
 const base = import.meta.env.BASE_URL;
-let isMenuOpen = false;
 ---
 
 <header class="top-banner">
@@ -10,9 +9,12 @@ let isMenuOpen = false;
     </a>
   </div>
 
-  <button id="menu-toggle" aria-label="Toggle menu" class="menu-btn">☰</button>
+  <!-- Accessible hamburger -->
+  <button id="menu-toggle" class="menu-btn" aria-label="Menü öffnen" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 
-  <nav class="main-nav">
+  <nav class="main-nav" id="site-nav">
     <a href={`${base}wohngemeinschaften/`}>die Wohngemeinschaften</a>
     <a href={`${base}lage/`}>die Lage</a>
     <a href={`${base}haus/`}>das Haus</a>
@@ -21,70 +23,44 @@ let isMenuOpen = false;
 </header>
 
 <style>
-.top-banner {
-  background: black;
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
+/* Banner */
+.top-banner{
+  background:#000;color:#fff;display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 2rem;position:relative
 }
 
-.main-nav {
-  display: flex;
-  gap: 1.5rem;
+/* Nav is hidden by default; opens as a dropdown */
+.main-nav{
+  display:none;position:absolute;top:72px;right:0;left:auto;background:#000;
+  flex-direction:column;gap:1rem;padding:1rem 1.25rem;min-width:240px;border-left:1px solid #222;border-bottom:1px solid #222
+}
+.main-nav a{color:#fff;text-decoration:none;font-size:0.95rem}
+.main-nav a:hover{text-decoration:underline}
+.main-nav.open{display:flex}
+
+/* Hamburger: three consistent bars */
+.menu-btn{
+  width:36px;height:28px;padding:0;border:0;background:none;cursor:pointer;display:flex;
+  flex-direction:column;justify-content:space-between;align-items:stretch
+}
+.menu-btn span{
+  height:2px;background:#fff;border-radius:2px;display:block
 }
 
-.main-nav a {
-  color: white;
-  text-decoration: none;
-  font-size: 0.9rem;
+/* If you want the nav visible on wide screens as a row, uncomment this:
+@media (min-width: 900px){
+  .main-nav{position:static;display:flex;flex-direction:row;gap:1.5rem;padding:0;border:0}
 }
-
-.main-nav a:hover {
-  text-decoration: underline;
-}
-
-/* The hamburger button */
-.menu-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.75rem;
-  display: none; /* hidden on desktop */
-  cursor: pointer;
-}
-
-/* Responsive: show hamburger, hide nav */
-@media (max-width: 768px) {
-  .menu-btn {
-    display: block;
-  }
-
-  .main-nav {
-    display: none;
-    position: absolute;
-    top: 70px;
-    right: 0;
-    background: black;
-    flex-direction: column;
-    padding: 1rem;
-    width: 100%;
-  }
-
-  .main-nav.open {
-    display: flex;
-  }
-}
+*/
 </style>
 
 <script>
-  // Small vanilla JS for the toggle
   document.addEventListener("DOMContentLoaded", () => {
     const btn = document.getElementById("menu-toggle");
-    const nav = document.querySelector(".main-nav");
+    const nav = document.getElementById("site-nav");
     btn.addEventListener("click", () => {
-      nav.classList.toggle("open");
+      const open = nav.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
     });
   });
 </script>
