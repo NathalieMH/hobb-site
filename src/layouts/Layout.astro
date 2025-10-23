@@ -1,28 +1,26 @@
 ---
 const { title = "HoBB" } = Astro.props;
+const base = import.meta.env.BASE_URL; // "/" locally, "/hobb-site/" on Pages
 ---
 <html lang="de">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>{title}</title>
-    <meta name="description" content="Studenten-Wohngemeinschaften bei der FU" />
   </head>
   <body>
     <header>
       <nav>
-        <a href="/">Home</a> |
-        <a href="/wohngemeinschaften/">die Wohngemeinschaften</a> |
-        <a href="/lage">die Lage</a> |
-        <a href="/haus">das Haus</a> |
-        <a href="/impressum-kontakt">Impressum/Kontakt</a>
+        <a href={`${base}`}>Home</a> |
+        <a href={`${base}wohngemeinschaften/`}>die Wohngemeinschaften</a> |
+        <a href={`${base}lage`}>die Lage</a> |
+        <a href={`${base}haus`}>das Haus</a> |
+        <a href={`${base}impressum-kontakt`}>Impressum/Kontakt</a>
       </nav>
     </header>
     <main>
       <slot />
     </main>
-    <footer>
-      <small>© HoBB</small>
-    </footer>
+    <footer><small>© HoBB</small></footer>
   </body>
 </html>
