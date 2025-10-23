@@ -1,15 +1,106 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+
 const base = import.meta.env.BASE_URL;
 const apartments = (await getCollection("apartments"))
-  .sort((a,b) => (a.data.order ?? 0) - (b.data.order ?? 0));
+  .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
+
+const FALLBACK_THUMB = `${base}home-wohngemeinschaften.png`;
 ---
+
 <Layout title="Die Wohngemeinschaften">
-  <h1>Die Wohngemeinschaften</h1>
-  <ul>
-    {apartments.map(({ data, slug }) => (
-      <li><a href={`${base}wohngemeinschaften/${slug}/`}>{data.title}</a></li>
-    ))}
-  </ul>
+  <section class="wg-wrap">
+    <!-- LEFT: dynamic cards (one per apartment file) -->
+    <div class="grid">
+      {apartments.map(({ data, slug }) => {
+        const thumb = data.thumbnail ?? FALLBACK_THUMB;
+        const details = Array.isArray(data.details) ? data.details : [];
+        return (
+          <a class="card" href={`${base}wohngemeinschaften/${slug}/`}>
+            <img src={thumb} alt={data.title} loading="lazy" />
+            <div class="caption">
+              <strong>&gt; {data.title}</strong>
+              {details.length > 0 && (
+                <div class="small">
+                  {details.map((line) => <div>{line}</div>)}
+                </div>
+              )}
+            </div>
+          </a>
+        );
+      })}
+    </div>
+
+    <!-- RIGHT: explanatory text -->
+    <aside class="aside">
+      <h1>Die Wohngemeinschaften</h1>
+      <p>
+        Ab Dezember 2025 werden die ersten zwei Wohnungen mit insgesamt 9 Zimmern im
+        1. und 2. Obergeschoss bezugsfertig sein. Ab Frühjahr bzw. Sommer 2026
+        kommen nochmals 7 bzw. 6 Zimmer über 2 Etagen in Altbau und Anbau dazu.
+      </p>
+      <p>Je nach Zimmergröße variiert die Kaltmiete (siehe jeweilige Zimmerseite). In der Miete ist immer eingeschlossen</p>
+      <ul>
+        <li>Möblierung: Bett, Schrank, Schreibtisch, Stuhl sowie viel Raum für euren eigenen Stil</li>
+        <li>Wasser- und Heizkosten</li>
+        <li>Strom</li>
+        <li>Waschmaschinen- und Trockenraum</li>
+        <li>regelmäßige Grundreinigung der Gemeinschaftsräume</li>
+        <li>Internetzugang</li>
+        <li>Gartennutzung bzw. Terrasse und Boule-Bahn</li>
+      </ul>
+    </aside>
+  </section>
 </Layout>
+
+<style>
+/* Two-column page layout: cards left, text right */
+.wg-wrap {
+  max-width: 1200px;
+  margin: 2rem auto 4rem;
+  padding: 0 1.25rem;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 3rem;
+}
+
+/* Cards grid: always 2 columns (auto wraps to rows) */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem 2rem;
+}
+
+.card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 3px solid #d9d9d9;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  display: block;
+}
+
+.caption { margin-top: .5rem; }
+.caption strong { font-size: 1rem; }
+.caption .small { margin-top: .4rem; font-size: .92rem; line-height: 1.35; color: #222; }
+
+/* Right column */
+.aside h1 { margin-top: 0; }
+.aside ul { padding-left: 1.2rem; margin-top: .75rem; }
+.aside li { margin: .35rem 0; }
+
+/* Responsive: stack columns; keep cards 1-per-row on small screens */
+@media (max-width: 1000px) {
+  .wg-wrap { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; }
+}
+</style>
