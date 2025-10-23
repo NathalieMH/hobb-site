@@ -12,4 +12,16 @@ const { slug } = Astro.params;
 const room = (await getCollection("rooms")).find(r => r.slug === slug);
 const d = room?.data;
 ---
-<Layout title={
+<Layout title={d?.title ?? "Zimmer"}>
+  <h1>{d?.title ?? "Zimmer"}</h1>
+  {d ? (
+    <>
+      <p>
+        {d.size_m2 ? `${d.size_m2} m²` : ""} {d.cold_rent_eur ? `• €${d.cold_rent_eur}` : ""} {d.available_from ? `• ab ${d.available_from}` : ""}
+      </p>
+      {d.images.map((src) => <img src={src} alt={d.title} />)}
+      <slot />
+    </>
+  ) : <p>Nicht gefunden.</p>}
+</Layout>
+

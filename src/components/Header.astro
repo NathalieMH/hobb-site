@@ -1,12 +1,18 @@
 ---
 const base = import.meta.env.BASE_URL;
+let isMenuOpen = false;
 ---
+
 <header class="top-banner">
   <div class="logo">
     <a href={`${base}`}>
-      <img src={`${base}logo.svg`} alt="HoBB Logo" height="60" />
+      <img src={`${base}logo.png`} alt="HoBB Logo" height="60" />
     </a>
   </div>
+
+  <button id="menu-toggle" aria-label="Toggle menu" class="menu-btn">
+    ☰
+  </button>
 
   <nav class="main-nav">
     <a href={`${base}wohngemeinschaften/`}>die Wohngemeinschaften</a>
@@ -26,9 +32,13 @@ const base = import.meta.env.BASE_URL;
   padding: 1rem 2rem;
 }
 
+.main-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
 .main-nav a {
   color: white;
-  margin-left: 1.5rem;
   text-decoration: none;
   font-size: 0.9rem;
 }
@@ -37,7 +47,46 @@ const base = import.meta.env.BASE_URL;
   text-decoration: underline;
 }
 
-.logo img {
-  display: block;
+/* The hamburger button */
+.menu-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.75rem;
+  display: none; /* hidden on desktop */
+  cursor: pointer;
+}
+
+/* Responsive: show hamburger, hide nav */
+@media (max-width: 768px) {
+  .menu-btn {
+    display: block;
+  }
+
+  .main-nav {
+    display: none;
+    position: absolute;
+    top: 70px;
+    right: 0;
+    background: black;
+    flex-direction: column;
+    padding: 1rem;
+    width: 100%;
+  }
+
+  .main-nav.open {
+    display: flex;
+  }
 }
 </style>
+
+<script>
+  // Small vanilla JS for the toggle
+  document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("menu-toggle");
+    const nav = document.querySelector(".main-nav");
+    btn.addEventListener("click", () => {
+      nav.classList.toggle("open");
+    });
+  });
+</script>
