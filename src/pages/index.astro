@@ -4,14 +4,17 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
 ---
 <WelcomeLayout title="HoBB">
   <div class="page">
-    <!-- Framed poster -->
     <div class="frame">
       <div class="frame-inner">
+        <!-- top spacer establishes the top/side/bottom gutter -->
+        <div class="top-pad" />
+
+        <!-- main content -->
         <div class="content">
-          <!-- LOGO -->
+          <!-- LOGO (80% of previous size) -->
           <img
             class="logo-img"
-            src={`${base}logo_noborders.png`}   /* /public/logo_noborders.png */
+            src={`${base}logo_noborders.png`}
             alt="HoBB"
             decoding="async"
           />
@@ -19,17 +22,19 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
           <!-- centered line -->
           <hr class="rule" />
 
-          <!-- taglines: same width as the rule, centered block, text right-aligned -->
+          <!-- taglines: same width & centering as the rule; text right-aligned -->
           <div class="taglines">
             <p class="tagline de">Studenten-Wohngemeinschaften bei der FU</p>
             <p class="tagline en">Student Shared Apartments close to FU</p>
           </div>
         </div>
 
-        <!-- Elegant button (unchanged) -->
-        <a class="cta" href={`${base}home/`} aria-label="Enter HoBB">
-          enter HoBB
-        </a>
+        <!-- bottom gutter that matches the top gutter; button sits inside it -->
+        <div class="bottom-pad">
+          <a class="cta" href={`${base}home/`} aria-label="Enter HoBB">
+            enter HoBB
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -44,7 +49,7 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       font-family: ui-serif, "Playfair Display", Georgia, "Times New Roman", serif;
     }
 
-    /* double-border frame */
+    /* outer/inner double frame */
     .frame {
       width: min(92vw, 1100px);
       height: min(86vh, 640px);
@@ -52,27 +57,41 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       display: grid;
       place-items: center;
     }
+
+    /* GUTTER SYSTEM:
+       - left/right padding = --gutter
+       - top = first row (var(--gutter))
+       - bottom = last row (var(--gutter)) where the button lives
+    */
     .frame-inner {
+      --gutter: clamp(24px, 5vw, 56px);
       width: calc(100% - 26px);
       height: calc(100% - 26px);
       border: 3px solid #fff;
       display: grid;
-      grid-template-rows: 1fr auto; /* content then button */
+      grid-template-rows: var(--gutter) 1fr var(--gutter);
+      padding-inline: var(--gutter);
     }
 
+    .top-pad { /* empty spacer to enforce top gutter */ }
+    .bottom-pad {
+      display: grid;
+      place-items: center; /* centers the button inside the bottom gutter */
+    }
+
+    /* main content area */
     .content {
-      align-self: center;
       width: 100%;
-      padding: 0 clamp(16px, 3vw, 40px);
       display: grid;
       justify-items: center;
       gap: clamp(0.9rem, 2.4vw, 1.6rem);
     }
 
-    /* Responsive logo fit */
+    /* LOGO at 80% of the previous caps */
+    /* (previous: max-width: 78vw/980px; max-height: 36vh/420px) */
     .logo-img {
-      max-width: min(78vw, 980px);
-      max-height: min(36vh, 420px);
+      max-width: min(62.4vw, 784px);  /* 80% of 78vw / 980px */
+      max-height: min(28.8vh, 336px); /* 80% of 36vh / 420px */
       width: auto;
       height: auto;
       object-fit: contain;
@@ -88,12 +107,12 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       margin: 0 auto; /* centered */
     }
 
-    /* IMPORTANT: taglines share width AND centering with the rule.
-       This makes the taglines' right edge align with the rule's right edge. */
+    /* Taglines share the same width & centering as the rule, text right-aligned.
+       => Right edge of text aligns exactly with the right edge of the line. */
     .taglines {
       width: min(82%, 820px);
-      margin: 0 auto;     /* center the block, same as .rule */
-      text-align: right;  /* right-align within that centered block */
+      margin: 0 auto;
+      text-align: right;
     }
     .tagline {
       margin: .35rem 0;
@@ -102,10 +121,8 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       white-space: nowrap;
     }
 
-    /* Elegant outlined CTA button (unchanged) */
+    /* Elegant outlined CTA button (unchanged behavior) */
     .cta {
-      justify-self: center;
-      margin: 1.25rem 0 1.75rem;
       font-size: clamp(.95rem, 1.6vw, 1.1rem);
       text-decoration: none;
       padding: .65rem 1.1rem;
@@ -123,11 +140,13 @@ const base = import.meta.env.BASE_URL; // works locally & on GitHub Pages subpat
       outline: none;
     }
 
-    /* Small/short screens */
+    /* short screens */
     @media (max-height: 560px) {
       .frame { height: 82vh; }
       .rule { height: 2px; }
-      .logo-img { max-height: 32vh; }
+      .logo-img {
+        max-height: min(26vh, 300px); /* keep headroom on very short viewports */
+      }
     }
     @media (prefers-reduced-motion: reduce) {
       .cta { transition: none; }
