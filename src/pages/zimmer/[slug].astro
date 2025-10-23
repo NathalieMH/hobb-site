@@ -1,8 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+const base = import.meta.env.BASE_URL;
 
-// Tell Astro which room pages to build (one per content file).
 export async function getStaticPaths() {
   const rooms = await getCollection("rooms");
   return rooms.map(({ slug }) => ({ params: { slug } }));
@@ -12,15 +12,4 @@ const { slug } = Astro.params;
 const room = (await getCollection("rooms")).find(r => r.slug === slug);
 const d = room?.data;
 ---
-<Layout title={d?.title ?? "Zimmer"}>
-  <h1>{d?.title ?? "Zimmer"}</h1>
-  {d ? (
-    <>
-      <p>
-        {d.size_m2 ? `${d.size_m2} m²` : ""} {d.cold_rent_eur ? `• €${d.cold_rent_eur}` : ""} {d.available_from ? `• ab ${d.available_from}` : ""}
-      </p>
-      {d.images.map((src) => <img src={src} alt={d.title} />)}
-      <slot />
-    </>
-  ) : <p>Nicht gefunden.</p>}
-</Layout>
+<Layout title={
