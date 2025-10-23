@@ -8,18 +8,19 @@ export async function getStaticPaths() {
   return apartments.map(({ slug }) => ({ params: { apartment: slug } }));
 }
 
-const { apartment } = Astro.params;
+const { apartment } = Astro.params; // e.g., "apartment-3"
 const apartments = await getCollection("apartments");
 const apt = apartments.find(a => a.slug === apartment);
-const aptNo = apartment?.split("-")[1];
-const rooms = await getCollection("rooms", r => r.data.apartment === aptNo);
+
+// Rooms are linked via apartment that equals the apartment slug
+const rooms = await getCollection("rooms", r => r.data.apartment === apartment);
 ---
 <Layout title={apt?.data.title ?? "Wohngemeinschaft"}>
   <h1>{apt?.data.title ?? "Wohngemeinschaft"}</h1>
   <h2>Zimmer</h2>
   <ul>
     {rooms.map(({ data, slug }) => (
-      <li><a href={`${base}zimmer/${slug}/`}>{data.title}</a>{data.teaser ? ` — ${data.teaser}` : ""}</li>
+      <li><a href={`${import.meta.env.BASE_URL}zimmer/${slug}/`}>{data.title}</a>{data.teaser ? ` — ${data.teaser}` : ""}</li>
     ))}
   </ul>
 </Layout>
