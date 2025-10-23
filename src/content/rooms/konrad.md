@@ -1,10 +1,10 @@
 ---
-title: "X.X Zimmername"
-apartment: "apartment-1"  # e.g., "apartment-3"
+title: "3.2 Konrad"
+apartment: "apartment-1"  # exactly matches the apartment file name
 size_m2: 21
 cold_rent_eur: 3400
 available_from: "2025-12"
 teaser: "Kurzbeschreibung"
 images: []
 ---
-Ausführliche Beschreibung des Zimmers …
+Eines unserer kleineren Zimmer im 1.Obergeschoss mit viel Licht und Luft nach oben.

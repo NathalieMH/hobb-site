@@ -1,6 +1,6 @@
 ---
 title: "3.1 Albert"
-apartment: "apartment-1"   # exactly matches the apartment file name (slug)
+apartment: "apartment-1"   # exactly matches the apartment file name
 size_m2: 18
 cold_rent_eur: 520
 available_from: "2025-12"
