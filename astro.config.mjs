@@ -1,4 +1,4 @@
 import { defineConfig } from "astro/config";
 export default defineConfig({
-  site: "https://<your-username>.github.io/hobb-site"
+  site: "https://NathalieMH.github.io/hobb-site"
 });
