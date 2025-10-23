@@ -11,7 +11,8 @@ Jede Datei steht für **ein Apartment** oder **ein Zimmer**.
 
 - Apartments liegen in: `src/content/apartments/`
 - Zimmer liegen in: `src/content/rooms/`
-- Fotos liegen in: `public/rooms/`
+- Fotos der Apartments liegen in: `public/apartments/`
+- Fotos der Zimmer liegen in: `public/rooms/`
 
 ---
 
@@ -62,9 +63,7 @@ Jede Datei steht für **ein Apartment** oder **ein Zimmer**.
    cold_rent_eur: 520
    available_from: "2025-12"
    teaser: "Größtes Zimmer im 1. OG mit Ausblick."
-   images:
-     - "/rooms/albert1.jpg"
-     - "/rooms/albert2.jpg"
+   images: ["/rooms/albert1.jpg", "/rooms/albert2.jpg"]
    ---
    Ausführliche Beschreibung des Zimmers …
    ```
@@ -102,9 +101,7 @@ Die Seite wird beim nächsten Deployment automatisch ohne diesen Eintrag neu ers
 2. Öffne die zugehörige `.md`-Datei des Zimmers.
 3. Füge den Dateinamen in der Bildliste hinzu:
    ```yaml
-   images:
-     - "/rooms/zimmer3a.jpg"
-     - "/rooms/zimmer3b.jpg"
+   images: ["/rooms/zimmer3a.jpg", "/rooms/zimmer3b.jpg"]
    ```
 4. **Commit changes**.  
    Nach dem nächsten Deployment ist das neue Foto sichtbar.
@@ -112,10 +109,13 @@ Die Seite wird beim nächsten Deployment automatisch ohne diesen Eintrag neu ers
 ---
 
 💡 **Tipp:**  
-Ihr könnt Änderungen jederzeit rückgängig machen – GitHub speichert automatisch alte Versionen.
+- Ihr könnt Änderungen jederzeit rückgängig machen – GitHub speichert automatisch alte Versionen.
+- ChatGPT kennt sich sehr gut mit GitHub aus! 
+
 
 ---
 ---
+
 
 # 🏠 HoBB Site – Developer Details — Astro Static Website
 
