@@ -1,12 +1,10 @@
 ---
 title: "5 Zimmer / Wohnung X"
-shared_spaces: ["Bad 1","Bad 2","Küche","Esszimmer","Balkon","Laundry"]
+shared_spaces: ["Bad 1", "Bad 2", "Küche", "Esszimmer", "Balkon", "Laundry"]
 order: 10
-# Optional (used by the WG list page):
-# thumbnail: "/home-wohngemeinschaften.png"
-# details:
-#   - "Hochparterre / 3 Zimmer"
-#   - "Souterrain / 4 Zimmer"
-#   - "(ab Frühjahr 2026)"
+floorplan: "/floorplans/apartment-X.png"
+details:
+  - "1. Obergeschoss"
+  - "Ab Frühjahr 2026"
 ---
 Kurze Beschreibung der Wohnung …

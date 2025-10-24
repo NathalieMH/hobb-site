@@ -8,19 +8,116 @@ export async function getStaticPaths() {
   return apartments.map(({ slug }) => ({ params: { apartment: slug } }));
 }
 
-const { apartment } = Astro.params; // e.g., "apartment-3"
+const { apartment } = Astro.params;
 const apartments = await getCollection("apartments");
 const apt = apartments.find(a => a.slug === apartment);
 
-// Rooms are linked via apartment that equals the apartment slug
-const rooms = await getCollection("rooms", r => r.data.apartment === apartment);
+// Fetch all rooms where data.apartment === apartment slug
+const rooms = await getCollection("rooms", (r) => r.data.apartment === apartment);
 ---
+
 <Layout title={apt?.data.title ?? "Wohngemeinschaft"}>
-  <h1>{apt?.data.title ?? "Wohngemeinschaft"}</h1>
-  <h2>Zimmer</h2>
-  <ul>
-    {rooms.map(({ data, slug }) => (
-      <li><a href={`${import.meta.env.BASE_URL}zimmer/${slug}/`}>{data.title}</a>{data.teaser ? ` — ${data.teaser}` : ""}</li>
-    ))}
-  </ul>
+  <section class="apartment-header">
+    <div class="apartment-image">
+      {apt?.data.floorplan ? (
+        <img src={`${base}${apt.data.floorplan}`} alt={apt.data.title} />
+      ) : (
+        <div class="placeholder">[Kein Plan vorhanden]</div>
+      )}
+    </div>
+
+    <div class="apartment-details">
+      <h1>{apt?.data.title}</h1>
+      {apt?.data.details && (
+        <p class="details">{apt.data.details.join(" / ")}</p>
+      )}
+      <div class="description">
+        {apt?.body ? <Fragment set:html={apt.body} /> : null}
+      </div>
+    </div>
+  </section>
+
+  <section class="rooms-section">
+    <div class="rooms-grid">
+      {rooms.map(({ data, slug }) => (
+        <a href={`${base}zimmer/${slug}/`} class="room-card">
+          <img src={data.images?.[0] ?? `${base}placeholder-room.png`} alt={data.title} />
+          <p><strong>&gt; {data.title}</strong></p>
+        </a>
+      ))}
+    </div>
+  </section>
 </Layout>
+
+<style>
+.apartment-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.apartment-image img {
+  max-width: 600px;
+  width: 100%;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.apartment-details {
+  flex: 1;
+  min-width: 250px;
+}
+
+.apartment-details h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.details {
+  font-weight: bold;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.rooms-section {
+  margin-top: 3rem;
+}
+
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.room-card {
+  text-decoration: none;
+  color: black;
+  text-align: center;
+}
+
+.room-card img {
+  width: 100%;
+  max-width: 180px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.room-card p {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.placeholder {
+  width: 600px;
+  height: 400px;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  border: 1px dashed #ccc;
+}
+</style>

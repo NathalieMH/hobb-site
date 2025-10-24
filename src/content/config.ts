@@ -6,6 +6,7 @@ import { defineCollection, z } from "astro:content";
  * - Files live in: src/content/apartments/
  * - Filename (e.g., "apartment-3.md") becomes the slug used in URLs.
  * - Optional fields "thumbnail" and "details" are used on the WG list page.
+ * - Optional field "floorplan" is used on the apartment detail page.
  */
 const apartments = defineCollection({
   type: "content",
@@ -13,7 +14,8 @@ const apartments = defineCollection({
     title: z.string(),
     shared_spaces: z.array(z.string()).default([]),
     order: z.number().default(0),
-    thumbnail: z.string().optional(),
+    thumbnail: z.string().optional(),   // used on WG list cards (optional)
+    floorplan: z.string().optional(),   // NEW: used on apartment page (optional)
     details: z.array(z.string()).optional(),
   }),
 });
