@@ -119,37 +119,30 @@ const rooms = await getCollection("rooms", r => r.data.apartment === apartment);
 }
 
 /* Rooms section */
-.rooms-section {
-  margin-top: 3rem;
-}
+.rooms-section { margin-top: 3rem; }
 
-/* Grid of room cards */
+/* Left-aligned, wrapping row of cards */
 .rooms-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
-  justify-items: center;
-  align-items: start;
+  justify-content: flex-start; /* <-- left align inside the centered container */
 }
 
+/* Fixed card width so rows look tidy */
 .room-card {
   text-decoration: none;
   color: black;
   text-align: center;
-  width: 100%;
-  max-width: 220px;
+  width: 220px;               /* <-- fixed width for neat wrapping */
 }
 
-/* Room image */
-.room-card img {
-  width: 100%;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-/* Placeholder for missing room images */
+.room-card img,
 .room-placeholder {
   width: 100%;
+}
+
+.room-placeholder {
   aspect-ratio: 4/3;
   background: #f0f0f0;
   color: #888;
