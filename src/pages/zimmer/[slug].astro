@@ -1,27 +1,7 @@
 ---
-// src/pages/zimmer/[slug].astro
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
-import fs from "node:fs/promises";
-import path from "node:path";
-
 const base = import.meta.env.BASE_URL;
-
-// Auto-discover all images under public/rooms/<room-slug>/
-async function loadRoomImages(slug: string) {
-  const dir = path.resolve(process.cwd(), "public", "rooms", slug);
-  try {
-    const files = await fs.readdir(dir);
-    return files
-      .filter((f) => /\.(jpe?g|png|webp|gif)$/i.test(f))
-      .sort((a, b) =>
-        a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" })
-      )
-      .map((f) => `${base}rooms/${slug}/${f}`);
-  } catch {
-    return [];
-  }
-}
 
 export async function getStaticPaths() {
   const rooms = await getCollection("rooms");
@@ -29,111 +9,18 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-
-// Room entry
-const rooms = await getCollection("rooms");
-const room = rooms.find((r) => r.slug === slug);
-
-if (!room) {
-  throw new Error(`Room not found for slug: ${slug}`);
-}
-
-const { Content } = await room.render();
-
-// Auto images for this room
-const images = await loadRoomImages(slug);
-const cover = images[0] ?? null;
+const room = (await getCollection("rooms")).find(r => r.slug === slug);
+const d = room?.data;
 ---
-
-<Layout title={room.data.title}>
-  <div class="container">
-    <header class="room-header">
-      <h1>{room.data.title}</h1>
-      <ul class="meta">
-        {room.data.size_m2 && <li><strong>Größe:</strong> {room.data.size_m2} m²</li>}
-        {typeof room.data.cold_rent_eur !== "undefined" && (
-          <li><strong>Kaltmiete:</strong> {room.data.cold_rent_eur} €</li>
-        )}
-        {room.data.available_from && (
-          <li><strong>Verfügbar ab:</strong> {room.data.available_from}</li>
-        )}
-        {room.data.teaser && <li><strong>Info:</strong> {room.data.teaser}</li>}
-      </ul>
-    </header>
-
-    <section class="room-gallery">
-      {cover ? (
-        <img class="cover" src={cover} alt={room.data.title} />
-      ) : (
-        <div class="placeholder">[Kein Bild verfügbar]</div>
-      )}
-
-      {images.length > 1 && (
-        <div class="thumbs">
-          {images.slice(1).map((url) => (
-            <img src={url} alt={`Weitere Ansicht – ${room.data.title}`} />
-          ))}
-        </div>
-      )}
-    </section>
-
-    <section class="room-body">
-      <Content />
-    </section>
-  </div>
+<Layout title={d?.title ?? "Zimmer"}>
+  <h1>{d?.title ?? "Zimmer"}</h1>
+  {d ? (
+    <>
+      <p>
+        {d.size_m2 ? `${d.size_m2} m²` : ""} {d.cold_rent_eur ? `• €${d.cold_rent_eur}` : ""} {d.available_from ? `• ab ${d.available_from}` : ""}
+      </p>
+      <slot />
+    </>
+  ) : <p>Nicht gefunden.</p>}
 </Layout>
 
-<style>
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0 1.25rem 2rem;
-}
-
-.room-header h1 {
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  font-size: 1.6rem;
-}
-.meta {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1.25rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1.5rem;
-}
-
-.room-gallery .cover {
-  width: 100%;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 6px rgba(0,0,0,.1);
-}
-.placeholder {
-  width: 100%;
-  aspect-ratio: 4/3;
-  background: #f0f0f0;
-  color: #888;
-  border: 1px dashed #ccc;
-  display: grid;
-  place-items: center;
-}
-
-.thumbs {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-}
-.thumbs img {
-  width: 100%;
-  height: 100px;
-  object-fit: cover;
-  border: 1px solid #ddd;
-  box-shadow: 0 1px 2px rgba(0,0,0,.08);
-}
-
-.room-body :where(p, ul, ol) {
-  margin: 0.75rem 0;
-}
-</style>
