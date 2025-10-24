@@ -16,7 +16,7 @@ const apartments = defineCollection({
     order: z.number().default(0),
     thumbnail: z.string().optional(),   // used on WG list cards (optional)
     floorplan: z.string().optional(),   // NEW: used on apartment page (optional)
-    details: z.array(z.string()).optional(),
+    details: z.array(z.string()).optional()
   }),
 });
 
@@ -36,7 +36,7 @@ const rooms = defineCollection({
     size_m2: z.number().optional(),
     cold_rent_eur: z.number().optional(),
     available_from: z.string().optional(), // e.g., "2025-12"
-    teaser: z.string().optional(),
+    teaser: z.string().optional()
   }),
 });
 
