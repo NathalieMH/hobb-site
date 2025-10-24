@@ -269,6 +269,29 @@ const renderedRooms = await Promise.all(
   .apartment-image { flex-basis: 100%; }
   .apartment-details { flex-basis: 100%; }
 }
+
+/* Minimal, elegant close “×” in the top-right of the card */
+.modal-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;      /* no background */
+  border: none;          /* no border */
+  color: #000;           /* black X */
+  font-size: 26px;       /* elegant size */
+  line-height: 1;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  opacity: 0.6;          /* subtle hover */
+}
+
+.modal-close:focus {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
 </style>
 
 <script>
