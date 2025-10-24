@@ -5,6 +5,5 @@ size_m2: 21
 cold_rent_eur: 3400
 available_from: "2025-12"
 teaser: "Kurzbeschreibung"
-images: []
 ---
 Eines unserer kleineren Zimmer im 1.Obergeschoss mit viel Licht und Luft nach oben.

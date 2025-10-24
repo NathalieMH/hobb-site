@@ -37,7 +37,6 @@ const rooms = defineCollection({
     cold_rent_eur: z.number().optional(),
     available_from: z.string().optional(), // e.g., "2025-12"
     teaser: z.string().optional(),
-    images: z.array(z.string()).default([]), // e.g., ["/rooms/img1.jpg"]
   }),
 });
 

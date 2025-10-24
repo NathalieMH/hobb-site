@@ -1,8 +1,27 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+import fs from "node:fs/promises";
+import path from "node:path";
+
 const base = import.meta.env.BASE_URL;
 
+// Helper: auto-load all images for a given room slug
+async function loadRoomImages(slug) {
+  const publicDir = path.resolve(process.cwd(), "public", "rooms", slug);
+  try {
+    const files = await fs.readdir(publicDir);
+    const images = files
+      .filter(f => /\.(jpe?g|png|webp|gif)$/i.test(f))
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }))
+      .map(f => `${base}rooms/${slug}/${f}`);
+    return images;
+  } catch {
+    return [];
+  }
+}
+
+// Fetch apartments + rooms
 export async function getStaticPaths() {
   const apartments = await getCollection("apartments");
   return apartments.map(({ slug }) => ({ params: { apartment: slug } }));
@@ -10,16 +29,15 @@ export async function getStaticPaths() {
 
 const { apartment } = Astro.params;
 const apartments = await getCollection("apartments");
-const apt = apartments.find((a) => a.slug === apartment);
+const apt = apartments.find(a => a.slug === apartment);
+const rooms = await getCollection("rooms", r => r.data.apartment === apartment);
 
-// Rooms linked by apartment slug (e.g., "apartment-3")
-const rooms = await getCollection("rooms", (r) => r.data.apartment === apartment);
-
-// Pre-render room markdown so we can show full text inside the modal
+// Pre-render room markdown and automatically pull images
 const renderedRooms = await Promise.all(
   rooms.map(async (r) => {
     const { Content } = await r.render();
-    return { entry: r, Content };
+    const imgs = await loadRoomImages(r.slug);
+    return { entry: r, Content, imgs };
   })
 );
 ---
