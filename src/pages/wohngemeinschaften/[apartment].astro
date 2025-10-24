@@ -3,25 +3,22 @@ import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import fs from "node:fs/promises";
 import path from "node:path";
-
 const base = import.meta.env.BASE_URL;
 
-// Helper: auto-load all images for a given room slug
+// Auto-discover all images under public/rooms/<room-slug>/
 async function loadRoomImages(slug) {
-  const publicDir = path.resolve(process.cwd(), "public", "rooms", slug);
+  const dir = path.resolve(process.cwd(), "public", "rooms", slug);
   try {
-    const files = await fs.readdir(publicDir);
-    const images = files
-      .filter(f => /\.(jpe?g|png|webp|gif)$/i.test(f))
+    const files = await fs.readdir(dir);
+    return files
+      .filter((f) => /\.(jpe?g|png|webp|gif)$/i.test(f))
       .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }))
-      .map(f => `${base}rooms/${slug}/${f}`);
-    return images;
+      .map((f) => `${base}rooms/${slug}/${f}`);
   } catch {
     return [];
   }
 }
 
-// Fetch apartments + rooms
 export async function getStaticPaths() {
   const apartments = await getCollection("apartments");
   return apartments.map(({ slug }) => ({ params: { apartment: slug } }));
@@ -29,10 +26,12 @@ export async function getStaticPaths() {
 
 const { apartment } = Astro.params;
 const apartments = await getCollection("apartments");
-const apt = apartments.find(a => a.slug === apartment);
-const rooms = await getCollection("rooms", r => r.data.apartment === apartment);
+const apt = apartments.find((a) => a.slug === apartment);
 
-// Pre-render room markdown and automatically pull images
+// Get rooms for this apartment
+const rooms = await getCollection("rooms", (r) => r.data.apartment === apartment);
+
+// Pre-render + load images once, reuse for grid and modal
 const renderedRooms = await Promise.all(
   rooms.map(async (r) => {
     const { Content } = await r.render();
@@ -40,6 +39,9 @@ const renderedRooms = await Promise.all(
     return { entry: r, Content, imgs };
   })
 );
+
+// Helper map
+const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs}) => [entry.slug, imgs]));
 ---
 
 <Layout title={apt?.data.title ?? "Wohngemeinschaft"}>
@@ -69,8 +71,8 @@ const renderedRooms = await Promise.all(
       <h2>Zimmer</h2>
       <div class="rooms-grid">
         {rooms.map(({ data, slug }) => {
-          const hasImg = data.images && data.images.length > 0;
-          const imgSrc = hasImg ? `${base}${data.images[0]}` : null;
+          const imgs = roomImages[slug] ?? [];
+          const cover = imgs[0];
 
           return (
             <button
@@ -78,8 +80,8 @@ const renderedRooms = await Promise.all(
               data-room={slug}
               aria-label={`Zimmer ${data.title} öffnen`}
             >
-              {hasImg ? (
-                <img src={imgSrc} alt={data.title} />
+              {cover ? (
+                <img src={cover} alt={data.title} />
               ) : (
                 <div class="room-placeholder">[Kein Bild verfügbar]</div>
               )}
@@ -90,21 +92,18 @@ const renderedRooms = await Promise.all(
       </div>
     </section>
 
+
     <!-- Hidden templates: one per room (used by the modal) -->
-    {renderedRooms.map(({ entry, Content }) => {
+    {renderedRooms.map(({ entry, Content, imgs }) => {
       const d = entry.data;
-      const imgs = Array.isArray(d.images) ? d.images.map((p) => `${base}${p.replace(/^\/+/, "")}`) : [];
       const cover = imgs[0] ?? null;
       const hasGallery = imgs.length > 1;
 
       return (
         <template id={`tpl-${entry.slug}`}>
-          <!-- Store images on the article for JS -->
           <article class="modal-content" data-images={JSON.stringify(imgs)}>
             <div class="modal-left">
-              {hasGallery && (
-                <button class="nav prev" aria-label="Vorheriges Bild">‹</button>
-              )}
+              {hasGallery && <button class="nav prev" aria-label="Vorheriges Bild">‹</button>}
 
               {cover ? (
                 <img class="modal-cover" src={cover} alt={d.title} data-index="0" />
@@ -112,9 +111,7 @@ const renderedRooms = await Promise.all(
                 <div class="room-placeholder large modal-cover" data-index="-1">[Kein Bild verfügbar]</div>
               )}
 
-              {hasGallery && (
-                <button class="nav next" aria-label="Nächstes Bild">›</button>
-              )}
+              {hasGallery && <button class="nav next" aria-label="Nächstes Bild">›</button>}
 
               {hasGallery && (
                 <div class="thumbs" role="list">
@@ -126,7 +123,7 @@ const renderedRooms = await Promise.all(
                       aria-label={`Bild ${i + 1} ansehen`}
                       role="listitem"
                     >
-                      <img src={url} alt={`Vorschau ${i + 1} von ${d.title}`} />
+                      <img src={url} alt={`Vorschau ${i + 1} von {d.title}`} />
                     </button>
                   ))}
                 </div>
@@ -135,6 +132,7 @@ const renderedRooms = await Promise.all(
 
             <div class="modal-right">
               <h3>{d.title}</h3>
+              <!-- meta + description unchanged -->
               <ul class="meta">
                 {d.size_m2 && <li><strong>Größe:</strong> {d.size_m2} m²</li>}
                 {typeof d.cold_rent_eur !== "undefined" && (
@@ -143,14 +141,13 @@ const renderedRooms = await Promise.all(
                 {d.available_from && <li><strong>Verfügbar ab:</strong> {d.available_from}</li>}
                 {d.teaser && <li><strong>Info:</strong> {d.teaser}</li>}
               </ul>
-              <div class="room-description">
-                <Content />
-              </div>
+              <div class="room-description"><Content /></div>
             </div>
           </article>
         </template>
       );
     })}
+
 
     <!-- Shared modal/overlay -->
     <div id="overlay" class="overlay hidden" aria-hidden="true">
