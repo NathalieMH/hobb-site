@@ -10,15 +10,24 @@ export async function getStaticPaths() {
 
 const { apartment } = Astro.params;
 const apartments = await getCollection("apartments");
-const apt = apartments.find(a => a.slug === apartment);
+const apt = apartments.find((a) => a.slug === apartment);
 
 // Rooms linked by apartment slug (e.g., "apartment-3")
-const rooms = await getCollection("rooms", r => r.data.apartment === apartment);
+const rooms = await getCollection("rooms", (r) => r.data.apartment === apartment);
+
+// Pre-render room markdown so we can show full text inside the modal
+const renderedRooms = await Promise.all(
+  rooms.map(async (r) => {
+    const { Content } = await r.render();
+    return { entry: r, Content };
+  })
+);
 ---
 
 <Layout title={apt?.data.title ?? "Wohngemeinschaft"}>
   <div class="container">
 
+    <!-- Header: floorplan + details -->
     <section class="apartment-header">
       <div class="apartment-image">
         {apt?.data.floorplan ? (
@@ -30,43 +39,92 @@ const rooms = await getCollection("rooms", r => r.data.apartment === apartment);
 
       <div class="apartment-details">
         <h1>{apt?.data.title}</h1>
-        {apt?.data.details && (
-          <p class="details">{apt.data.details.join(" / ")}</p>
-        )}
+        {apt?.data.details && <p class="details">{apt.data.details.join(" / ")}</p>}
         <div class="description">
           {apt?.body ? <Fragment set:html={apt.body} /> : null}
         </div>
       </div>
     </section>
 
+    <!-- Room thumbnails -->
     <section class="rooms-section">
       <h2>Zimmer</h2>
       <div class="rooms-grid">
-        {rooms.map(({ data, slug }) => (
-          <a href={`${base}zimmer/${slug}/`} class="room-card">
-            {data.images && data.images.length > 0 ? (
-              <img src={`${base}${data.images[0]}`} alt={data.title} />
-            ) : (
-              <div class="room-placeholder">[Kein Bild verfügbar]</div>
-            )}
-            <p><strong>&gt; {data.title}</strong></p>
-          </a>
-        ))}
+        {rooms.map(({ data, slug }) => {
+          const hasImg = data.images && data.images.length > 0;
+          const imgSrc = hasImg ? `${base}${data.images[0]}` : null;
+
+          return (
+            <button
+              class="room-card open-room"
+              data-room={slug}
+              aria-label={`Zimmer ${data.title} öffnen`}
+            >
+              {hasImg ? (
+                <img src={imgSrc} alt={data.title} />
+              ) : (
+                <div class="room-placeholder">[Kein Bild verfügbar]</div>
+              )}
+              <p><strong>&gt; {data.title}</strong></p>
+            </button>
+          );
+        })}
       </div>
     </section>
+
+    <!-- Hidden templates: one per room (used by the modal) -->
+    {renderedRooms.map(({ entry, Content }) => {
+      const d = entry.data;
+      const cover = d.images && d.images.length > 0 ? `${base}${d.images[0]}` : null;
+      return (
+        <template id={`tpl-${entry.slug}`}>
+          <article class="modal-content">
+            <div class="modal-left">
+              {cover ? (
+                <img src={cover} alt={d.title} />
+              ) : (
+                <div class="room-placeholder large">[Kein Bild verfügbar]</div>
+              )}
+            </div>
+            <div class="modal-right">
+              <h3>{d.title}</h3>
+              <ul class="meta">
+                {d.size_m2 && <li><strong>Größe:</strong> {d.size_m2} m²</li>}
+                {typeof d.cold_rent_eur !== "undefined" && (
+                  <li><strong>Kaltmiete:</strong> {d.cold_rent_eur} €</li>
+                )}
+                {d.available_from && <li><strong>Verfügbar ab:</strong> {d.available_from}</li>}
+                {d.teaser && <li><strong>Info:</strong> {d.teaser}</li>}
+              </ul>
+              <div class="room-description">
+                <Content />
+              </div>
+            </div>
+          </article>
+        </template>
+      );
+    })}
+
+    <!-- Shared modal/overlay -->
+    <div id="overlay" class="overlay hidden" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-label="Zimmerdetails">
+        <button class="modal-close" aria-label="Schließen">×</button>
+        <div id="modal-body"></div>
+      </div>
+    </div>
 
   </div>
 </Layout>
 
 <style>
-/* Page layout container */
+/* Centered page container */
 .container {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 1.25rem;
 }
 
-/* Apartment header with image + details */
+/* Header (floorplan + details) */
 .apartment-header {
   display: flex;
   flex-wrap: wrap;
@@ -75,8 +133,6 @@ const rooms = await getCollection("rooms", r => r.data.apartment === apartment);
   gap: 2rem;
   margin: 2rem 0;
 }
-
-/* Floorplan area */
 .apartment-image {
   display: flex;
   justify-content: center;
@@ -88,79 +144,152 @@ const rooms = await getCollection("rooms", r => r.data.apartment === apartment);
   border: 1px solid #ccc;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
-
-/* Placeholder for missing floorplans */
 .placeholder {
   width: 600px;
   height: 400px;
   background: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   color: #888;
   border: 1px dashed #ccc;
+  display: flex; align-items: center; justify-content: center;
 }
 
-/* Apartment text section */
-.apartment-details {
-  flex: 1 1 300px;
-  min-width: 260px;
-}
-
-.apartment-details h1 {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.details {
-  font-weight: bold;
-  margin-top: 0.5rem;
-  margin-bottom: 1rem;
-}
+.apartment-details { flex: 1 1 300px; min-width: 260px; }
+.apartment-details h1 { font-size: 1.5rem; font-weight: bold; }
+.details { font-weight: bold; margin: .5rem 0 1rem; }
 
 /* Rooms section */
 .rooms-section { margin-top: 3rem; }
 
-/* Left-aligned, wrapping row of cards */
+/* Left-aligned, wrapping row of cards inside centered container */
 .rooms-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
-  justify-content: flex-start; /* <-- left align inside the centered container */
+  justify-content: flex-start;
 }
 
-/* Fixed card width so rows look tidy */
 .room-card {
-  text-decoration: none;
-  color: black;
+  width: 220px;
+  background: transparent;
+  border: none;
+  padding: 0;
   text-align: center;
-  width: 220px;               /* <-- fixed width for neat wrapping */
+  cursor: pointer;
+  color: black;
 }
+.room-card img {
+  width: 100%;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.room-card p { margin-top: .5rem; font-size: .9rem; }
 
-.room-card img,
+/* Inline gray placeholders */
 .room-placeholder {
   width: 100%;
-}
-
-.room-placeholder {
   aspect-ratio: 4/3;
   background: #f0f0f0;
   color: #888;
   border: 1px dashed #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem;
+}
+.room-placeholder.large {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #f0f0f0;
+  color: #888;
+  border: 1px dashed #ccc;
+  display: flex; align-items: center; justify-content: center;
 }
 
-.room-card p {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
+/* Modal overlay */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  display: grid; place-items: center;
+  padding: 2rem;
+  z-index: 1000;
+}
+.hidden { display: none; }
+
+.modal-card {
+  background: white;
+  width: min(100%, 960px);
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  position: relative;
+  padding: 1.25rem;
 }
 
-/* Responsive stacking */
+/* Modal internal layout: cover left, text right */
+.modal-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+.modal-left img {
+  width: 100%;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0,0,0,.1);
+}
+.modal-right h3 { margin-top: 0; }
+.meta { list-style: none; padding: 0; margin: .5rem 0 1rem; }
+.meta li { margin: .25rem 0; }
+.room-description :where(p, ul, ol){ margin: .5rem 0; }
+
+/* Close button */
+.modal-close {
+  position: absolute; top: .5rem; right: .75rem;
+  background: transparent; border: none; font-size: 2rem; line-height: 1; cursor: pointer;
+}
+
+/* Responsive modal + header stacking */
+@media (max-width: 800px) {
+  .modal-content { grid-template-columns: 1fr; }
+}
 @media (max-width: 900px) {
   .apartment-image { flex-basis: 100%; }
   .apartment-details { flex-basis: 100%; }
 }
 </style>
+
+<script>
+  // Open/close modal
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".open-room");
+    const overlay = document.getElementById("overlay");
+    const body = document.getElementById("modal-body");
+
+    if (btn) {
+      e.preventDefault();
+      const slug = btn.getAttribute("data-room");
+      const tpl = document.getElementById(`tpl-${slug}`);
+      if (tpl) {
+        body.innerHTML = "";
+        body.appendChild(tpl.content.cloneNode(true));
+        overlay.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+      }
+      return;
+    }
+
+    if (e.target.matches(".modal-close") || (overlay && e.target === overlay)) {
+      overlay.classList.add("hidden");
+      document.body.style.overflow = "";
+    }
+  });
+
+  // Close on Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const overlay = document.getElementById("overlay");
+      if (overlay && !overlay.classList.contains("hidden")) {
+        overlay.classList.add("hidden");
+        document.body.style.overflow = "";
+      }
+    }
+  });
+</script>
