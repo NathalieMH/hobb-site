@@ -75,7 +75,7 @@ const renderedRooms = await Promise.all(
     <!-- Hidden templates: one per room (used by the modal) -->
     {renderedRooms.map(({ entry, Content }) => {
       const d = entry.data;
-      const imgs = Array.isArray(d.images) ? d.images.map((p) => `${base}${p}`) : [];
+      const imgs = Array.isArray(d.images) ? d.images.map((p) => `${base}${p.replace(/^\/+/, "")}`) : [];
       const cover = imgs[0] ?? null;
       const hasGallery = imgs.length > 1;
 
@@ -233,8 +233,9 @@ const renderedRooms = await Promise.all(
   margin-top: .75rem;
 }
 .thumb {
+  position: relative;                 /* needed for overlay */
   border: none; padding: 0; background: transparent; cursor: pointer;
-  width: 110px; height: 82px; /* ≈ 4:3 */
+  width: 110px; height: 82px;         /* ≈ 4:3 */
   display: block; border-radius: 4px; overflow: hidden;
   outline-offset: 2px;
 }
@@ -242,6 +243,18 @@ const renderedRooms = await Promise.all(
   width: 100%; height: 100%; object-fit: cover; border: 1px solid #ddd;
   box-shadow: 0 1px 2px rgba(0,0,0,.08);
 }
+/* White overlay to make non-active thumbs look "blasser" */
+.thumb::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,0.3);  /* ~30% white */
+  transition: opacity .2s ease;
+  opacity: 1;                         /* default = dimmed */
+}
+.thumb.active::after { opacity: 0; }   /* active = full color */
+.thumb:hover::after { opacity: .15; }  /* slightly less dim on hover */
+
+/* Optional subtle active outline (kept) */
 .thumb.active img { outline: 2px solid #333; }
 
 /* Nav arrows over the large image */
@@ -261,6 +274,22 @@ const renderedRooms = await Promise.all(
 .meta li { margin: .25rem 0; }
 .room-description :where(p, ul, ol){ margin: .5rem 0; }
 
+/* Minimal, elegant close “×” in the top-right of the card */
+.modal-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #000;
+  font-size: 26px;
+  line-height: 1;
+  padding: 4px;
+  cursor: pointer;
+}
+.modal-close:hover { opacity: .6; }
+.modal-close:focus { outline: 2px solid #000; outline-offset: 2px; }
+
 /* Responsive modal + header stacking */
 @media (max-width: 800px) {
   .modal-content { grid-template-columns: 1fr; }
@@ -268,29 +297,6 @@ const renderedRooms = await Promise.all(
 @media (max-width: 900px) {
   .apartment-image { flex-basis: 100%; }
   .apartment-details { flex-basis: 100%; }
-}
-
-/* Minimal, elegant close “×” in the top-right of the card */
-.modal-close {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  background: none;      /* no background */
-  border: none;          /* no border */
-  color: #000;           /* black X */
-  font-size: 26px;       /* elegant size */
-  line-height: 1;
-  padding: 4px;
-  cursor: pointer;
-}
-
-.modal-close:hover {
-  opacity: 0.6;          /* subtle hover */
-}
-
-.modal-close:focus {
-  outline: 2px solid #000;
-  outline-offset: 2px;
 }
 </style>
 
@@ -311,6 +317,14 @@ const renderedRooms = await Promise.all(
         body.appendChild(tpl.content.cloneNode(true));
         overlay.classList.remove("hidden");
         document.body.style.overflow = "hidden";
+
+        // Ensure initial active thumb state (index 0) if gallery exists
+        const article = body.querySelector(".modal-content");
+        const firstThumb = article?.querySelector('.thumb[data-index="0"]');
+        if (firstThumb) {
+          article.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
+          firstThumb.classList.add("active");
+        }
       }
       return;
     }
