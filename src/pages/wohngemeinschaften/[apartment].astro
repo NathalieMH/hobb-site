@@ -46,7 +46,7 @@ const renderedRooms = await Promise.all(
       </div>
     </section>
 
-    <!-- Room thumbnails -->
+    <!-- Room thumbnails on the apartment page -->
     <section class="rooms-section">
       <h2>Zimmer</h2>
       <div class="rooms-grid">
@@ -75,17 +75,37 @@ const renderedRooms = await Promise.all(
     <!-- Hidden templates: one per room (used by the modal) -->
     {renderedRooms.map(({ entry, Content }) => {
       const d = entry.data;
-      const cover = d.images && d.images.length > 0 ? `${base}${d.images[0]}` : null;
+      const images = Array.isArray(d.images) ? d.images : [];
+      const fulls = images.map((p) => `${base}${p}`);
+      const cover = fulls[0] ?? null;
+      const hasGallery = fulls.length > 1;
+
       return (
         <template id={`tpl-${entry.slug}`}>
           <article class="modal-content">
             <div class="modal-left">
               {cover ? (
-                <img src={cover} alt={d.title} />
+                <img class="modal-cover" src={cover} alt={d.title} />
               ) : (
-                <div class="room-placeholder large">[Kein Bild verfügbar]</div>
+                <div class="room-placeholder large modal-cover">[Kein Bild verfügbar]</div>
+              )}
+
+              {hasGallery && (
+                <div class="thumbs" role="list">
+                  {fulls.map((url, i) => (
+                    <button
+                      class={`thumb ${i === 0 ? "active" : ""}`}
+                      data-full={url}
+                      aria-label={`Bild ${i + 1} ansehen`}
+                      role="listitem"
+                    >
+                      <img src={url} alt={`Vorschau ${i + 1} von ${d.title}`} />
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
+
             <div class="modal-right">
               <h3>{d.title}</h3>
               <ul class="meta">
@@ -134,22 +154,17 @@ const renderedRooms = await Promise.all(
   margin: 2rem 0;
 }
 .apartment-image {
-  display: flex;
-  justify-content: center;
+  display: flex; justify-content: center;
   flex: 0 1 600px;
 }
 .apartment-image img {
-  max-width: 600px;
-  width: 100%;
+  max-width: 600px; width: 100%;
   border: 1px solid #ccc;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 .placeholder {
-  width: 600px;
-  height: 400px;
-  background: #f0f0f0;
-  color: #888;
-  border: 1px dashed #ccc;
+  width: 600px; height: 400px;
+  background: #f0f0f0; color: #888; border: 1px dashed #ccc;
   display: flex; align-items: center; justify-content: center;
 }
 
@@ -157,84 +172,69 @@ const renderedRooms = await Promise.all(
 .apartment-details h1 { font-size: 1.5rem; font-weight: bold; }
 .details { font-weight: bold; margin: .5rem 0 1rem; }
 
-/* Rooms section */
+/* Rooms list on the apartment page */
 .rooms-section { margin-top: 3rem; }
-
-/* Left-aligned, wrapping row of cards inside centered container */
 .rooms-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  justify-content: flex-start;
+  display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: flex-start;
 }
-
 .room-card {
-  width: 220px;
-  background: transparent;
-  border: none;
-  padding: 0;
-  text-align: center;
-  cursor: pointer;
-  color: black;
+  width: 220px; background: transparent; border: none; padding: 0;
+  text-align: center; cursor: pointer; color: black;
 }
 .room-card img {
-  width: 100%;
-  border: 1px solid #ccc;
+  width: 100%; border: 1px solid #ccc;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 .room-card p { margin-top: .5rem; font-size: .9rem; }
 
-/* Inline gray placeholders */
 .room-placeholder {
-  width: 100%;
-  aspect-ratio: 4/3;
-  background: #f0f0f0;
-  color: #888;
-  border: 1px dashed #ccc;
-  display: flex; align-items: center; justify-content: center;
-  font-size: .9rem;
+  width: 100%; aspect-ratio: 4/3; background: #f0f0f0;
+  color: #888; border: 1px dashed #ccc;
+  display: flex; align-items: center; justify-content: center; font-size: .9rem;
 }
-.room-placeholder.large {
-  width: 100%;
-  aspect-ratio: 4/3;
-  background: #f0f0f0;
-  color: #888;
-  border: 1px dashed #ccc;
-  display: flex; align-items: center; justify-content: center;
-}
+.room-placeholder.large { aspect-ratio: 4/3; }
 
 /* Modal overlay */
 .overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.45);
-  display: grid; place-items: center;
-  padding: 2rem;
-  z-index: 1000;
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: grid; place-items: center; padding: 2rem; z-index: 1000;
 }
 .hidden { display: none; }
 
 .modal-card {
-  background: white;
-  width: min(100%, 960px);
-  max-height: 90vh;
-  overflow: auto;
-  border-radius: 12px;
+  background: white; width: min(100%, 960px);
+  max-height: 90vh; overflow: auto; border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0,0,0,.25);
-  position: relative;
-  padding: 1.25rem;
+  position: relative; padding: 1.25rem;
 }
 
-/* Modal internal layout: cover left, text right */
+/* Modal internal layout */
 .modal-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
 }
-.modal-left img {
-  width: 100%;
-  border: 1px solid #ddd;
+.modal-left img.modal-cover {
+  width: 100%; border: 1px solid #ddd;
   box-shadow: 0 2px 6px rgba(0,0,0,.1);
 }
+
+/* Thumbnails row under the large image (only when 2+ images) */
+.thumbs {
+  display: flex; flex-wrap: wrap; gap: .75rem;
+  margin-top: .75rem;
+}
+.thumb {
+  border: none; padding: 0; background: transparent; cursor: pointer;
+  width: 110px; height: 82px; /* roughly 4:3 */
+  display: block; border-radius: 4px; overflow: hidden;
+  outline-offset: 2px;
+}
+.thumb img {
+  width: 100%; height: 100%; object-fit: cover; border: 1px solid #ddd;
+  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+}
+.thumb.active img { outline: 2px solid #333; }
+
+/* Right side of modal */
 .modal-right h3 { margin-top: 0; }
 .meta { list-style: none; padding: 0; margin: .5rem 0 1rem; }
 .meta li { margin: .25rem 0; }
@@ -257,12 +257,13 @@ const renderedRooms = await Promise.all(
 </style>
 
 <script>
-  // Open/close modal
+  // Open/close modal + thumbnail gallery logic
   document.addEventListener("click", (e) => {
     const btn = e.target.closest(".open-room");
     const overlay = document.getElementById("overlay");
     const body = document.getElementById("modal-body");
 
+    // Open modal
     if (btn) {
       e.preventDefault();
       const slug = btn.getAttribute("data-room");
@@ -276,9 +277,33 @@ const renderedRooms = await Promise.all(
       return;
     }
 
+    // Close modal (× or clicking outside the card)
     if (e.target.matches(".modal-close") || (overlay && e.target === overlay)) {
       overlay.classList.add("hidden");
       document.body.style.overflow = "";
+      return;
+    }
+
+    // Thumbnail click inside modal: swap large image
+    const thumb = e.target.closest(".thumb");
+    if (thumb && body.contains(thumb)) {
+      const fullUrl = thumb.getAttribute("data-full");
+      const coverImg = body.querySelector(".modal-cover");
+      if (coverImg && fullUrl) {
+        if (coverImg.tagName === "IMG") {
+          coverImg.setAttribute("src", fullUrl);
+        } else {
+          // If cover is placeholder div, replace it with an <img>
+          const img = document.createElement("img");
+          img.className = "modal-cover";
+          img.alt = "";
+          img.src = fullUrl;
+          coverImg.replaceWith(img);
+        }
+      }
+      // Update active state
+      body.querySelectorAll(".thumb").forEach((t) => t.classList.remove("active"));
+      thumb.classList.add("active");
     }
   });
 
