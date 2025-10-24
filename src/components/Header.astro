@@ -3,6 +3,7 @@ const base = import.meta.env.BASE_URL;
 ---
 
 <header class="top-banner">
+  <!-- Centered logo -->
   <div class="logo">
     <a href={`${base}home/`}>
       <img src={`${base}logo.png`} alt="HoBB Logo" height="60" />
@@ -21,37 +22,47 @@ const base = import.meta.env.BASE_URL;
     <a href={`${base}haus/`}>das Haus</a>
     <a href={`${base}impressum-kontakt/`}>Impressum/Kontakt</a>
   </nav>
-
 </header>
 
 <style>
-/* Banner */
+/* Header layout: grid gives a true centered logo */
 .top-banner{
-  background:#000;color:#fff;display:flex;align-items:center;justify-content:space-between;
-  padding:1rem 2rem;position:relative
+  background:#fff; color:#111;
+  display:grid; grid-template-columns: 1fr auto 1fr;
+  align-items:center;
+  padding:.75rem 1rem;
+  position:relative;
+  border-bottom:1px solid #000; /* elegant black bottom line */
 }
 
-/* Nav is hidden by default; opens as a dropdown */
+/* Put logo in the middle column, button on the right */
+.logo{ grid-column:2; justify-self:center; }
+.menu-btn{ grid-column:3; justify-self:end; }
+
+/* Dropdown nav (hidden by default) */
 .main-nav{
-  display:none;position:absolute;top:72px;right:0;left:auto;background:#000;
-  flex-direction:column;gap:1rem;padding:1rem 1.25rem;min-width:240px;border-left:1px solid #222;border-bottom:1px solid #222
+  display:none;
+  position:absolute; top:100%; right:0; left:auto;
+  background:#fff;
+  flex-direction:column; gap:1rem;
+  padding:1rem 1.25rem; min-width:240px;
+  border:1px solid #000; border-top:none; /* align with header line */
+  box-shadow:0 10px 18px rgba(0,0,0,.06);
 }
-.main-nav a{color:#fff;text-decoration:none;font-size:0.95rem}
-.main-nav a:hover{text-decoration:underline}
-.main-nav.open{display:flex}
+.main-nav a{ color:#111; text-decoration:none; font-size:.95rem; }
+.main-nav a:hover{ text-decoration:underline; }
+.main-nav.open{ display:flex; }
 
-/* Hamburger: three consistent bars */
+/* Hamburger: three bars (now black to match white header) */
 .menu-btn{
-  width:36px;height:28px;padding:0;border:0;background:none;cursor:pointer;display:flex;
-  flex-direction:column;justify-content:space-between;align-items:stretch
+  width:36px; height:28px; padding:0; border:0; background:none; cursor:pointer;
+  display:flex; flex-direction:column; justify-content:space-between; align-items:stretch;
 }
-.menu-btn span{
-  height:2px;background:#fff;border-radius:2px;display:block
-}
+.menu-btn span{ height:2px; background:#111; border-radius:2px; display:block; }
 
-/* If you want the nav visible on wide screens as a row, uncomment this:
+/* Optional: show the nav inline on wide screens
 @media (min-width: 900px){
-  .main-nav{position:static;display:flex;flex-direction:row;gap:1.5rem;padding:0;border:0}
+  .main-nav{ position:static; display:flex; flex-direction:row; gap:1.5rem; padding:0; border:0; box-shadow:none; }
 }
 */
 </style>
