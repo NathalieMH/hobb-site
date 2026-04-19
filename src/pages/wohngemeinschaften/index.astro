@@ -402,7 +402,7 @@ const grundrissMap = Object.fromEntries(
   let zoom = 1;
 
   function setZoom(z: number) {
-    zoom = Math.min(3, Math.max(0.5, z));
+    zoom = Math.min(2.5, Math.max(0.75, z));
     imgWrap.style.transform = `scale(${zoom})`;
     pctEl.textContent = Math.round(zoom * 100) + '%';
   }
@@ -447,8 +447,8 @@ const grundrissMap = Object.fromEntries(
     e.preventDefault();
     if (wheelLocked) return;
     wheelLocked = true;
-    setZoom(zoom + (e.deltaY < 0 ? 0.15 : -0.15));
-    setTimeout(() => { wheelLocked = false; }, 80);
+    setZoom(zoom + (e.deltaY < 0 ? 0.1 : -0.1));
+    setTimeout(() => { wheelLocked = false; }, 120);
   }, { passive: false });
 
   document.addEventListener('keydown', (e) => {
