@@ -184,6 +184,13 @@ const hasAptImages = carouselImages.length > 0;
                 <span class="car-placeholder-label" data-en>Images coming soon</span>
               </div>
           }
+          {hasAptImages && (
+            <button class="car-zoom-btn" id="car-zoom-btn" aria-label="Bild vergrößern">
+              <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1.5 6V1.5H6M12 1.5H16.5V6M16.5 12V16.5H12M6 16.5H1.5V12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </button>
+          )}
         </div>
         {hasAptImages && (
           <div class="car-controls">
@@ -269,6 +276,12 @@ const hasAptImages = carouselImages.length > 0;
               : <div class="room-placeholder modal-cover" data-index="-1" />
             }
             {hasGallery && <button class="nav next" aria-label="Nächstes Bild">›</button>}
+            <button class="modal-zoom-btn" aria-label="Bild vergrößern">
+              <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1.5 6V1.5H6M12 1.5H16.5V6M16.5 12V16.5H12M6 16.5H1.5V12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+              <span data-de>Vergrößern</span><span data-en>Zoom</span>
+            </button>
             {hasGallery && (
               <div class="thumbs">
                 {imgs.map((url, i) => (
@@ -303,6 +316,21 @@ const hasAptImages = carouselImages.length > 0;
       </template>
     );
   })}
+
+  <!-- Image zoom overlay -->
+  <div id="img-zoom-overlay" class="img-zoom-overlay hidden" aria-hidden="true">
+    <div class="img-zoom-bar">
+      <button class="img-zoom-ctrl" id="img-zoom-out">−</button>
+      <span class="img-zoom-pct" id="img-zoom-pct">100%</span>
+      <button class="img-zoom-ctrl" id="img-zoom-in">+</button>
+      <button class="img-zoom-close" id="img-zoom-close" aria-label="Schließen">×</button>
+    </div>
+    <div id="img-zoom-stage" class="img-zoom-stage">
+      <div id="img-zoom-wrap" class="img-zoom-wrap">
+        <img id="img-zoom-img" src="" alt="" />
+      </div>
+    </div>
+  </div>
 
   <!-- Modal overlay -->
   <div id="overlay" class="overlay hidden" aria-hidden="true">
@@ -380,6 +408,7 @@ const hasAptImages = carouselImages.length > 0;
 /* Carousel */
 .apt-carousel { display: flex; flex-direction: column; gap: 0.75rem; }
 .car-stage {
+  position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
   background: var(--bg);
@@ -389,6 +418,24 @@ const hasAptImages = carouselImages.length > 0;
   justify-content: center;
   overflow: hidden;
 }
+.car-zoom-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(28,26,23,0.45);
+  border: none;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: rgba(245,242,236,0.85);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--ease), background var(--ease);
+}
+.car-stage:hover .car-zoom-btn { opacity: 1; }
+.car-zoom-btn:hover { background: rgba(28,26,23,0.75); color: #fff; }
+.car-zoom-btn svg { width: 14px; height: 14px; }
 .car-img {
   display: block;
   width: 100%;
@@ -549,7 +596,92 @@ const hasAptImages = carouselImages.length > 0;
   gap: 2rem;
 }
 .modal-left { position: relative; }
-.modal-cover { width: 100%; border: 1px solid var(--border); }
+.modal-cover { width: 100%; border: 1px solid var(--border); display: block; }
+.modal-zoom-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  background: none;
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.7rem;
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color var(--ease), color var(--ease);
+}
+.modal-zoom-btn:hover { border-color: var(--gold); color: var(--ink); }
+.modal-zoom-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* Image zoom overlay */
+.img-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18,16,14,0.94);
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+}
+.img-zoom-overlay.hidden { display: none; }
+.img-zoom-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+.img-zoom-ctrl {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: rgba(245,242,236,0.8);
+  width: 28px;
+  height: 28px;
+  font-size: 1.1rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: border-color var(--ease), color var(--ease);
+}
+.img-zoom-ctrl:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
+.img-zoom-pct {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: rgba(245,242,236,0.5);
+  min-width: 3rem;
+}
+.img-zoom-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: rgba(245,242,236,0.6);
+  cursor: pointer;
+  transition: color var(--ease);
+}
+.img-zoom-close:hover { color: #fff; }
+.img-zoom-stage {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  user-select: none;
+}
+.img-zoom-stage.dragging { cursor: grabbing; }
+.img-zoom-wrap {
+  transform-origin: center center;
+  transition: transform 0.15s ease;
+  will-change: transform;
+}
+.img-zoom-wrap.no-transition { transition: none; }
+.img-zoom-wrap img { display: block; max-width: 90vw; max-height: 85vh; pointer-events: none; }
 .thumbs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
 .thumb {
   width: 80px; height: 60px;
@@ -706,6 +838,106 @@ const hasAptImages = carouselImages.length > 0;
         overlay.setAttribute("aria-hidden", "true");
         document.body.style.overflow = "";
       }
+      closeImgZoom();
+    }
+  });
+
+  // ── Image zoom overlay ─────────────────────────────────────────
+  const izOverlay = document.getElementById('img-zoom-overlay')!;
+  const izImg     = document.getElementById('img-zoom-img') as HTMLImageElement;
+  const izWrap    = document.getElementById('img-zoom-wrap')!;
+  const izStage   = document.getElementById('img-zoom-stage')!;
+  const izPct     = document.getElementById('img-zoom-pct')!;
+  let izZoom = 1, izPanX = 0, izPanY = 0;
+
+  function izApply(animate = true) {
+    if (!animate) izWrap.classList.add('no-transition');
+    izWrap.style.transform = `translate(${izPanX}px,${izPanY}px) scale(${izZoom})`;
+    if (!animate) requestAnimationFrame(() => izWrap.classList.remove('no-transition'));
+  }
+  function izSetZoom(z: number) {
+    izZoom = Math.min(2.5, Math.max(0.75, z));
+    izPct.textContent = Math.round(izZoom * 100) + '%';
+    izApply();
+  }
+  function openImgZoom(src: string) {
+    izImg.src = src;
+    izZoom = 1; izPanX = 0; izPanY = 0;
+    izApply();
+    izPct.textContent = '100%';
+    izOverlay.classList.remove('hidden');
+    izOverlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeImgZoom() {
+    if (!izOverlay.classList.contains('hidden')) {
+      izOverlay.classList.add('hidden');
+      izOverlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+  }
+
+  document.getElementById('img-zoom-in')!.addEventListener('click', () => izSetZoom(izZoom + 0.25));
+  document.getElementById('img-zoom-out')!.addEventListener('click', () => izSetZoom(izZoom - 0.25));
+  document.getElementById('img-zoom-close')!.addEventListener('click', closeImgZoom);
+
+  // Scroll to zoom
+  let izWheelLocked = false;
+  izStage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (izWheelLocked) return;
+    izWheelLocked = true;
+    izSetZoom(izZoom + (e.deltaY < 0 ? 0.1 : -0.1));
+    setTimeout(() => { izWheelLocked = false; }, 100);
+  }, { passive: false });
+
+  // Drag to pan
+  let izDragging = false, izDX = 0, izDY = 0, izPX0 = 0, izPY0 = 0;
+  izStage.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    izDragging = true; izDX = e.clientX; izDY = e.clientY; izPX0 = izPanX; izPY0 = izPanY;
+    izStage.classList.add('dragging'); izWrap.classList.add('no-transition');
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!izDragging) return;
+    izPanX = izPX0 + (e.clientX - izDX); izPanY = izPY0 + (e.clientY - izDY);
+    izApply(false);
+  });
+  window.addEventListener('mouseup', () => {
+    if (!izDragging) return;
+    izDragging = false; izStage.classList.remove('dragging'); izWrap.classList.remove('no-transition');
+  });
+
+  // Touch drag
+  let izTouch0: Touch | null = null;
+  izStage.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    izTouch0 = e.touches[0]; izPX0 = izPanX; izPY0 = izPanY;
+    izWrap.classList.add('no-transition');
+  }, { passive: true });
+  izStage.addEventListener('touchmove', (e) => {
+    if (!izTouch0 || e.touches.length !== 1) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    izPanX = izPX0 + (t.clientX - izTouch0.clientX);
+    izPanY = izPY0 + (t.clientY - izTouch0.clientY);
+    izApply(false);
+  }, { passive: false });
+  izStage.addEventListener('touchend', () => { izTouch0 = null; izWrap.classList.remove('no-transition'); });
+
+  // Trigger zoom from carousel expand button
+  document.getElementById('car-zoom-btn')?.addEventListener('click', () => {
+    const img = document.getElementById('car-img') as HTMLImageElement | null;
+    if (img?.src) openImgZoom(img.src);
+  });
+
+  // Trigger zoom from room modal zoom button (event delegation)
+  document.addEventListener('click', (e) => {
+    const zBtn = (e.target as Element).closest('.modal-zoom-btn');
+    if (zBtn) {
+      const body = document.getElementById('modal-body')!;
+      const cover = body.querySelector('.modal-cover') as HTMLImageElement | null;
+      if (cover?.src) openImgZoom(cover.src);
     }
   });
 </script>
