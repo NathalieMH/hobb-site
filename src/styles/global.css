@@ -23,6 +23,7 @@
 
 /* ── Reset ──────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+main { display: block; }
 img, video { display: block; max-width: 100%; }
 a { color: inherit; }
 button { cursor: pointer; font: inherit; }

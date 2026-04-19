@@ -4,42 +4,40 @@ const base = import.meta.env.BASE_URL;
 
 <header class="site-header">
 
-  <!-- Left nav (wide) / DE|EN + hamburger (narrow) -->
+  <!-- Left group: DE|EN far-left + left nav right-aligned against wordmark -->
   <div class="header-left">
-    <!-- Wide: left nav links -->
+    <button class="lang-toggle" id="lang-toggle" aria-label="Sprache wechseln">
+      <span class="lang-opt" id="lang-de">DE</span>
+      <span class="lang-sep">|</span>
+      <span class="lang-opt" id="lang-en">EN</span>
+    </button>
     <nav class="split-nav split-nav-left" aria-label="Hauptnavigation links">
-      <a href={`${base}wohngemeinschaften/`}>
-        <span data-de>Wohngemeinschaften</span>
-        <span data-en>Apartments</span>
-      </a>
-      <a href={`${base}lage/`}>
-        <span data-de>Lage</span>
-        <span data-en>Location</span>
-      </a>
       <a href={`${base}haus/`}>
         <span data-de>Das Haus</span>
         <span data-en>The Villa</span>
       </a>
+      <a href={`${base}wohngemeinschaften/`}>
+        <span data-de>Wohngemeinschaften</span>
+        <span data-en>Apartments</span>
+      </a>
     </nav>
-    <!-- Narrow: DE|EN toggle -->
-    <button class="lang-toggle narrow-only" id="lang-toggle-narrow" aria-label="Sprache wechseln">
-      <span class="lang-opt" id="lang-de-n">DE</span>
-      <span class="lang-sep">|</span>
-      <span class="lang-opt" id="lang-en-n">EN</span>
-    </button>
   </div>
 
   <!-- Center: Wordmark -->
   <a class="wordmark" href={`${base}home/`} aria-label="Villa Theo — Home">
     <span class="wordmark-main">Villa Theo</span>
     <span class="wordmark-rule"></span>
-    <span class="wordmark-sub">Studenten-Wohngemeinschaften bei der FU</span>
+    <span class="wordmark-sub" data-de>Studenten-Wohngemeinschaften bei der FU</span>
+    <span class="wordmark-sub" data-en>Student Shared Apartments close to FU Berlin</span>
   </a>
 
-  <!-- Right nav (wide) / hamburger (narrow) -->
+  <!-- Right group: right nav left-aligned against wordmark + hamburger far-right on narrow -->
   <div class="header-right">
-    <!-- Wide: right nav links + DE|EN -->
     <nav class="split-nav split-nav-right" aria-label="Hauptnavigation rechts">
+      <a href={`${base}lage/`}>
+        <span data-de>Lage</span>
+        <span data-en>Location</span>
+      </a>
       <a href={`${base}verfuegbarkeit/`}>
         <span data-de>Verfügbarkeit</span>
         <span data-en>Availability</span>
@@ -48,13 +46,7 @@ const base = import.meta.env.BASE_URL;
         <span data-de>Kontakt</span>
         <span data-en>Contact</span>
       </a>
-      <button class="lang-toggle wide-only" id="lang-toggle" aria-label="Sprache wechseln">
-        <span class="lang-opt" id="lang-de">DE</span>
-        <span class="lang-sep">|</span>
-        <span class="lang-opt" id="lang-en">EN</span>
-      </button>
     </nav>
-    <!-- Narrow: hamburger -->
     <button class="menu-btn narrow-only" id="menu-toggle" aria-label="Menü öffnen" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
@@ -78,6 +70,7 @@ const base = import.meta.env.BASE_URL;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
+  gap: 0 1rem;
   padding: 1.1rem clamp(1.25rem, 5vw, 3rem);
   border-bottom: 1px solid var(--border);
   position: sticky;
@@ -125,13 +118,16 @@ const base = import.meta.env.BASE_URL;
   grid-column: 1;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between; /* DE|EN far-left, nav hugs wordmark */
 }
 .header-right {
   grid-column: 3;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end; /* hamburger far-right on narrow */
+}
+@media (min-width: 920px) {
+  .header-right { justify-content: flex-start; } /* nav hugs wordmark on wide */
 }
 
 /* ── Split nav (wide screens) ───────────────────────────────── */
@@ -151,11 +147,7 @@ const base = import.meta.env.BASE_URL;
   transition: color var(--ease);
 }
 .split-nav a:hover { color: var(--ink); }
-
-/* Right nav also contains the lang toggle */
-.split-nav-right {
-  gap: 1.25rem;
-}
+.split-nav-right { gap: 1.25rem; }
 
 /* ── Language toggle ─────────────────────────────────────────── */
 .lang-toggle {
@@ -169,7 +161,9 @@ const base = import.meta.env.BASE_URL;
   align-items: center;
   gap: 0.3rem;
   padding: 0.2rem 0;
+  cursor: pointer;
   transition: color var(--ease);
+  flex-shrink: 0;
 }
 .lang-toggle:hover { color: var(--ink); }
 .lang-sep { opacity: 0.4; }
@@ -225,12 +219,10 @@ const base = import.meta.env.BASE_URL;
 .dropdown-nav a:hover { background: var(--ink); color: var(--ink-light); }
 
 /* ── Responsive ──────────────────────────────────────────────── */
-.wide-only  { display: none; }
 .narrow-only { display: flex; }
 
 @media (min-width: 920px) {
   .split-nav   { display: flex; }
-  .wide-only   { display: flex; }
   .narrow-only { display: none; }
 }
 </style>
@@ -252,11 +244,11 @@ const base = import.meta.env.BASE_URL;
     });
   });
 
-  // Language toggle — handles both wide and narrow buttons
+  // Language toggle
   function applyLang(lang: string) {
     document.documentElement[lang === 'en' ? 'setAttribute' : 'removeAttribute']('data-lang', 'en');
     localStorage.setItem('vt-lang', lang);
-    ['lang-de', 'lang-en', 'lang-de-n', 'lang-en-n'].forEach(id => {
+    ['lang-de', 'lang-en'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.toggle('active', id.includes(lang === 'en' ? 'en' : 'de'));
     });
@@ -264,10 +256,8 @@ const base = import.meta.env.BASE_URL;
 
   document.addEventListener("DOMContentLoaded", () => {
     applyLang(localStorage.getItem('vt-lang') || 'de');
-    ['lang-toggle', 'lang-toggle-narrow'].forEach(id => {
-      document.getElementById(id)?.addEventListener('click', () => {
-        applyLang(document.documentElement.getAttribute('data-lang') === 'en' ? 'de' : 'en');
-      });
+    document.getElementById('lang-toggle')?.addEventListener('click', () => {
+      applyLang(document.documentElement.getAttribute('data-lang') === 'en' ? 'de' : 'en');
     });
   });
 </script>

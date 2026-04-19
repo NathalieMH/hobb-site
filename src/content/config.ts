@@ -12,6 +12,7 @@ const apartments = defineCollection({
     order: z.number().default(0),
     thumbnail: z.string().optional(),
     floorplan: z.string().optional(),
+    shared_space_images: z.record(z.string()).optional(),
   }),
 });
 

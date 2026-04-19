@@ -1,10 +1,26 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import DecoRule from "../components/DecoRule.astro";
+import { getCollection } from "astro:content";
 const base = import.meta.env.BASE_URL;
+
+const allApts  = await getCollection("apartments");
+const allRooms = await getCollection("rooms");
+const aptCount  = allApts.length;
+const roomCount = allRooms.length;
 ---
 <Layout title="Villa Theo — Das Haus">
 
+  <!-- Hero image first, contained with side margins (Benson style) -->
+  <section class="haus-hero">
+    <img
+      src={`${base}home-dashaus.png`}
+      alt="Villa Theo, Berlin Steglitz-Dahlem"
+      loading="eager"
+    />
+  </section>
+
+  <!-- Page header below image -->
   <section class="page-header">
     <div class="container page-header-inner">
       <span class="eyebrow" data-de>Geschichte & Architektur</span>
@@ -15,27 +31,19 @@ const base = import.meta.env.BASE_URL;
     </div>
   </section>
 
-  <!-- Hero image -->
-  <section class="haus-hero">
-    <img
-      src={`${base}home-dashaus.png`}
-      alt="Villa Theo, Berlin Steglitz-Dahlem"
-      loading="lazy"
-    />
-  </section>
-
-  <!-- Main text -->
+  <!-- Main content -->
   <section class="section haus-content" style="padding-top:1.5rem">
     <div class="container haus-inner">
+
       <div class="haus-text">
         <div class="pull-quote">
-          <span class="eyebrow" data-de>Art Déco · Berlin · 1920er Jahre</span>
-          <span class="eyebrow" data-en>Art Déco · Berlin · 1920s</span>
+          <span class="eyebrow" data-de>Berlin · 1920er Jahre · Architekt Leo Nachtlicht</span>
+          <span class="eyebrow" data-en>Berlin · 1920s · Architect Leo Nachtlicht</span>
           <blockquote data-de>
-            „Ein Haus, das Studierenden seit seiner Renovierung ein echtes Zuhause bieten soll — mit Geschichte, Charakter und Leben."
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </blockquote>
           <blockquote data-en>
-            "A house that, since its renovation, aims to offer students a true home — with history, character, and life."
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </blockquote>
         </div>
 
@@ -43,43 +51,40 @@ const base = import.meta.env.BASE_URL;
 
         <div class="haus-body">
           <p data-de>
-            Die Villa Theo wurde in den 1920er Jahren im Stil des Berliner Art Déco erbaut — einer Ära, in der Architektur die Spannung zwischen klassischer Strenge und modernistischem Aufbruch verkörperte. Die Villa in Steglitz, an der Grenze zu Dahlem, gehört zu den charaktervollen Zeitzeugen dieser Epoche: mit hohen Stuckdecken, großen Sprossenfenstern und eleganten Proportionen.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
           </p>
           <p data-en>
-            Villa Theo was built in the 1920s in the Berlin Art Déco style — an era in which architecture embodied the tension between classical restraint and modernist ambition. Situated in Steglitz, on the border with Dahlem, the villa is a characterful witness to this period: high stucco ceilings, large divided-light windows, and elegant proportions.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
           </p>
           <p data-de>
-            Nach einer umfassenden Renovierung bietet das Haus heute vier Wohngemeinschaften für Studierende. Der Anbau aus späterer Zeit fügt sich harmonisch an den Altbau an und schafft einen fließenden Übergang zwischen historischem Charakter und zeitgemäßem Komfort. Garten, Terrasse und Boule-Bahn laden zum gemeinsamen Leben unter freiem Himmel ein.
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
           </p>
           <p data-en>
-            After a thorough renovation, the house now offers four shared apartments for students. A later annex integrates harmoniously with the original building, creating a seamless transition between historic character and contemporary comfort. The garden, terrace, and pétanque court invite communal life in the open air.
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
           </p>
         </div>
       </div>
 
       <div class="haus-sidebar">
-        <img src={`${base}home-wohngemeinschaften.png`} alt="" loading="lazy" class="sidebar-img" />
+        <img src={`${base}placeholder_haderslebener.png`} alt="" loading="lazy" class="sidebar-img" />
         <div class="haus-facts">
           <dl>
-            <dt data-de>Baujahr</dt>
-            <dt data-en>Built</dt>
+            <dt><span data-de>Baujahr</span><span data-en>Built</span></dt>
             <dd>1920er Jahre</dd>
-            <dt data-de>Stil</dt>
-            <dt data-en>Style</dt>
-            <dd data-de>Berliner Art Déco</dd>
-            <dd data-en>Berlin Art Déco</dd>
-            <dt data-de>Wohnungen</dt>
-            <dt data-en>Apartments</dt>
-            <dd>4</dd>
-            <dt data-de>Zimmer gesamt</dt>
-            <dt data-en>Total rooms</dt>
-            <dd>22</dd>
-            <dt data-de>Lage</dt>
-            <dt data-en>Location</dt>
+            <dt><span data-de>Architekt</span><span data-en>Architect</span></dt>
+            <dd>
+              <a class="wiki-link" href="https://de.wikipedia.org/wiki/Leo_Nachtlicht" target="_blank" rel="noopener">Leo Nachtlicht</a>
+            </dd>
+            <dt><span data-de>Wohnungen</span><span data-en>Apartments</span></dt>
+            <dd>{aptCount}</dd>
+            <dt><span data-de>Zimmer gesamt</span><span data-en>Total rooms</span></dt>
+            <dd>{roomCount}</dd>
+            <dt><span data-de>Lage</span><span data-en>Location</span></dt>
             <dd>Berlin Steglitz · Dahlem</dd>
           </dl>
         </div>
       </div>
+
     </div>
   </section>
 
@@ -94,15 +99,17 @@ const base = import.meta.env.BASE_URL;
   gap: 1rem;
 }
 
-/* Full-width house photo */
+/* Hero with Benson-style side whitespace */
 .haus-hero {
-  width: 100%;
-  max-height: 520px;
-  overflow: hidden;
+  padding-inline: clamp(2rem, 8vw, 5rem);
+  margin-top: 0;
+  font-size: 0; /* kill any inline gap */
+  line-height: 0;
 }
 .haus-hero img {
+  display: block;
   width: 100%;
-  height: 100%;
+  max-height: 520px;
   object-fit: cover;
   object-position: center 35%;
 }
@@ -135,11 +142,12 @@ const base = import.meta.env.BASE_URL;
 
 /* Sidebar */
 .haus-sidebar { display: flex; flex-direction: column; gap: 2rem; }
-.sidebar-img { width: 100%; border: 1px solid var(--border); }
+.sidebar-img { display: block; width: 100%; border: 1px solid var(--border); }
 .haus-facts dl {
   display: grid;
   grid-template-columns: max-content 1fr;
   gap: 0.5rem 1.5rem;
+  align-items: baseline;
 }
 .haus-facts dt {
   font-size: 0.7rem;
@@ -153,6 +161,13 @@ const base = import.meta.env.BASE_URL;
   font-size: 1.05rem;
   margin: 0;
 }
+.wiki-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--gold);
+  text-underline-offset: 3px;
+}
+.wiki-link:hover { color: var(--gold); }
 
 @media (max-width: 900px) {
   .haus-inner { grid-template-columns: 1fr; gap: 3rem; }

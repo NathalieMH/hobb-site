@@ -33,18 +33,19 @@ const apartments = (await getCollection("apartments"))
         <span class="eyebrow" data-de>In der Miete inbegriffen</span>
         <span class="eyebrow" data-en>Included in the rent</span>
         <ul>
-          <li><span data-de>Möblierung: Bett, Schrank, Schreibtisch, Stuhl</span><span data-en>Furnishings: bed, wardrobe, desk, chair</span></li>
+          <li><span data-de>Möblierung: Bett, Schrank, Schreibtisch, Stuhl sowie viel Raum für euren eigenen Stil</span><span data-en>Furnishings: bed, wardrobe, desk, chair — plus plenty of room for your own style</span></li>
           <li><span data-de>Wasser, Heizung, Strom</span><span data-en>Water, heating, electricity</span></li>
-          <li><span data-de>Waschmaschine & Trockenraum</span><span data-en>Washing machine & drying room</span></li>
-          <li><span data-de>Grundreinigung der Gemeinschaftsräume</span><span data-en>Cleaning of shared areas</span></li>
           <li><span data-de>Internetzugang</span><span data-en>Internet access</span></li>
-          <li><span data-de>Garten, Terrasse & Boule-Bahn</span><span data-en>Garden, terrace & pétanque court</span></li>
+          <li><span data-de>Waschmaschinen- und Trockenraum</span><span data-en>Washing machine & drying room</span></li>
+          <li><span data-de>Gartennutzung bzw. Terrasse und Boule-Bahn</span><span data-en>Use of the garden, terrace and pétanque court</span></li>
+          <li><span data-de>Regelmäßige Grundreinigung der Gemeinschaftsräume (tägliches Putzen ist WG-Aufgabe, Putz-App optional)</span><span data-en>Regular deep-cleaning of shared areas (day-to-day tidying is a flatmate task, cleaning app optional)</span></li>
         </ul>
       </div>
     </div>
   </section>
 
   <!-- Apartment cards -->
+
   <section class="section apt-section">
     <div class="container">
       <div class="apt-grid">
@@ -52,7 +53,23 @@ const apartments = (await getCollection("apartments"))
           <a class="apt-card" href={`${base}wohngemeinschaften/${slug}/`}>
             <div class="apt-floorplan">
               {data.floorplan
-                ? <img src={`${base}${data.floorplan}`} alt="" loading="lazy" />
+                ? <>
+                    <img src={`${base}${data.floorplan}`} alt="" loading="lazy" />
+                    <button
+                      class="fp-zoom-btn"
+                      data-src={`${base}${data.floorplan}`}
+                      data-title-de={data.title_de}
+                      data-title-en={data.title_en}
+                      aria-label="Grundriss vergrößern"
+                    >
+                      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
+                        <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.3"/>
+                        <line x1="10" y1="10" x2="14" y2="14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                        <line x1="6.5" y1="4" x2="6.5" y2="9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                        <line x1="4" y1="6.5" x2="9" y2="6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                      </svg>
+                    </button>
+                  </>
                 : <div class="floorplan-placeholder">
                     <svg viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                       <rect x="10" y="10" width="140" height="100" stroke="#B8952A" stroke-opacity="0.35" stroke-width="1.5"/>
@@ -84,20 +101,45 @@ const apartments = (await getCollection("apartments"))
     </div>
   </section>
 
+<!-- Floorplan zoom modal -->
+<div id="fp-zoom-overlay" class="fp-zoom-overlay hidden" aria-hidden="true">
+  <div class="fp-zoom-modal" role="dialog" aria-modal="true">
+    <div class="fp-zoom-header">
+      <p class="fp-zoom-title" id="fp-zoom-title"></p>
+      <div class="fp-zoom-controls">
+        <button class="fp-zoom-ctrl" id="fp-zoom-out" aria-label="Verkleinern">−</button>
+        <span class="fp-zoom-pct" id="fp-zoom-pct">100%</span>
+        <button class="fp-zoom-ctrl" id="fp-zoom-in" aria-label="Vergrößern">+</button>
+        <button class="fp-zoom-close" id="fp-zoom-close" aria-label="Schließen">×</button>
+      </div>
+    </div>
+    <div class="fp-zoom-stage" id="fp-zoom-stage">
+      <div class="fp-zoom-img-wrap" id="fp-zoom-img-wrap">
+        <img id="fp-zoom-img" src="" alt="" />
+      </div>
+    </div>
+  </div>
+</div>
+
 </Layout>
 
 <style>
 /* Intro */
 .intro-section { padding-top: 0; }
 .intro-cols {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem 3rem;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
 }
-.intro-cols > p { color: var(--muted); font-size: 0.95rem; }
+.intro-cols > p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  text-align: center;
+  max-width: 60ch;
+}
 .includes {
-  grid-column: 1 / -1;
+  width: 100%;
   padding-top: 1.5rem;
   border-top: 1px solid var(--border);
   display: flex;
@@ -107,22 +149,24 @@ const apartments = (await getCollection("apartments"))
 .includes ul {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: 5fr 4fr 6fr;
   gap: 0.35rem 2rem;
 }
 .includes li {
   font-size: 0.85rem;
   color: var(--muted);
-  padding-left: 0.9rem;
-  position: relative;
+  padding-left: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
 }
 .includes li::before {
   content: '◆';
-  position: absolute;
-  left: 0;
-  font-size: 0.35rem;
+  flex-shrink: 0;
+  font-size: 0.455rem;
   color: var(--gold);
-  top: 0.5em;
+  margin-top: 0.42em;
+  line-height: 1;
 }
 
 /* Apartment grid */
@@ -133,6 +177,7 @@ const apartments = (await getCollection("apartments"))
   gap: 3rem 2.5rem;
 }
 .apt-card {
+  min-width: 0;
   text-decoration: none;
   color: var(--ink);
   display: flex;
@@ -142,12 +187,14 @@ const apartments = (await getCollection("apartments"))
 
 /* Floorplan area */
 .apt-floorplan {
+  width: 100%;
   overflow: hidden;
   border: 1px solid var(--border);
   aspect-ratio: 4 / 3;
   background: var(--bg);
 }
 .apt-floorplan img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -192,8 +239,167 @@ const apartments = (await getCollection("apartments"))
 }
 .apt-card:hover .apt-cta { text-decoration: underline; }
 
+/* Floorplan zoom button */
+.apt-floorplan { position: relative; }
+.fp-zoom-btn {
+  position: absolute;
+  bottom: 0.6rem;
+  right: 0.6rem;
+  width: 32px;
+  height: 32px;
+  background: rgba(250, 248, 243, 0.92);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--ease), color var(--ease);
+  z-index: 2;
+}
+.apt-card:hover .fp-zoom-btn { opacity: 1; }
+.fp-zoom-btn:hover { color: var(--ink); }
+
+/* Floorplan zoom modal */
+.fp-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 26, 23, 0.6);
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  z-index: 400;
+}
+.fp-zoom-overlay.hidden { display: none; }
+.fp-zoom-modal {
+  background: var(--bg);
+  width: min(100%, 800px);
+  max-height: 92vh;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 64px rgba(28, 26, 23, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+.fp-zoom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  gap: 1rem;
+  flex-shrink: 0;
+}
+.fp-zoom-title {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.fp-zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.fp-zoom-ctrl {
+  background: none;
+  border: 1px solid var(--border);
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: color var(--ease), border-color var(--ease);
+}
+.fp-zoom-ctrl:hover { color: var(--ink); border-color: var(--ink); }
+.fp-zoom-pct { font-size: 0.72rem; color: var(--muted); min-width: 3rem; text-align: center; }
+.fp-zoom-close {
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+.fp-zoom-close:hover { color: var(--ink); }
+.fp-zoom-stage {
+  overflow: auto;
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.fp-zoom-img-wrap {
+  transform-origin: top center;
+  transition: transform 0.2s ease;
+}
+.fp-zoom-img-wrap img { display: block; max-width: 100%; border: 1px solid var(--border); }
+
 @media (max-width: 860px) {
-  .intro-cols { grid-template-columns: 1fr; }
+  .includes li:nth-child(n) { grid-column: span 6; }
   .apt-grid { grid-template-columns: 1fr; }
 }
+@media (max-width: 540px) {
+  .includes li:nth-child(n) { grid-column: span 12; }
+}
 </style>
+
+<script>
+  const overlay  = document.getElementById('fp-zoom-overlay')!;
+  const zoomImg  = document.getElementById('fp-zoom-img') as HTMLImageElement;
+  const imgWrap  = document.getElementById('fp-zoom-img-wrap')!;
+  const titleEl  = document.getElementById('fp-zoom-title')!;
+  const pctEl    = document.getElementById('fp-zoom-pct')!;
+  const lang     = () => document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de';
+  let zoom = 1;
+
+  function setZoom(z: number) {
+    zoom = Math.min(3, Math.max(0.5, z));
+    imgWrap.style.transform = `scale(${zoom})`;
+    pctEl.textContent = Math.round(zoom * 100) + '%';
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as Element).closest('.fp-zoom-btn') as HTMLElement | null;
+    if (btn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const src   = btn.getAttribute('data-src') || '';
+      const title = lang() === 'en'
+        ? (btn.getAttribute('data-title-en') || '')
+        : (btn.getAttribute('data-title-de') || '');
+      titleEl.textContent = title;
+      zoomImg.src = src;
+      zoom = 1;
+      imgWrap.style.transform = 'scale(1)';
+      pctEl.textContent = '100%';
+      overlay.classList.remove('hidden');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      return;
+    }
+
+    if ((e.target as Element).closest('#fp-zoom-close') || e.target === overlay) {
+      overlay.classList.add('hidden');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+  });
+
+  document.getElementById('fp-zoom-in')!.addEventListener('click',  () => setZoom(zoom + 0.25));
+  document.getElementById('fp-zoom-out')!.addEventListener('click', () => setZoom(zoom - 0.25));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !overlay.classList.contains('hidden')) {
+      overlay.classList.add('hidden');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+  });
+</script>

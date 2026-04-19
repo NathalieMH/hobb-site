@@ -6,14 +6,14 @@ import fs from "node:fs/promises";
 import path from "node:path";
 const base = import.meta.env.BASE_URL;
 
-async function loadRoomImages(slug: string) {
-  const dir = path.resolve(process.cwd(), "public", "rooms", slug);
+async function loadImages(folder: string) {
+  const dir = path.resolve(process.cwd(), "public", folder);
   try {
     const files = await fs.readdir(dir);
     return files
       .filter((f) => /\.(jpe?g|png|webp|gif)$/i.test(f))
       .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }))
-      .map((f) => `${base}rooms/${slug}/${f}`);
+      .map((f) => `${base}${folder}/${f}`);
   } catch {
     return [];
   }
@@ -27,15 +27,34 @@ export async function getStaticPaths() {
 const { apartment } = Astro.params;
 const apartments = await getCollection("apartments");
 const apt = apartments.find((a) => a.slug === apartment);
-const rooms = await getCollection("rooms", (r) => r.data.apartment === apartment);
+
+// Available rooms first, taken rooms last
+const rooms = (await getCollection("rooms", (r) => r.data.apartment === apartment))
+  .sort((a, b) => {
+    if (a.data.available === b.data.available) return 0;
+    return a.data.available ? -1 : 1;
+  });
+
 const renderedRooms = await Promise.all(
   rooms.map(async (r) => {
     const { Content } = await r.render();
-    const imgs = await loadRoomImages(r.slug);
+    const imgs = await loadImages(`rooms/${r.slug}`);
     return { entry: r, Content, imgs };
   })
 );
 const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [entry.slug, imgs]));
+
+// Apartment images: put them in public/apartments/[slug]/
+const aptImages = await loadImages(`apartments/${apartment}`);
+
+// Map DE shared space name → full image URL
+const spaceImgMap = apt?.data.shared_space_images ?? {};
+function spaceImageUrl(nameDE: string): string {
+  const file = spaceImgMap[nameDE];
+  return file ? `${base}apartments/${apartment}/${file}` : '';
+}
+
+const hasAptImages = aptImages.length > 0;
 ---
 
 <Layout title={`Villa Theo — ${apt?.data.title_de ?? "Wohngemeinschaft"}`}>
@@ -55,37 +74,69 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
     </div>
   </section>
 
-  <!-- Apartment details -->
+  <!-- Apartment details: info left, carousel right -->
   <section class="section apt-detail" style="padding-top:1.5rem">
     <div class="container apt-detail-inner">
 
-      {apt?.data.floorplan && (
-        <div class="floorplan-wrap">
-          <img src={`${base}${apt.data.floorplan}`} alt="" />
-        </div>
-      )}
-
+      <!-- Left: description + shared spaces -->
       <div class="apt-info">
-        {apt?.data.description_de && (
-          <p data-de>{apt.data.description_de}</p>
-        )}
-        {apt?.data.description_en && (
-          <p data-en>{apt.data.description_en}</p>
-        )}
+        {apt?.data.description_de && <p data-de>{apt.data.description_de}</p>}
+        {apt?.data.description_en && <p data-en>{apt.data.description_en}</p>}
 
         {(apt?.data.shared_spaces_de?.length ?? 0) > 0 && (
           <div class="shared-spaces">
             <h3 data-de>Gemeinschaftsräume</h3>
-            <h3 data-en>Shared spaces</h3>
-            <ul data-de>
-              {apt?.data.shared_spaces_de.map(s => <li>{s}</li>)}
-            </ul>
-            <ul data-en>
-              {apt?.data.shared_spaces_en.map(s => <li>{s}</li>)}
+            <h3 data-en>Shared Spaces</h3>
+            <ul class="space-tags">
+              {apt?.data.shared_spaces_de.map((nameDE, i) => {
+                const nameEN = apt.data.shared_spaces_en[i] ?? nameDE;
+                const imgUrl = spaceImageUrl(nameDE);
+                return (
+                  <li>
+                    <button class="space-tag" data-img={imgUrl} data-de>{nameDE}</button>
+                    <button class="space-tag" data-img={imgUrl} data-en>{nameEN}</button>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
       </div>
+
+      <!-- Right: carousel
+           Images go in: public/apartments/[slug]/
+           Name files like: 01-kueche.jpg, 02-bad1.jpg etc. for sort order.
+           To map a shared space to an image, add to the apartment's frontmatter:
+             shared_space_images:
+               "Bad 1": 02-bad1.jpg
+      -->
+      <div class="apt-carousel" id="apt-carousel" data-images={JSON.stringify(aptImages)}>
+        <div class="car-stage" id="car-stage">
+          {hasAptImages
+            ? <img class="car-img" id="car-img" src={aptImages[0]} alt="" data-index="0" loading="lazy" />
+            : <div class="car-placeholder">
+                <svg viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="10" y="10" width="140" height="100" stroke="#B8952A" stroke-opacity="0.35" stroke-width="1.5"/>
+                  <rect x="10" y="10" width="80" height="60" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
+                  <rect x="90" y="10" width="60" height="40" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
+                  <rect x="90" y="50" width="60" height="60" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
+                  <rect x="10" y="70" width="50" height="40" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
+                  <rect x="60" y="70" width="30" height="40" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
+                </svg>
+                <span class="car-placeholder-label" data-de>Bilder folgen</span>
+                <span class="car-placeholder-label" data-en>Images coming soon</span>
+              </div>
+          }
+        </div>
+        {hasAptImages && (
+          <div class="car-controls">
+            <button class="car-nav car-prev" id="car-prev" aria-label="Vorheriges Bild">‹</button>
+            <span class="car-counter" id="car-counter">1 / {aptImages.length}</span>
+            <button class="car-nav car-next" id="car-next" aria-label="Nächstes Bild">›</button>
+          </div>
+        )}
+      </div>
+
     </div>
   </section>
 
@@ -112,12 +163,8 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
                   ? <img src={cover} alt={data.title_de} loading="lazy" />
                   : <div class="room-placeholder" />
                 }
-                {!data.available && (
-                  <span class="taken-overlay" data-de>vergeben</span>
-                )}
-                {!data.available && (
-                  <span class="taken-overlay" data-en>taken</span>
-                )}
+                {!data.available && <span class="taken-overlay" data-de>vergeben</span>}
+                {!data.available && <span class="taken-overlay" data-en>taken</span>}
               </div>
               <div class="room-meta">
                 <span class="room-title" data-de>
@@ -128,7 +175,10 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
                   {data.title_en}
                   {!data.available && <span class="badge-taken" data-en>taken</span>}
                 </span>
-                {data.size_m2 && <span class="room-size">{data.size_m2} m²</span>}
+                <div class="room-stats">
+                  {data.size_m2 && <span class="room-size">{data.size_m2} m²</span>}
+                  {data.cold_rent_eur && <span class="room-rent">{data.cold_rent_eur} €<span class="rent-unit">/Mo.</span></span>}
+                </div>
               </div>
             </button>
           );
@@ -175,7 +225,7 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
             </div>
             <ul class="room-facts">
               {d.size_m2 && <li><span class="fact-label" data-de>Größe</span><span class="fact-label" data-en>Size</span><span class="fact-val">{d.size_m2} m²</span></li>}
-              {d.cold_rent_eur && <li><span class="fact-label" data-de>Kaltmiete</span><span class="fact-label" data-en>Cold rent</span><span class="fact-val">{d.cold_rent_eur} €</span></li>}
+              {d.cold_rent_eur && <li><span class="fact-label" data-de>Kaltmiete</span><span class="fact-label" data-en>Cold rent</span><span class="fact-val">{d.cold_rent_eur} €/Mo.</span></li>}
               {d.available_from && <li><span class="fact-label" data-de>Verfügbar ab</span><span class="fact-label" data-en>Available from</span><span class="fact-val">{d.available_from}</span></li>}
             </ul>
             {d.teaser_de && <p class="modal-teaser" data-de>{d.teaser_de}</p>}
@@ -216,26 +266,113 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
 }
 .back-link:hover { color: var(--ink); }
 
-/* Apartment detail */
+/* Apartment detail: info left, carousel right */
 .apt-detail-inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
   align-items: start;
 }
-.floorplan-wrap img {
-  width: 100%;
-  border: 1px solid var(--border);
-}
+.apt-info { display: flex; flex-direction: column; gap: 1.5rem; }
 .apt-info p { color: var(--muted); }
-.shared-spaces { margin-top: var(--sp-md); }
-.shared-spaces h3 { margin-bottom: 0.75rem; font-size: 1rem; font-family: var(--font-sans); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.75rem; color: var(--muted); }
-.shared-spaces ul { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.shared-spaces li {
+
+/* Shared spaces */
+.shared-spaces { display: flex; flex-direction: column; gap: 0.75rem; }
+.shared-spaces h3 {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
+.space-tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.space-tags li { display: contents; }
+.space-tag {
   font-size: 0.8rem;
-  padding: 0.25rem 0.75rem;
+  padding: 0.3rem 0.8rem;
   border: 1px solid var(--border);
-  letter-spacing: 0.05em;
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background var(--ease), border-color var(--ease), color var(--ease);
+}
+.space-tag:hover,
+.space-tag.active {
+  background: var(--ink);
+  color: var(--ink-light);
+  border-color: var(--ink);
+}
+
+/* Carousel */
+.apt-carousel { display: flex; flex-direction: column; gap: 0.75rem; }
+.car-stage {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--border);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.car-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.25s ease;
+}
+.car-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  background: var(--bg);
+}
+.car-placeholder svg { width: 60%; max-width: 180px; opacity: 0.6; }
+.car-placeholder-label {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.car-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: center;
+}
+.car-nav {
+  background: none;
+  border: 1px solid var(--border);
+  width: 34px;
+  height: 34px;
+  font-size: 1.2rem;
+  color: var(--muted);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: color var(--ease), border-color var(--ease);
+}
+.car-nav:hover { color: var(--ink); border-color: var(--ink); }
+.car-counter {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  min-width: 3rem;
+  text-align: center;
 }
 
 /* Rooms */
@@ -246,6 +383,7 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
   gap: 2rem;
 }
 .room-card {
+  min-width: 0;
   background: none;
   border: none;
   padding: 0;
@@ -260,17 +398,14 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
   background: var(--border);
 }
 .room-img-wrap img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
 }
 .room-card:hover .room-img-wrap img { transform: scale(1.04); }
-.room-placeholder {
-  width: 100%;
-  height: 100%;
-  background: var(--border);
-}
+.room-placeholder { width: 100%; height: 100%; background: var(--border); }
 .room-taken .room-img-wrap img { opacity: 0.45; filter: grayscale(0.5); }
 .taken-overlay {
   position: absolute;
@@ -284,9 +419,12 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
   text-transform: uppercase;
   color: var(--muted);
 }
-.room-meta { padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0.2rem; }
+.room-meta { padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0.25rem; }
 .room-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 300; }
+.room-stats { display: flex; gap: 1rem; align-items: baseline; }
 .room-size { font-size: 0.8rem; color: var(--muted); }
+.room-rent { font-size: 0.85rem; color: var(--ink); font-family: var(--font-serif); }
+.rent-unit { font-family: var(--font-sans); font-size: 0.7rem; color: var(--muted); }
 
 /* Modal */
 .overlay {
@@ -376,6 +514,63 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
 </style>
 
 <script>
+  // ── Apartment carousel ──────────────────────────────────────────
+  const carousel = document.getElementById('apt-carousel');
+  if (carousel) {
+    const imgs: string[] = JSON.parse(carousel.getAttribute('data-images') || '[]');
+    const stage    = document.getElementById('car-stage')!;
+    const counterEl = document.getElementById('car-counter');
+    let currentIdx = 0;
+
+    function goTo(idx: number) {
+      if (!imgs.length) return;
+      currentIdx = (idx + imgs.length) % imgs.length;
+      let img = stage.querySelector('.car-img') as HTMLImageElement | null;
+      if (!img) {
+        img = document.createElement('img');
+        img.className = 'car-img';
+        img.setAttribute('alt', '');
+        stage.innerHTML = '';
+        stage.appendChild(img);
+      }
+      img.src = imgs[currentIdx];
+      img.setAttribute('data-index', String(currentIdx));
+      if (counterEl) counterEl.textContent = `${currentIdx + 1} / ${imgs.length}`;
+    }
+
+    document.getElementById('car-prev')?.addEventListener('click', () => goTo(currentIdx - 1));
+    document.getElementById('car-next')?.addEventListener('click', () => goTo(currentIdx + 1));
+
+    // Space tag → carousel
+    document.querySelectorAll<HTMLButtonElement>('.space-tag').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const imgUrl = btn.getAttribute('data-img');
+        if (!imgUrl) return;
+        const idx = imgs.indexOf(imgUrl);
+        // Mark active on sibling (the same space, other language)
+        const li = btn.closest('li');
+        document.querySelectorAll('.space-tag').forEach(t => t.classList.remove('active'));
+        li?.querySelectorAll('.space-tag').forEach(t => t.classList.add('active'));
+        if (idx !== -1) {
+          goTo(idx);
+        } else if (imgUrl) {
+          // Image exists but not in the scanned list (e.g., floorplan) — show it directly
+          let img = stage.querySelector('.car-img') as HTMLImageElement | null;
+          if (!img) {
+            img = document.createElement('img');
+            img.className = 'car-img';
+            img.setAttribute('alt', '');
+            stage.innerHTML = '';
+            stage.appendChild(img);
+          }
+          img.src = imgUrl;
+          img.setAttribute('data-index', '-1');
+        }
+      });
+    });
+  }
+
+  // ── Room modal ─────────────────────────────────────────────────
   document.addEventListener("click", (e) => {
     const target = e.target as Element;
     const btn = target.closest(".open-room") as HTMLElement | null;
@@ -392,11 +587,6 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
         overlay.classList.remove("hidden");
         overlay.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
-        const firstThumb = body.querySelector<HTMLElement>('.thumb[data-index="0"]');
-        if (firstThumb) {
-          body.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
-          firstThumb.classList.add("active");
-        }
       }
       return;
     }
@@ -412,10 +602,8 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
     if (thumb && body.contains(thumb)) {
       const article = thumb.closest(".modal-content") as HTMLElement;
       const cover = article.querySelector(".modal-cover") as HTMLImageElement;
-      const newUrl = thumb.getAttribute("data-full")!;
-      const idx = thumb.getAttribute("data-index") || "0";
-      cover.setAttribute("src", newUrl);
-      cover.setAttribute("data-index", idx);
+      cover.setAttribute("src", thumb.getAttribute("data-full")!);
+      cover.setAttribute("data-index", thumb.getAttribute("data-index") || "0");
       article.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
       thumb.classList.add("active");
       return;
@@ -425,12 +613,12 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
     if (navBtn && body.contains(navBtn)) {
       const article = navBtn.closest(".modal-content") as HTMLElement;
       const cover = article.querySelector(".modal-cover") as HTMLImageElement;
-      const imgs: string[] = JSON.parse(article.getAttribute("data-images") || "[]");
-      if (imgs.length < 2) return;
+      const allImgs: string[] = JSON.parse(article.getAttribute("data-images") || "[]");
+      if (allImgs.length < 2) return;
       let idx = parseInt(cover.getAttribute("data-index") || "0", 10);
       if (isNaN(idx) || idx < 0) idx = 0;
-      const newIdx = (idx + (navBtn.classList.contains("next") ? 1 : -1) + imgs.length) % imgs.length;
-      cover.setAttribute("src", imgs[newIdx]);
+      const newIdx = (idx + (navBtn.classList.contains("next") ? 1 : -1) + allImgs.length) % allImgs.length;
+      cover.setAttribute("src", allImgs[newIdx]);
       cover.setAttribute("data-index", String(newIdx));
       article.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
       article.querySelector<HTMLElement>(`.thumb[data-index="${newIdx}"]`)?.classList.add("active");
