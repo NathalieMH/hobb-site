@@ -1,0 +1,401 @@
+---
+import Layout from "../layouts/Layout.astro";
+import DecoRule from "../components/DecoRule.astro";
+import { getCollection } from "astro:content";
+
+const base = import.meta.env.BASE_URL;
+
+const allRooms = await getCollection("rooms");
+const allApts  = await getCollection("apartments");
+
+const aptMap = Object.fromEntries(allApts.map(a => [a.slug, a.data]));
+
+const available = allRooms
+  .filter(r => r.data.available)
+  .sort((a, b) => (aptMap[a.data.apartment]?.order ?? 0) - (aptMap[b.data.apartment]?.order ?? 0));
+
+const taken = allRooms
+  .filter(r => !r.data.available)
+  .sort((a, b) => (aptMap[a.data.apartment]?.order ?? 0) - (aptMap[b.data.apartment]?.order ?? 0));
+
+function formatDate(s?: string) {
+  if (!s) return '—';
+  const [y, m] = s.split('-');
+  const months_de = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+  const months_en = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const idx = parseInt(m, 10) - 1;
+  return { de: `${months_de[idx]} ${y}`, en: `${months_en[idx]} ${y}` };
+}
+---
+
+<Layout title="Villa Theo — Verfügbarkeit">
+
+  <section class="page-header">
+    <div class="container page-header-inner">
+      <span class="eyebrow" data-de>Zimmer & Preise</span>
+      <span class="eyebrow" data-en>Rooms & Prices</span>
+      <h1 data-de>Verfügbarkeit</h1>
+      <h1 data-en>Availability</h1>
+      <DecoRule />
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:1.5rem">
+    <div class="container avail-wrap">
+
+      <!-- Note on pricing -->
+      <p class="pricing-note" data-de>
+        Alle Preise sind Kaltmieten. Nebenkosten (Strom, Wasser, Heizung, Internet) sind im Mietpreis inbegriffen — die Miete ist also all-inclusive.
+      </p>
+      <p class="pricing-note" data-en>
+        All prices are base rents (Kaltmiete). Utilities (electricity, water, heating, internet) are included — the rent is all-inclusive.
+      </p>
+
+      <!-- Available rooms -->
+      {available.length > 0 && (
+        <div class="avail-group">
+          <h2 class="group-heading" data-de>Verfügbare Zimmer</h2>
+          <h2 class="group-heading" data-en>Available Rooms</h2>
+          <div class="room-list">
+            {available.map(r => {
+              const apt = aptMap[r.data.apartment];
+              const dateObj = formatDate(r.data.available_from);
+              const hasFloorplan = !!apt?.floorplan;
+              return (
+                <div class="room-row">
+                  <div class="room-row-main">
+                    <a class="room-name" href={`${base}zimmer/${r.slug}/`}>
+                      <span data-de>{r.data.title_de}</span>
+                      <span data-en>{r.data.title_en}</span>
+                    </a>
+                    <a class="apt-name" href={`${base}wohngemeinschaften/${r.data.apartment}/`}>
+                      <span data-de>{apt?.title_de ?? r.data.apartment}</span>
+                      <span data-en>{apt?.title_en ?? r.data.apartment}</span>
+                    </a>
+                    <button
+                      class={`floorplan-btn${hasFloorplan ? '' : ' fp-placeholder'}`}
+                      data-floorplan={apt?.floorplan ? `${base}${apt.floorplan}` : ''}
+                      data-apt-de={apt?.title_de ?? ''}
+                      data-apt-en={apt?.title_en ?? ''}
+                      aria-label="Grundriss ansehen"
+                    >
+                      <span class="fp-icon" aria-hidden="true">
+                        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="1.5" y="1.5" width="15" height="15" stroke="currentColor" stroke-width="1.2"/>
+                          <rect x="1.5" y="1.5" width="9" height="8" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                          <rect x="10.5" y="1.5" width="6" height="5" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                          <rect x="1.5" y="9.5" width="6" height="7" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                        </svg>
+                      </span>
+                      <span class="fp-label" data-de>Grundriss</span>
+                      <span class="fp-label" data-en>Floorplan</span>
+                    </button>
+                    {r.data.size_m2 && <span class="room-size">{r.data.size_m2} m²</span>}
+                    <span class="room-rent">
+                      {r.data.cold_rent_eur ? `${r.data.cold_rent_eur} €` : '—'}
+                    </span>
+                    <span class="room-from">
+                      {typeof dateObj === 'object'
+                        ? <><span data-de>{dateObj.de}</span><span data-en>{dateObj.en}</span></>
+                        : dateObj
+                      }
+                    </span>
+                  </div>
+                  {r.data.teaser_de && <p class="room-teaser" data-de>{r.data.teaser_de}</p>}
+                  {r.data.teaser_en && <p class="room-teaser" data-en>{r.data.teaser_en}</p>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <!-- Taken rooms -->
+      {taken.length > 0 && (
+        <div class="avail-group taken-group">
+          <DecoRule />
+          <h2 class="group-heading taken-heading" data-de>Vergeben</h2>
+          <h2 class="group-heading taken-heading" data-en>Currently Taken</h2>
+          <div class="room-list taken-list">
+            {taken.map(r => {
+              const apt = aptMap[r.data.apartment];
+              const hasFloorplan = !!apt?.floorplan;
+              return (
+                <div class="room-row room-row-taken">
+                  <div class="room-row-main">
+                    <span class="room-name taken-name">
+                      <span data-de>{r.data.title_de}</span>
+                      <span data-en>{r.data.title_en}</span>
+                    </span>
+                    <a class="apt-name" href={`${base}wohngemeinschaften/${r.data.apartment}/`}>
+                      <span data-de>{apt?.title_de ?? r.data.apartment}</span>
+                      <span data-en>{apt?.title_en ?? r.data.apartment}</span>
+                    </a>
+                    <button
+                      class={`floorplan-btn${hasFloorplan ? '' : ' fp-placeholder'}`}
+                      data-floorplan={apt?.floorplan ? `${base}${apt.floorplan}` : ''}
+                      data-apt-de={apt?.title_de ?? ''}
+                      data-apt-en={apt?.title_en ?? ''}
+                      aria-label="Grundriss ansehen"
+                    >
+                      <span class="fp-icon" aria-hidden="true">
+                        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="1.5" y="1.5" width="15" height="15" stroke="currentColor" stroke-width="1.2"/>
+                          <rect x="1.5" y="1.5" width="9" height="8" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                          <rect x="10.5" y="1.5" width="6" height="5" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                          <rect x="1.5" y="9.5" width="6" height="7" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                        </svg>
+                      </span>
+                      <span class="fp-label" data-de>Grundriss</span>
+                      <span class="fp-label" data-en>Floorplan</span>
+                    </button>
+                    {r.data.size_m2 && <span class="room-size">{r.data.size_m2} m²</span>}
+                    <span class="room-rent">{r.data.cold_rent_eur ? `${r.data.cold_rent_eur} €` : '—'}</span>
+                    <span class="room-from">—</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+    </div>
+  </section>
+
+  <!-- Floorplan modal -->
+  <div id="fp-overlay" class="fp-overlay hidden" aria-hidden="true">
+    <div class="fp-modal" role="dialog" aria-modal="true">
+      <button class="fp-close" aria-label="Schließen">×</button>
+      <p class="fp-apt-name" id="fp-apt-name"></p>
+      <div id="fp-modal-body" class="fp-modal-body"></div>
+    </div>
+  </div>
+
+</Layout>
+
+<style>
+.avail-wrap {
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.pricing-note {
+  font-size: 0.85rem;
+  color: var(--muted);
+  max-width: none;
+  padding: 0.9rem 1.25rem;
+  border-left: 2px solid var(--gold);
+  background: rgba(184, 149, 42, 0.04);
+}
+
+.avail-group { display: flex; flex-direction: column; gap: 1rem; }
+.taken-group { gap: 1.25rem; }
+
+.group-heading {
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.taken-heading { color: var(--border); }
+
+/* Room list */
+.room-list { display: flex; flex-direction: column; }
+.room-row {
+  border-top: 1px solid var(--border);
+  padding-block: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.room-list .room-row:last-child { border-bottom: 1px solid var(--border); }
+
+.room-row-main {
+  display: grid;
+  grid-template-columns: 1.8fr 1.6fr auto 4rem 5rem 5rem;
+  align-items: center;
+  gap: 1rem;
+}
+
+.room-name {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  color: var(--ink);
+  transition: color var(--ease);
+}
+.room-name:hover { color: var(--gold); }
+.taken-name { color: var(--muted); cursor: default; }
+
+.apt-name {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--ease);
+}
+.apt-name:hover { color: var(--ink); }
+
+/* Floorplan button */
+.floorplan-btn {
+  background: none;
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color var(--ease), color var(--ease);
+  white-space: nowrap;
+}
+.floorplan-btn:hover:not(.fp-placeholder) {
+  border-color: var(--gold);
+  color: var(--ink);
+}
+.fp-placeholder { opacity: 0.4; cursor: default; }
+.fp-icon { width: 14px; height: 14px; flex-shrink: 0; display: flex; }
+.fp-icon svg { width: 100%; height: 100%; }
+
+.room-size, .room-rent {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--ink);
+  text-align: right;
+}
+.room-from {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: right;
+  letter-spacing: 0.03em;
+}
+
+.room-row-taken .room-size,
+.room-row-taken .room-rent,
+.room-row-taken .room-from { color: var(--muted); opacity: 0.5; }
+
+.room-teaser {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-style: italic;
+  padding-left: 0;
+  max-width: 56ch;
+}
+
+.taken-list .room-row { opacity: 0.6; }
+
+/* Floorplan modal */
+.fp-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 26, 23, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  z-index: 300;
+}
+.fp-overlay.hidden { display: none; }
+.fp-modal {
+  background: var(--bg);
+  width: min(100%, 700px);
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+  padding: 2rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 64px rgba(28, 26, 23, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.fp-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+}
+.fp-close:hover { color: var(--ink); }
+.fp-apt-name {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.fp-modal-body img { width: 100%; border: 1px solid var(--border); }
+.fp-no-plan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 720px) {
+  .room-row-main {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  .room-name { grid-column: 1 / -1; }
+  .floorplan-btn { justify-self: start; }
+  .room-from { text-align: left; }
+}
+</style>
+
+<script>
+  const overlay = document.getElementById('fp-overlay')!;
+  const body    = document.getElementById('fp-modal-body')!;
+  const aptName = document.getElementById('fp-apt-name')!;
+  const lang    = () => document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de';
+
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as Element).closest('.floorplan-btn') as HTMLElement | null;
+    if (btn && !btn.classList.contains('fp-placeholder')) {
+      const src = btn.getAttribute('data-floorplan') || '';
+      const nameDE = btn.getAttribute('data-apt-de') || '';
+      const nameEN = btn.getAttribute('data-apt-en') || '';
+      aptName.textContent = lang() === 'en' ? nameEN : nameDE;
+      body.innerHTML = src
+        ? `<img src="${src}" alt="" />`
+        : `<div class="fp-no-plan"><span data-de>Grundriss noch nicht verfügbar</span><span data-en>Floorplan not yet available</span></div>`;
+      overlay.classList.remove('hidden');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      return;
+    }
+    const closeBtn = (e.target as Element).closest('.fp-close');
+    if (closeBtn || e.target === overlay) {
+      overlay.classList.add('hidden');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !overlay.classList.contains('hidden')) {
+      overlay.classList.add('hidden');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+  });
+</script>

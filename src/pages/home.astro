@@ -133,7 +133,7 @@ const base = import.meta.env.BASE_URL;
 }
 
 /* ── Intro ──────────────────────────────────────────────────── */
-.intro-section { text-align: center; }
+.intro-section { text-align: center; padding-top: 2.5rem; padding-bottom: 2rem; }
 .intro-wrap {
   max-width: 680px;
   display: flex;
@@ -154,7 +154,8 @@ const base = import.meta.env.BASE_URL;
 }
 
 /* ── Cards ──────────────────────────────────────────────────── */
-.cards-section .container { display: flex; flex-direction: column; gap: var(--sp-md); }
+.cards-section { padding-top: 1.5rem; }
+.cards-section .container { display: flex; flex-direction: column; gap: 1.5rem; }
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

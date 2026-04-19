@@ -16,7 +16,7 @@ const { Content } = room ? await room.render() : { Content: null };
 ---
 
 <Layout title={`Villa Theo — ${d?.title_de ?? "Zimmer"}`}>
-  <section class="section page-header">
+  <section class="page-header">
     <div class="container page-header-inner">
       <a class="back-link" href={d?.apartment ? `${base}wohngemeinschaften/${d.apartment}/` : `${base}wohngemeinschaften/`}>
         <span data-de>← Zur Wohnung</span>

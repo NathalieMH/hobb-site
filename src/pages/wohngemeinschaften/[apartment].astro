@@ -41,7 +41,7 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
 <Layout title={`Villa Theo — ${apt?.data.title_de ?? "Wohngemeinschaft"}`}>
 
   <!-- Apartment header -->
-  <section class="section page-header">
+  <section class="page-header">
     <div class="container page-header-inner">
       <a class="back-link" href={`${base}wohngemeinschaften/`}>
         <span data-de>← Alle Wohnungen</span>
@@ -56,7 +56,7 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
   </section>
 
   <!-- Apartment details -->
-  <section class="section apt-detail">
+  <section class="section apt-detail" style="padding-top:1.5rem">
     <div class="container apt-detail-inner">
 
       {apt?.data.floorplan && (

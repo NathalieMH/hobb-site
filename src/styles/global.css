@@ -14,8 +14,8 @@
   --sp-xs:  0.5rem;
   --sp-sm:  1rem;
   --sp-md:  2rem;
-  --sp-lg:  4rem;
-  --sp-xl:  7rem;
+  --sp-lg:  3.5rem;
+  --sp-xl:  5.5rem;
 
   --ease: 0.25s ease;
   --max-w: 1200px;
@@ -45,17 +45,18 @@ h1, h2, h3, h4 {
   letter-spacing: 0.05em;
   line-height: 1.1;
 }
-h1 { font-size: clamp(2.75rem, 6vw, 5rem); }
-h2 { font-size: clamp(1.9rem, 3.5vw, 3.25rem); }
-h3 { font-size: clamp(1.35rem, 2.5vw, 2rem); }
-h4 { font-size: clamp(1.1rem, 1.8vw, 1.5rem); }
+/* Hero h1 — large, used only on home */
+h1 { font-size: clamp(2rem, 4vw, 3rem); }
+h2 { font-size: clamp(1.5rem, 2.8vw, 2.4rem); }
+h3 { font-size: clamp(1.1rem, 1.8vw, 1.5rem); }
+h4 { font-size: clamp(1rem, 1.4vw, 1.2rem); }
 
 p { max-width: 68ch; }
 
 /* ── Utility classes ────────────────────────────────────────── */
 .eyebrow {
   font-family: var(--font-sans);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--muted);
@@ -68,8 +69,26 @@ p { max-width: 68ch; }
   padding-inline: clamp(1.25rem, 5vw, 3rem);
 }
 
+/* Standard section rhythm */
 .section {
-  padding-block: clamp(var(--sp-lg), 8vw, var(--sp-xl));
+  padding-block: clamp(2rem, 4vw, 3.5rem);
+}
+
+/* Page-title header — compact, centered */
+.page-header {
+  padding-block: 2.5rem 1.75rem;
+  text-align: center;
+}
+.page-header-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+/* Subpage h1 — notably smaller than hero */
+.page-header h1 {
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+  letter-spacing: 0.08em;
 }
 
 /* ── Bilingual toggle ───────────────────────────────────────── */

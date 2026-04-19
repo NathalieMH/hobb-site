@@ -6,13 +6,11 @@ import { getCollection } from "astro:content";
 const base = import.meta.env.BASE_URL;
 const apartments = (await getCollection("apartments"))
   .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
-
-const FALLBACK = `${base}home-wohngemeinschaften.png`;
 ---
 
 <Layout title="Villa Theo — Die Wohngemeinschaften">
-  <!-- Page header -->
-  <section class="page-header section">
+
+  <section class="page-header">
     <div class="container page-header-inner">
       <span class="eyebrow" data-de>Wohnen</span>
       <span class="eyebrow" data-en>Living</span>
@@ -22,165 +20,179 @@ const FALLBACK = `${base}home-wohngemeinschaften.png`;
     </div>
   </section>
 
-  <!-- Intro -->
+  <!-- Intro + includes -->
   <section class="section intro-section">
     <div class="container intro-cols">
       <p data-de>
         Ab Dezember 2025 werden die ersten zwei Wohnungen mit insgesamt neun Zimmern im ersten und zweiten Obergeschoss bezugsfertig sein. Ab Frühjahr bzw. Sommer 2026 kommen nochmals sieben bzw. sechs Zimmer über zwei Etagen in Altbau und Anbau dazu.
       </p>
       <p data-en>
-        From December 2025, the first two apartments with nine rooms on the first and second floors will be ready to move into. A further seven and six rooms across two floors in the main building and annex will follow in spring and summer 2026.
+        From December 2025, the first two apartments with nine rooms on the first and second floors will be ready. A further seven and six rooms across two floors in the main building and annex follow in spring and summer 2026.
       </p>
       <div class="includes">
-        <h3 data-de>In der Miete inbegriffen</h3>
-        <h3 data-en>Included in the rent</h3>
+        <span class="eyebrow" data-de>In der Miete inbegriffen</span>
+        <span class="eyebrow" data-en>Included in the rent</span>
         <ul>
-          <li>
-            <span data-de>Möblierung: Bett, Schrank, Schreibtisch, Stuhl</span>
-            <span data-en>Furnishings: bed, wardrobe, desk, chair</span>
-          </li>
-          <li>
-            <span data-de>Wasser, Heizung, Strom</span>
-            <span data-en>Water, heating, electricity</span>
-          </li>
-          <li>
-            <span data-de>Waschmaschine & Trockenraum</span>
-            <span data-en>Washing machine & drying room</span>
-          </li>
-          <li>
-            <span data-de>Regelmäßige Grundreinigung der Gemeinschaftsräume</span>
-            <span data-en>Regular cleaning of shared areas</span>
-          </li>
-          <li>
-            <span data-de>Internetzugang</span>
-            <span data-en>Internet access</span>
-          </li>
-          <li>
-            <span data-de>Gartennutzung, Terrasse & Boule-Bahn</span>
-            <span data-en>Garden, terrace & pétanque court</span>
-          </li>
+          <li><span data-de>Möblierung: Bett, Schrank, Schreibtisch, Stuhl</span><span data-en>Furnishings: bed, wardrobe, desk, chair</span></li>
+          <li><span data-de>Wasser, Heizung, Strom</span><span data-en>Water, heating, electricity</span></li>
+          <li><span data-de>Waschmaschine & Trockenraum</span><span data-en>Washing machine & drying room</span></li>
+          <li><span data-de>Grundreinigung der Gemeinschaftsräume</span><span data-en>Cleaning of shared areas</span></li>
+          <li><span data-de>Internetzugang</span><span data-en>Internet access</span></li>
+          <li><span data-de>Garten, Terrasse & Boule-Bahn</span><span data-en>Garden, terrace & pétanque court</span></li>
         </ul>
       </div>
     </div>
   </section>
 
   <!-- Apartment cards -->
-  <section class="section apartments-section">
+  <section class="section apt-section">
     <div class="container">
       <div class="apt-grid">
-        {apartments.map(({ data, slug }) => {
-          const thumb = data.thumbnail ?? FALLBACK;
-          return (
-            <a class="apt-card" href={`${base}wohngemeinschaften/${slug}/`}>
-              <div class="apt-img-wrap">
-                <img src={thumb} alt="" loading="lazy" />
-              </div>
-              <div class="apt-caption">
-                <span class="eyebrow" data-de>Wohnung</span>
-                <span class="eyebrow" data-en>Apartment</span>
-                <span class="apt-title" data-de>{data.title_de}</span>
-                <span class="apt-title" data-en>{data.title_en}</span>
-                {data.description_de && (
-                  <p class="apt-desc" data-de>{data.description_de}</p>
-                )}
-                {data.description_en && (
-                  <p class="apt-desc" data-en>{data.description_en}</p>
-                )}
-                <span class="apt-link" data-de>Zimmer ansehen →</span>
-                <span class="apt-link" data-en>View rooms →</span>
-              </div>
-            </a>
-          );
-        })}
+        {apartments.map(({ data, slug }) => (
+          <a class="apt-card" href={`${base}wohngemeinschaften/${slug}/`}>
+            <div class="apt-floorplan">
+              {data.floorplan
+                ? <img src={`${base}${data.floorplan}`} alt="" loading="lazy" />
+                : <div class="floorplan-placeholder">
+                    <svg viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <rect x="10" y="10" width="140" height="100" stroke="#B8952A" stroke-opacity="0.35" stroke-width="1.5"/>
+                      <rect x="10" y="10" width="80" height="60" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
+                      <rect x="90" y="10" width="60" height="40" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
+                      <rect x="90" y="50" width="60" height="60" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
+                      <rect x="10" y="70" width="50" height="40" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
+                      <rect x="60" y="70" width="30" height="40" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
+                      <line x1="35" y1="70" x2="35" y2="110" stroke="#B8952A" stroke-opacity="0.15" stroke-width="1" stroke-dasharray="3 3"/>
+                    </svg>
+                    <span class="placeholder-label" data-de>Grundriss folgt</span>
+                    <span class="placeholder-label" data-en>Floorplan coming soon</span>
+                  </div>
+              }
+            </div>
+            <div class="apt-caption">
+              <span class="eyebrow" data-de>Wohngemeinschaft</span>
+              <span class="eyebrow" data-en>Shared Apartment</span>
+              <span class="apt-title" data-de>{data.title_de}</span>
+              <span class="apt-title" data-en>{data.title_en}</span>
+              {data.description_de && <p class="apt-desc" data-de>{data.description_de}</p>}
+              {data.description_en && <p class="apt-desc" data-en>{data.description_en}</p>}
+              <span class="apt-cta" data-de>Zimmer & Details →</span>
+              <span class="apt-cta" data-en>Rooms & Details →</span>
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   </section>
+
 </Layout>
 
 <style>
-/* Page header */
-.page-header-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 1rem;
-}
-
 /* Intro */
 .intro-section { padding-top: 0; }
 .intro-cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2.5rem 4rem;
+  gap: 1.5rem 3rem;
   align-items: start;
 }
-.intro-cols p { color: var(--muted); }
-.includes { grid-column: 1 / -1; padding-top: var(--sp-md); border-top: 1px solid var(--border); }
-.includes h3 { margin-bottom: 1rem; }
+.intro-cols > p { color: var(--muted); font-size: 0.95rem; }
+.includes {
+  grid-column: 1 / -1;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
 .includes ul {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 0.5rem 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.35rem 2rem;
 }
 .includes li {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--muted);
-  padding-left: 1rem;
+  padding-left: 0.9rem;
   position: relative;
 }
 .includes li::before {
   content: '◆';
   position: absolute;
   left: 0;
-  font-size: 0.4rem;
+  font-size: 0.35rem;
   color: var(--gold);
-  top: 0.45em;
+  top: 0.5em;
 }
 
 /* Apartment grid */
+.apt-section { padding-top: 1rem; }
 .apt-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 4rem 3rem;
+  gap: 3rem 2.5rem;
 }
 .apt-card {
   text-decoration: none;
   color: var(--ink);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
-.apt-img-wrap {
+
+/* Floorplan area */
+.apt-floorplan {
   overflow: hidden;
+  border: 1px solid var(--border);
   aspect-ratio: 4 / 3;
+  background: var(--bg);
 }
-.apt-img-wrap img {
+.apt-floorplan img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s ease;
+  object-fit: contain;
+  padding: 1rem;
+  transition: transform 0.5s ease;
 }
-.apt-card:hover .apt-img-wrap img { transform: scale(1.03); }
-.apt-caption { display: flex; flex-direction: column; gap: 0.4rem; }
+.apt-card:hover .apt-floorplan img { transform: scale(1.02); }
+
+.floorplan-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+}
+.floorplan-placeholder svg { width: 100%; max-width: 180px; opacity: 0.7; }
+.placeholder-label {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.apt-caption { display: flex; flex-direction: column; gap: 0.35rem; }
 .apt-title {
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 300;
   letter-spacing: 0.04em;
 }
-.apt-desc { font-size: 0.9rem; color: var(--muted); max-width: 48ch; }
-.apt-link {
-  font-size: 0.75rem;
+.apt-desc { font-size: 0.88rem; color: var(--muted); max-width: 46ch; }
+.apt-cta {
+  font-size: 0.7rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--gold);
-  margin-top: 0.25rem;
+  margin-top: 0.15rem;
 }
-.apt-card:hover .apt-link { text-decoration: underline; }
+.apt-card:hover .apt-cta { text-decoration: underline; }
 
-@media (max-width: 900px) {
+@media (max-width: 860px) {
   .intro-cols { grid-template-columns: 1fr; }
   .apt-grid { grid-template-columns: 1fr; }
 }
