@@ -448,7 +448,7 @@ const grundrissMap = Object.fromEntries(
     if (wheelLocked) return;
     wheelLocked = true;
     setZoom(zoom + (e.deltaY < 0 ? 0.1 : -0.1));
-    setTimeout(() => { wheelLocked = false; }, 100);
+    setTimeout(() => { wheelLocked = false; }, 80);
   }, { passive: false });
 
   document.addEventListener('keydown', (e) => {
