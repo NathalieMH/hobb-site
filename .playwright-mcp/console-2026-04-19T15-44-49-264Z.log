@@ -1,4 +1,0 @@
-[     827ms] [WARNING] 11:44:50:090 (ScrollMagic.Scene) -> (animation.gsap) -> WARNING: tween was overwritten by another. To learn how to avoid this issue see here: https://github.com/janpaepke/ScrollMagic/wiki/WARNING:-tween-was-overwritten-by-another @ https://the-benson.com/private/js/fullsite.js?version=e0baa0406ff8028bb8338f4705fc45de:0
-[     829ms] [WARNING] 11:44:50:092 (ScrollMagic.Scene) -> (animation.gsap) -> WARNING: tween was overwritten by another. To learn how to avoid this issue see here: https://github.com/janpaepke/ScrollMagic/wiki/WARNING:-tween-was-overwritten-by-another @ https://the-benson.com/private/js/fullsite.js?version=e0baa0406ff8028bb8338f4705fc45de:0
-[    1804ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://cdn.acsbapp.com/config/the-benson.com/config.json:0
-[    2077ms] [LOG] acsb: This website is not registered or its license is expired. @ https://acsbapp.com/apps/app/assets/js/acsb.js:21
