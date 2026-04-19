@@ -322,22 +322,24 @@ const hasAptImages = carouselImages.length > 0;
 
   <!-- Image zoom overlay -->
   <div id="img-zoom-overlay" class="img-zoom-overlay hidden" aria-hidden="true">
-    <div class="img-zoom-bar">
-      <button class="img-zoom-ctrl" id="img-zoom-out">−</button>
-      <span class="img-zoom-pct" id="img-zoom-pct">100%</span>
-      <button class="img-zoom-ctrl" id="img-zoom-in">+</button>
-      <span class="img-zoom-sep"></span>
-      <span class="img-zoom-nav-counter" id="img-zoom-nav-counter"></span>
-      <button class="img-zoom-close" id="img-zoom-close" aria-label="Schließen">×</button>
-    </div>
-    <div class="img-zoom-body">
-      <button class="iz-nav iz-prev" id="iz-prev" aria-label="Vorheriges Bild">‹</button>
-      <div id="img-zoom-stage" class="img-zoom-stage">
-        <div id="img-zoom-wrap" class="img-zoom-wrap">
-          <img id="img-zoom-img" src="" alt="" />
-        </div>
+    <div class="img-zoom-modal">
+      <div class="img-zoom-bar">
+        <button class="img-zoom-ctrl" id="img-zoom-out">−</button>
+        <span class="img-zoom-pct" id="img-zoom-pct">100%</span>
+        <button class="img-zoom-ctrl" id="img-zoom-in">+</button>
+        <span class="img-zoom-sep"></span>
+        <span class="img-zoom-nav-counter" id="img-zoom-nav-counter"></span>
+        <button class="img-zoom-close" id="img-zoom-close" aria-label="Schließen">×</button>
       </div>
-      <button class="iz-nav iz-next" id="iz-next" aria-label="Nächstes Bild">›</button>
+      <div class="img-zoom-body">
+        <button class="iz-nav iz-prev" id="iz-prev" aria-label="Vorheriges Bild">‹</button>
+        <div id="img-zoom-stage" class="img-zoom-stage">
+          <div id="img-zoom-wrap" class="img-zoom-wrap">
+            <img id="img-zoom-img" src="" alt="" />
+          </div>
+        </div>
+        <button class="iz-nav iz-next" id="iz-next" aria-label="Nächstes Bild">›</button>
+      </div>
     </div>
   </div>
 
@@ -630,24 +632,35 @@ const hasAptImages = carouselImages.length > 0;
 .img-zoom-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(18,16,14,0.94);
+  background: rgba(0,0,0,0.55);
   z-index: 400;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
 }
 .img-zoom-overlay.hidden { display: none; }
+.img-zoom-modal {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  max-width: 92vw;
+  max-height: 92vh;
+  overflow: hidden;
+}
 .img-zoom-bar {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
 .img-zoom-ctrl {
   background: none;
-  border: 1px solid rgba(255,255,255,0.25);
-  color: rgba(245,242,236,0.8);
+  border: 1px solid var(--border);
+  color: var(--muted);
   width: 28px;
   height: 28px;
   font-size: 1rem;
@@ -659,12 +672,12 @@ const hasAptImages = carouselImages.length > 0;
   transition: border-color var(--ease), color var(--ease);
   flex-shrink: 0;
 }
-.img-zoom-ctrl:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
+.img-zoom-ctrl:hover { border-color: var(--gold); color: var(--ink); }
 .img-zoom-pct {
   font-family: var(--font-sans);
   font-size: 0.68rem;
   letter-spacing: 0.12em;
-  color: rgba(245,242,236,0.5);
+  color: var(--muted);
   min-width: 3rem;
   height: 28px;
   display: flex;
@@ -676,25 +689,25 @@ const hasAptImages = carouselImages.length > 0;
   font-family: var(--font-sans);
   font-size: 0.65rem;
   letter-spacing: 0.1em;
-  color: rgba(245,242,236,0.4);
+  color: var(--muted);
   min-width: 3rem;
   text-align: center;
 }
 .img-zoom-body {
   flex: 1;
+  min-height: 0;
   display: flex;
   align-items: stretch;
   overflow: hidden;
 }
-.img-zoom-body #img-zoom-stage { flex: 1; }
+.img-zoom-body #img-zoom-stage { flex: 1; min-width: 0; }
 .iz-nav {
   background: none;
   border: none;
-  border-left: 1px solid rgba(255,255,255,0.08);
-  border-right: 1px solid rgba(255,255,255,0.08);
-  color: rgba(245,242,236,0.4);
-  width: 48px;
-  font-size: 1.6rem;
+  border-right: 1px solid var(--border);
+  color: var(--muted);
+  width: 42px;
+  font-size: 1.5rem;
   line-height: 1;
   display: flex;
   align-items: center;
@@ -703,27 +716,28 @@ const hasAptImages = carouselImages.length > 0;
   flex-shrink: 0;
   transition: color var(--ease), background var(--ease);
 }
-.iz-nav:hover { color: rgba(245,242,236,0.9); background: rgba(255,255,255,0.05); }
+.iz-nav.iz-next { border-right: none; border-left: 1px solid var(--border); }
+.iz-nav:hover { color: var(--ink); background: rgba(0,0,0,0.03); }
 .iz-nav.hidden { visibility: hidden; pointer-events: none; }
 .img-zoom-close {
   margin-left: 0;
   background: none;
   border: none;
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   line-height: 1;
-  color: rgba(245,242,236,0.6);
+  color: var(--muted);
   cursor: pointer;
   transition: color var(--ease);
 }
-.img-zoom-close:hover { color: #fff; }
+.img-zoom-close:hover { color: var(--ink); }
 .img-zoom-stage {
-  flex: 1;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: grab;
   user-select: none;
+  background: var(--bg);
 }
 .img-zoom-stage.dragging { cursor: grabbing; }
 .img-zoom-wrap {
@@ -732,7 +746,7 @@ const hasAptImages = carouselImages.length > 0;
   will-change: transform;
 }
 .img-zoom-wrap.no-transition { transition: none; }
-.img-zoom-wrap img { display: block; max-width: 90vw; max-height: 85vh; pointer-events: none; }
+.img-zoom-wrap img { display: block; max-width: 80vw; max-height: calc(92vh - 50px); pointer-events: none; }
 .thumbs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
 .thumb {
   width: 80px; height: 60px;
