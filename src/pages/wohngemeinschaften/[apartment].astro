@@ -19,6 +19,28 @@ async function loadImages(folder: string) {
   }
 }
 
+// Filename prefix → bilingual shared space names
+const PREFIX_MAP: Record<string, { de: string; en: string }> = {
+  'kitchen':        { de: 'Küche',           en: 'Kitchen' },
+  'dining-room':    { de: 'Wohn-Esszimmer',  en: 'Living-Dining Room' },
+  'bathroom-1':     { de: 'Bad 1',           en: 'Bathroom 1' },
+  'bathroom-2':     { de: 'Bad 2',           en: 'Bathroom 2' },
+  'bathroom-3':     { de: 'Bad 3',           en: 'Bathroom 3' },
+  'balcony':        { de: 'Balkon',          en: 'Balcony' },
+  'terrace':        { de: 'Terrasse',        en: 'Terrace' },
+  'laundry':        { de: 'Waschküche',      en: 'Laundry Room' },
+  'roof-terrace':   { de: 'Dachterrasse',    en: 'Roof Terrace' },
+  'garden-terrace': { de: 'Gartenterrasse',  en: 'Garden Terrace' },
+};
+
+function getPrefix(filename: string): string {
+  const base = filename.replace(/\.[^.]+$/, '');
+  for (const prefix of Object.keys(PREFIX_MAP)) {
+    if (base === prefix || base.startsWith(prefix + '-')) return prefix;
+  }
+  return base;
+}
+
 export async function getStaticPaths() {
   const apartments = await getCollection("apartments");
   return apartments.map(({ slug }) => ({ params: { apartment: slug } }));
@@ -29,7 +51,7 @@ const apartments = await getCollection("apartments");
 const apt = apartments.find((a) => a.slug === apartment);
 
 // Available rooms first, taken rooms last
-const rooms = (await getCollection("rooms", (r) => r.data.apartment === apartment))
+const rooms = (await getCollection("rooms", (r) => r.data.apartment.toLowerCase() === apartment.toLowerCase()))
   .sort((a, b) => {
     if (a.data.available === b.data.available) return 0;
     return a.data.available ? -1 : 1;
@@ -38,23 +60,59 @@ const rooms = (await getCollection("rooms", (r) => r.data.apartment === apartmen
 const renderedRooms = await Promise.all(
   rooms.map(async (r) => {
     const { Content } = await r.render();
-    const imgs = await loadImages(`rooms/${r.slug}`);
+    const allImgs = await loadImages(`zimmer/${r.slug}`);
+    const coverUrl = allImgs.find(url => /\/cover\.[^/]+$/i.test(url)) ?? null;
+    const galleryImgs = allImgs.filter(url => !/\/cover\.[^/]+$/i.test(url));
+    const imgs = coverUrl ? [coverUrl, ...galleryImgs] : galleryImgs;
     return { entry: r, Content, imgs };
   })
 );
 const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [entry.slug, imgs]));
 
-// Apartment images: put them in public/apartments/[slug]/
-const aptImages = await loadImages(`apartments/${apartment}`);
+// Apartment images from wohngemeinschaften/[image_folder]/
+const aptFolder = apt?.data.image_folder ? `wohngemeinschaften/${apt.data.image_folder}` : '';
+const allAptFiles = aptFolder ? await loadImages(aptFolder) : [];
 
-// Map DE shared space name → full image URL
-const spaceImgMap = apt?.data.shared_space_images ?? {};
-function spaceImageUrl(nameDE: string): string {
-  const file = spaceImgMap[nameDE];
-  return file ? `${base}apartments/${apartment}/${file}` : '';
+// Separate grundriss and cover from carousel candidates
+const grundrissUrl = allAptFiles.find(url => /\/grundriss\.[^/]+$/i.test(url)) ?? '';
+const aptCoverUrl = allAptFiles.find(url => /\/cover\.[^/]+$/i.test(url)) ?? null;
+const rawImages = allAptFiles.filter(url =>
+  !/\/grundriss\.[^/]+$/i.test(url) && !/\/cover\.[^/]+$/i.test(url)
+);
+
+// Sort by shared_spaces_de order, then naturally within each group
+const spaceOrder = (apt?.data.shared_spaces_de ?? [])
+  .map(nameDE => Object.entries(PREFIX_MAP).find(([, v]) => v.de === nameDE)?.[0])
+  .filter((p): p is string => !!p);
+
+const orderedImages = [
+  ...spaceOrder.flatMap(prefix =>
+    rawImages.filter(url => getPrefix(url.split('/').pop() ?? '') === prefix)
+  ),
+  ...rawImages.filter(url => !spaceOrder.includes(getPrefix(url.split('/').pop() ?? ''))),
+];
+
+// cover.* goes first if present; otherwise dining-room-1 is first via spaceOrder
+// grundriss always goes last
+const carouselImages = [
+  ...(aptCoverUrl ? [aptCoverUrl, ...orderedImages] : orderedImages),
+  ...(grundrissUrl ? [grundrissUrl] : []),
+];
+
+// Build DE space name → carousel start index
+const spaceStartIndices: Record<string, number> = {};
+for (const nameDE of (apt?.data.shared_spaces_de ?? [])) {
+  const prefix = Object.entries(PREFIX_MAP).find(([, v]) => v.de === nameDE)?.[0];
+  if (prefix) {
+    const firstIdx = carouselImages.findIndex(url => {
+      const fname = url.split('/').pop() ?? '';
+      return getPrefix(fname) === prefix;
+    });
+    if (firstIdx !== -1) spaceStartIndices[nameDE] = firstIdx;
+  }
 }
 
-const hasAptImages = aptImages.length > 0;
+const hasAptImages = carouselImages.length > 0;
 ---
 
 <Layout title={`Villa Theo — ${apt?.data.title_de ?? "Wohngemeinschaft"}`}>
@@ -90,11 +148,10 @@ const hasAptImages = aptImages.length > 0;
             <ul class="space-tags">
               {apt?.data.shared_spaces_de.map((nameDE, i) => {
                 const nameEN = apt.data.shared_spaces_en[i] ?? nameDE;
-                const imgUrl = spaceImageUrl(nameDE);
                 return (
                   <li>
-                    <button class="space-tag" data-img={imgUrl} data-de>{nameDE}</button>
-                    <button class="space-tag" data-img={imgUrl} data-en>{nameEN}</button>
+                    <button class="space-tag" data-space-de={nameDE} data-de>{nameDE}</button>
+                    <button class="space-tag" data-space-de={nameDE} data-en>{nameEN}</button>
                   </li>
                 );
               })}
@@ -110,10 +167,10 @@ const hasAptImages = aptImages.length > 0;
              shared_space_images:
                "Bad 1": 02-bad1.jpg
       -->
-      <div class="apt-carousel" id="apt-carousel" data-images={JSON.stringify(aptImages)}>
+      <div class="apt-carousel" id="apt-carousel" data-images={JSON.stringify(carouselImages)} data-space-indices={JSON.stringify(spaceStartIndices)}>
         <div class="car-stage" id="car-stage">
           {hasAptImages
-            ? <img class="car-img" id="car-img" src={aptImages[0]} alt="" data-index="0" loading="lazy" />
+            ? <img class="car-img" id="car-img" src={carouselImages[0]} alt="" data-index="0" loading="lazy" />
             : <div class="car-placeholder">
                 <svg viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <rect x="10" y="10" width="140" height="100" stroke="#B8952A" stroke-opacity="0.35" stroke-width="1.5"/>
@@ -131,8 +188,18 @@ const hasAptImages = aptImages.length > 0;
         {hasAptImages && (
           <div class="car-controls">
             <button class="car-nav car-prev" id="car-prev" aria-label="Vorheriges Bild">‹</button>
-            <span class="car-counter" id="car-counter">1 / {aptImages.length}</span>
+            <span class="car-counter" id="car-counter">1 / {carouselImages.length}</span>
             <button class="car-nav car-next" id="car-next" aria-label="Nächstes Bild">›</button>
+            {grundrissUrl && (
+              <button class="car-floorplan-btn" id="car-floorplan-btn" aria-label="Grundriss anzeigen">
+                <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="1.5" y="1.5" width="15" height="15" stroke="currentColor" stroke-width="1.2"/>
+                  <rect x="1.5" y="1.5" width="9" height="8" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                  <rect x="10.5" y="1.5" width="6" height="5" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                  <rect x="1.5" y="9.5" width="6" height="7" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                </svg>
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -141,7 +208,7 @@ const hasAptImages = aptImages.length > 0;
   </section>
 
   <!-- Rooms grid -->
-  <section class="section rooms-section">
+  <section class="section rooms-section" style="padding-top: clamp(1rem, 2vw, 1.75rem)">
     <div class="container">
       <DecoRule />
       <div class="rooms-header">
@@ -314,9 +381,7 @@ const hasAptImages = aptImages.length > 0;
 .apt-carousel { display: flex; flex-direction: column; gap: 0.75rem; }
 .car-stage {
   width: 100%;
-  aspect-ratio: 4 / 3;
   background: var(--border);
-  overflow: hidden;
   border: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -325,13 +390,12 @@ const hasAptImages = aptImages.length > 0;
 .car-img {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
   transition: opacity 0.25s ease;
 }
 .car-placeholder {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 4 / 3;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -354,6 +418,21 @@ const hasAptImages = aptImages.length > 0;
   gap: 0.75rem;
   justify-content: center;
 }
+.car-floorplan-btn {
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--border);
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--ease), border-color var(--ease);
+  flex-shrink: 0;
+}
+.car-floorplan-btn svg { width: 16px; height: 16px; }
+.car-floorplan-btn:hover { color: var(--ink); border-color: var(--ink); }
 .car-nav {
   background: none;
   border: 1px solid var(--border);
@@ -540,31 +619,20 @@ const hasAptImages = aptImages.length > 0;
 
     document.getElementById('car-prev')?.addEventListener('click', () => goTo(currentIdx - 1));
     document.getElementById('car-next')?.addEventListener('click', () => goTo(currentIdx + 1));
+    document.getElementById('car-floorplan-btn')?.addEventListener('click', () => goTo(imgs.length - 1));
 
     // Space tag → carousel
+    const spaceIndices: Record<string, number> = JSON.parse(
+      carousel.getAttribute('data-space-indices') || '{}'
+    );
     document.querySelectorAll<HTMLButtonElement>('.space-tag').forEach(btn => {
       btn.addEventListener('click', () => {
-        const imgUrl = btn.getAttribute('data-img');
-        if (!imgUrl) return;
-        const idx = imgs.indexOf(imgUrl);
-        // Mark active on sibling (the same space, other language)
+        const nameDE = btn.getAttribute('data-space-de');
         const li = btn.closest('li');
         document.querySelectorAll('.space-tag').forEach(t => t.classList.remove('active'));
         li?.querySelectorAll('.space-tag').forEach(t => t.classList.add('active'));
-        if (idx !== -1) {
-          goTo(idx);
-        } else if (imgUrl) {
-          // Image exists but not in the scanned list (e.g., floorplan) — show it directly
-          let img = stage.querySelector('.car-img') as HTMLImageElement | null;
-          if (!img) {
-            img = document.createElement('img');
-            img.className = 'car-img';
-            img.setAttribute('alt', '');
-            stage.innerHTML = '';
-            stage.appendChild(img);
-          }
-          img.src = imgUrl;
-          img.setAttribute('data-index', '-1');
+        if (nameDE !== null && spaceIndices[nameDE] !== undefined) {
+          goTo(spaceIndices[nameDE]);
         }
       });
     });

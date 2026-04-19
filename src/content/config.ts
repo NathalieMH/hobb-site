@@ -11,8 +11,7 @@ const apartments = defineCollection({
     shared_spaces_en: z.array(z.string()).default([]),
     order: z.number().default(0),
     thumbnail: z.string().optional(),
-    floorplan: z.string().optional(),
-    shared_space_images: z.record(z.string()).optional(),
+    image_folder: z.string().optional(),
   }),
 });
 
@@ -23,9 +22,7 @@ const rooms = defineCollection({
     title_en: z.string(),
     teaser_de: z.string().optional(),
     teaser_en: z.string().optional(),
-    apartment: z
-      .string()
-      .regex(/^apartment-\d+$/, 'Use the apartment slug, e.g. "apartment-3"'),
+    apartment: z.string(),
     size_m2: z.number().optional(),
     cold_rent_eur: z.number().optional(),
     available_from: z.string().optional(),

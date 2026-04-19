@@ -2,10 +2,30 @@
 import Layout from "../../layouts/Layout.astro";
 import DecoRule from "../../components/DecoRule.astro";
 import { getCollection } from "astro:content";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 const base = import.meta.env.BASE_URL;
 const apartments = (await getCollection("apartments"))
   .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
+
+async function findGrundriss(imageFolder: string | undefined): Promise<string> {
+  if (!imageFolder) return '';
+  const dir = path.resolve(process.cwd(), "public", "wohngemeinschaften", imageFolder);
+  try {
+    const files = await fs.readdir(dir);
+    const found = files.find(f => /^grundriss\./i.test(f));
+    return found ? `wohngemeinschaften/${imageFolder}/${found}` : '';
+  } catch {
+    return '';
+  }
+}
+
+const grundrissMap = Object.fromEntries(
+  await Promise.all(
+    apartments.map(async (a) => [a.slug, await findGrundriss(a.data.image_folder)])
+  )
+);
 ---
 
 <Layout title="Villa Theo — Die Wohngemeinschaften">
@@ -24,23 +44,31 @@ const apartments = (await getCollection("apartments"))
   <section class="section intro-section">
     <div class="container intro-cols">
       <p data-de>
-        Ab Dezember 2025 werden die ersten zwei Wohnungen mit insgesamt neun Zimmern im ersten und zweiten Obergeschoss bezugsfertig sein. Ab Frühjahr bzw. Sommer 2026 kommen nochmals sieben bzw. sechs Zimmer über zwei Etagen in Altbau und Anbau dazu.
+        Die Vermietung der ersten beiden Wohnungen mit insgesamt neun Zimmern im ersten und zweiten Obergeschoss ist im April 2026 gestartet. Mittelfristig wächst das Angebot auf insgesamt fünf WGs für Studierende sowie zwei privat bewohnte Wohnungen in Stadtvilla und Anbau. Für ein gut organisiertes Zusammenleben steht eine WG-App zur Koordination gemeinsamer Aufgaben wie Reinigung oder Einkauf zur Verfügung. Der Vermieter ist jederzeit persönlich ansprechbar bei organisatorischen Fragen.
       </p>
       <p data-en>
-        From December 2025, the first two apartments with nine rooms on the first and second floors will be ready. A further seven and six rooms across two floors in the main building and annex follow in spring and summer 2026.
+        Rental of the first two apartments with a total of nine rooms on the first and second floors started in April 2026. In the medium term, the property will offer five student shared apartments as well as two privately occupied apartments in the villa and annex. A WG app is available to coordinate shared tasks such as cleaning and shopping. The landlord is available at all times for organizational questions.
       </p>
       <div class="includes">
         <span class="eyebrow" data-de>In der Miete inbegriffen</span>
         <span class="eyebrow" data-en>Included in the rent</span>
         <ul>
-          <li><span data-de>Möblierung: Bett, Schrank, Schreibtisch, Stuhl sowie viel Raum für euren eigenen Stil</span><span data-en>Furnishings: bed, wardrobe, desk, chair — plus plenty of room for your own style</span></li>
-          <li><span data-de>Wasser, Heizung, Strom</span><span data-en>Water, heating, electricity</span></li>
+          <li><span data-de>Möblierung: Bett, Schrank, Schreibtisch, Stuhl, Vorhänge, Lampen sowie viel Raum für euren eigenen Stil</span><span data-en>Furnishings: bed, wardrobe, desk, chair, curtains, lamps — plus plenty of room for your own style</span></li>
+          <li><span data-de>Wasser, Heizung, Strom</span><span data-en>Water, heating, electricity</span></li>        
+          <li><span data-de>Wäscheraum im Haus mit Waschmaschine, Trockner, Bügelbrett und -eisen</span><span data-en>In-house laundry room with washing machine, dryer, ironing board and iron</span></li>
+          <li><span data-de>Digitales Schloss / Chipschlüssel für jedes Zimmer</span><span data-en>Digital lock / chip key for each room</span></li>
           <li><span data-de>Internetzugang</span><span data-en>Internet access</span></li>
-          <li><span data-de>Waschmaschinen- und Trockenraum</span><span data-en>Washing machine & drying room</span></li>
-          <li><span data-de>Gartennutzung bzw. Terrasse und Boule-Bahn</span><span data-en>Use of the garden, terrace and pétanque court</span></li>
           <li><span data-de>Regelmäßige Grundreinigung der Gemeinschaftsräume (tägliches Putzen ist WG-Aufgabe, Putz-App optional)</span><span data-en>Regular deep-cleaning of shared areas (day-to-day tidying is a flatmate task, cleaning app optional)</span></li>
         </ul>
       </div>
+    </div>
+  </section>
+
+  <!-- Requirements callout -->
+  <section class="requirements-section">
+    <div class="container">
+      <p class="requirements-note" data-de>Eine gültige Immatrikulationsbescheinigung ist Voraussetzung für die Anmietung eines Zimmers. Die Kaution beträgt [#] Monatskomplettmieten und wird nach Auszug unkompliziert und zeitnah zurückerstattet.</p>
+      <p class="requirements-note" data-en>A valid enrolment certificate is required to rent a room. The deposit is [#] months' total rent and will be returned promptly and without complications after moving out.</p>
     </div>
   </section>
 
@@ -49,15 +77,17 @@ const apartments = (await getCollection("apartments"))
   <section class="section apt-section">
     <div class="container">
       <div class="apt-grid">
-        {apartments.map(({ data, slug }) => (
+        {apartments.map(({ data, slug }) => {
+          const grundriss = grundrissMap[slug];
+          return (
           <a class="apt-card" href={`${base}wohngemeinschaften/${slug}/`}>
             <div class="apt-floorplan">
-              {data.floorplan
+              {grundriss
                 ? <>
-                    <img src={`${base}${data.floorplan}`} alt="" loading="lazy" />
+                    <img src={`${base}${grundriss}`} alt="" loading="lazy" />
                     <button
                       class="fp-zoom-btn"
-                      data-src={`${base}${data.floorplan}`}
+                      data-src={`${base}${grundriss}`}
                       data-title-de={data.title_de}
                       data-title-en={data.title_en}
                       aria-label="Grundriss vergrößern"
@@ -96,7 +126,8 @@ const apartments = (await getCollection("apartments"))
               <span class="apt-cta" data-en>Rooms & Details →</span>
             </div>
           </a>
-        ))}
+          );
+        })}
       </div>
     </div>
   </section>
@@ -125,7 +156,7 @@ const apartments = (await getCollection("apartments"))
 
 <style>
 /* Intro */
-.intro-section { padding-top: 0; }
+.intro-section { padding-top: 0; padding-bottom: clamp(1rem, 2vw, 1.75rem); }
 .intro-cols {
   display: flex;
   flex-direction: column;
@@ -149,7 +180,7 @@ const apartments = (await getCollection("apartments"))
 .includes ul {
   list-style: none;
   display: grid;
-  grid-template-columns: 5fr 4fr 6fr;
+  grid-template-columns: 2fr 1fr 2fr;
   gap: 0.35rem 2rem;
 }
 .includes li {
@@ -170,6 +201,16 @@ const apartments = (await getCollection("apartments"))
 }
 
 /* Apartment grid */
+.requirements-section { padding-block: 0 1.5rem; }
+.requirements-note {
+  font-size: 0.85rem;
+  color: var(--muted);
+  max-width: none;
+  padding: 0.9rem 1.25rem;
+  border-left: 2px solid var(--gold);
+  background: rgba(184, 149, 42, 0.04);
+}
+
 .apt-section { padding-top: 1rem; }
 .apt-grid {
   display: grid;
@@ -241,6 +282,7 @@ const apartments = (await getCollection("apartments"))
 
 /* Floorplan zoom button */
 .apt-floorplan { position: relative; }
+.apt-floorplan img { cursor: pointer; }
 .fp-zoom-btn {
   position: absolute;
   bottom: 0.6rem;
@@ -366,14 +408,19 @@ const apartments = (await getCollection("apartments"))
   }
 
   document.addEventListener('click', (e) => {
-    const btn = (e.target as Element).closest('.fp-zoom-btn') as HTMLElement | null;
+    const target = e.target as Element;
+    const btn = target.closest('.fp-zoom-btn, .apt-floorplan img') as HTMLElement | null;
     if (btn) {
       e.preventDefault();
       e.stopPropagation();
-      const src   = btn.getAttribute('data-src') || '';
+      const source = btn.classList.contains('fp-zoom-btn')
+        ? btn
+        : btn.closest('.apt-floorplan')?.querySelector('.fp-zoom-btn') as HTMLElement | null;
+      if (!source) return;
+      const src   = source.getAttribute('data-src') || '';
       const title = lang() === 'en'
-        ? (btn.getAttribute('data-title-en') || '')
-        : (btn.getAttribute('data-title-de') || '');
+        ? (source.getAttribute('data-title-en') || '')
+        : (source.getAttribute('data-title-de') || '');
       titleEl.textContent = title;
       zoomImg.src = src;
       zoom = 1;
