@@ -456,12 +456,20 @@ function formatDate(s?: string) {
       const nameDE = btn.getAttribute('data-apt-de') || '';
       const nameEN = btn.getAttribute('data-apt-en') || '';
       aptName.textContent = lang() === 'en' ? nameEN : nameDE;
-      zoomImg.src = src;
       zoom = 1; panX = 0; panY = 0;
-      applyTransform(); pctEl.textContent = '100%';
-      overlay.classList.remove('hidden');
-      overlay.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
+      pctEl.textContent = '100%';
+      // Preload first so image is ready when modal opens
+      const preload = new Image();
+      const showModal = () => {
+        zoomImg.src = src;
+        applyTransform();
+        overlay.classList.remove('hidden');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      };
+      preload.onload = showModal;
+      preload.onerror = showModal;
+      preload.src = src;
       return;
     }
     if ((e.target as Element).closest('#fp-close') || e.target === overlay) closeModal();
