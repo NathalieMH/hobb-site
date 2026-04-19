@@ -58,7 +58,7 @@ const grundrissMap = Object.fromEntries(
           <li><span data-de>Wäscheraum im Haus mit Waschmaschine, Trockner, Bügelbrett und -eisen</span><span data-en>In-house laundry room with washing machine, dryer, ironing board and iron</span></li>
           <li><span data-de>Digitales Schloss / Chipschlüssel für jedes Zimmer</span><span data-en>Digital lock / chip key for each room</span></li>
           <li><span data-de>Internetzugang</span><span data-en>Internet access</span></li>
-          <li><span data-de>Regelmäßige Grundreinigung der Gemeinschaftsräume (tägliches Putzen ist WG-Aufgabe, Putz-App optional)</span><span data-en>Regular deep-cleaning of shared areas (day-to-day tidying is a flatmate task, cleaning app optional)</span></li>
+          <li><span data-de>Regelmäßige Grundreinigung der Gemeinschaftsräume (tägliches Putzen ist WG-Aufgabe, Putz-App verfügbar)</span><span data-en>Regular cleaning of shared areas (daily cleaning is a shared responsibility, cleaning app available)</span></li>
         </ul>
       </div>
     </div>
@@ -353,12 +353,22 @@ const grundrissMap = Object.fromEntries(
   line-height: 1;
   color: var(--muted);
   cursor: pointer;
-  display: grid;
-  place-items: center;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: color var(--ease), border-color var(--ease);
 }
 .fp-zoom-ctrl:hover { color: var(--ink); border-color: var(--ink); }
-.fp-zoom-pct { font-size: 0.72rem; color: var(--muted); min-width: 3rem; text-align: center; }
+.fp-zoom-pct {
+  font-size: 0.72rem;
+  color: var(--muted);
+  min-width: 3rem;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .fp-zoom-close {
   background: none;
   border: none;
