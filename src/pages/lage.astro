@@ -25,6 +25,17 @@ import DecoRule from "../components/DecoRule.astro";
         </p>
 
         <div class="transit-section">
+          <h3 data-de>Adresse</h3>
+          <h3 data-en>Address</h3>
+          <p class="address-block">
+            Haderslebener Straße 26<br />
+            12163 Berlin<br />
+            <span data-de>Steglitz-Zehlendorf</span>
+            <span data-en>Steglitz-Zehlendorf</span>
+          </p>
+        </div>
+
+        <div class="transit-section">
           <h3 data-de>In der Nähe</h3>
           <h3 data-en>In the Area</h3>
           <ul class="transit-list">
@@ -132,6 +143,14 @@ import DecoRule from "../components/DecoRule.astro";
   text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 0.75rem;
+}
+.address-block {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--ink);
+  letter-spacing: 0.03em;
 }
 .transit-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
 .transit-list li { display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; }
