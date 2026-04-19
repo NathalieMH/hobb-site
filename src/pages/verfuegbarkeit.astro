@@ -2,15 +2,16 @@
 import Layout from "../layouts/Layout.astro";
 import DecoRule from "../components/DecoRule.astro";
 import { getCollection } from "astro:content";
-import fs from "node:fs/promises";
-import path from "node:path";
+import { promises as fs } from "fs";
+import path from "path";
 
 const base = import.meta.env.BASE_URL;
 
 const allRooms = await getCollection("rooms");
 const allApts  = await getCollection("apartments");
 
-const aptMap = Object.fromEntries(allApts.map(a => [a.slug, a.data]));
+// Keyed by lowercase slug since Astro lowercases file-based slugs
+const aptMap = Object.fromEntries(allApts.map(a => [a.slug.toLowerCase(), a.data]));
 
 async function findGrundriss(imageFolder: string | undefined): Promise<string> {
   if (!imageFolder) return '';
@@ -23,16 +24,16 @@ async function findGrundriss(imageFolder: string | undefined): Promise<string> {
 }
 
 const grundrissMap = Object.fromEntries(
-  await Promise.all(allApts.map(async a => [a.slug, await findGrundriss(a.data.image_folder)]))
+  await Promise.all(allApts.map(async (a) => [a.slug.toLowerCase(), await findGrundriss(a.data.image_folder)]))
 );
 
 const available = allRooms
   .filter(r => r.data.available)
-  .sort((a, b) => (aptMap[a.data.apartment]?.order ?? 0) - (aptMap[b.data.apartment]?.order ?? 0));
+  .sort((a, b) => (aptMap[a.data.apartment.toLowerCase()]?.order ?? 0) - (aptMap[b.data.apartment.toLowerCase()]?.order ?? 0));
 
 const taken = allRooms
   .filter(r => !r.data.available)
-  .sort((a, b) => (aptMap[a.data.apartment]?.order ?? 0) - (aptMap[b.data.apartment]?.order ?? 0));
+  .sort((a, b) => (aptMap[a.data.apartment.toLowerCase()]?.order ?? 0) - (aptMap[b.data.apartment.toLowerCase()]?.order ?? 0));
 
 function formatDate(s?: string) {
   if (!s) return '—';
@@ -74,23 +75,25 @@ function formatDate(s?: string) {
           <h2 class="group-heading" data-en>Available Rooms</h2>
           <div class="room-list">
             {available.map(r => {
-              const apt = aptMap[r.data.apartment.toLowerCase()];
+              const aptKey = r.data.apartment.toLowerCase();
+              const apt = aptMap[aptKey];
+              const grundriss = grundrissMap[aptKey] ?? '';
+              const hasFloorplan = !!grundriss;
               const dateObj = formatDate(r.data.available_from);
-              const hasFloorplan = !!grundrissMap[r.data.apartment];
               return (
                 <div class="room-row">
                   <div class="room-row-main">
-                    <a class="room-name" href={`${base}zimmer/${r.slug}/`}>
+                    <span class="room-name">
                       <span data-de>{r.data.title_de}</span>
                       <span data-en>{r.data.title_en}</span>
-                    </a>
-                    <a class="apt-name" href={`${base}wohngemeinschaften/${r.data.apartment}/`}>
+                    </span>
+                    <a class="apt-name" href={`${base}wohngemeinschaften/${aptKey}/`}>
                       <span data-de>{apt?.title_de ?? r.data.apartment}</span>
                       <span data-en>{apt?.title_en ?? r.data.apartment}</span>
                     </a>
                     <button
                       class={`floorplan-btn${hasFloorplan ? '' : ' fp-placeholder'}`}
-                      data-floorplan={grundrissMap[r.data.apartment] ?? ''}
+                      data-floorplan={grundriss}
                       data-apt-de={apt?.title_de ?? ''}
                       data-apt-en={apt?.title_en ?? ''}
                       aria-label="Grundriss ansehen"
@@ -134,8 +137,10 @@ function formatDate(s?: string) {
           <h2 class="group-heading taken-heading" data-en>Currently Taken</h2>
           <div class="room-list taken-list">
             {taken.map(r => {
-              const apt = aptMap[r.data.apartment.toLowerCase()];
-              const hasFloorplan = !!grundrissMap[r.data.apartment];
+              const aptKey = r.data.apartment.toLowerCase();
+              const apt = aptMap[aptKey];
+              const grundriss = grundrissMap[aptKey] ?? '';
+              const hasFloorplan = !!grundriss;
               return (
                 <div class="room-row room-row-taken">
                   <div class="room-row-main">
@@ -143,13 +148,13 @@ function formatDate(s?: string) {
                       <span data-de>{r.data.title_de}</span>
                       <span data-en>{r.data.title_en}</span>
                     </span>
-                    <a class="apt-name" href={`${base}wohngemeinschaften/${r.data.apartment}/`}>
+                    <a class="apt-name" href={`${base}wohngemeinschaften/${aptKey}/`}>
                       <span data-de>{apt?.title_de ?? r.data.apartment}</span>
                       <span data-en>{apt?.title_en ?? r.data.apartment}</span>
                     </a>
                     <button
                       class={`floorplan-btn${hasFloorplan ? '' : ' fp-placeholder'}`}
-                      data-floorplan={grundrissMap[r.data.apartment] ?? ''}
+                      data-floorplan={grundriss}
                       data-apt-de={apt?.title_de ?? ''}
                       data-apt-en={apt?.title_en ?? ''}
                       aria-label="Grundriss ansehen"
@@ -243,12 +248,9 @@ function formatDate(s?: string) {
   font-size: 1.1rem;
   font-weight: 300;
   letter-spacing: 0.03em;
-  text-decoration: none;
   color: var(--ink);
-  transition: color var(--ease);
 }
-.room-name:hover { color: var(--gold); }
-.taken-name { color: var(--muted); cursor: default; }
+.taken-name { color: var(--muted); }
 
 .apt-name {
   font-size: 0.78rem;
