@@ -3,30 +3,14 @@ const base = import.meta.env.BASE_URL;
 ---
 
 <header class="site-header">
-  <!-- Left: DE | EN toggle -->
-  <button class="lang-toggle" id="lang-toggle" aria-label="Sprache wechseln / Switch language">
-    <span class="lang-opt" id="lang-de">DE</span>
-    <span class="lang-sep">|</span>
-    <span class="lang-opt" id="lang-en">EN</span>
-  </button>
 
-  <!-- Center: Wordmark -->
-  <a class="wordmark" href={`${base}home/`} aria-label="Villa Theo — Home">
-    <span class="wordmark-main">Villa Theo</span>
-    <span class="wordmark-rule"></span>
-    <span class="wordmark-sub">Studenten-Wohngemeinschaften bei der FU</span>
-  </a>
-
-  <!-- Right: inline nav (wide screens) + hamburger (narrow screens) -->
-  <div class="header-right">
-    <nav class="inline-nav" aria-label="Hauptnavigation">
+  <!-- Left nav (wide) / DE|EN + hamburger (narrow) -->
+  <div class="header-left">
+    <!-- Wide: left nav links -->
+    <nav class="split-nav split-nav-left" aria-label="Hauptnavigation links">
       <a href={`${base}wohngemeinschaften/`}>
         <span data-de>Wohngemeinschaften</span>
         <span data-en>Apartments</span>
-      </a>
-      <a href={`${base}verfuegbarkeit/`}>
-        <span data-de>Verfügbarkeit</span>
-        <span data-en>Availability</span>
       </a>
       <a href={`${base}lage/`}>
         <span data-de>Lage</span>
@@ -36,43 +20,56 @@ const base = import.meta.env.BASE_URL;
         <span data-de>Das Haus</span>
         <span data-en>The Villa</span>
       </a>
+    </nav>
+    <!-- Narrow: DE|EN toggle -->
+    <button class="lang-toggle narrow-only" id="lang-toggle-narrow" aria-label="Sprache wechseln">
+      <span class="lang-opt" id="lang-de-n">DE</span>
+      <span class="lang-sep">|</span>
+      <span class="lang-opt" id="lang-en-n">EN</span>
+    </button>
+  </div>
+
+  <!-- Center: Wordmark -->
+  <a class="wordmark" href={`${base}home/`} aria-label="Villa Theo — Home">
+    <span class="wordmark-main">Villa Theo</span>
+    <span class="wordmark-rule"></span>
+    <span class="wordmark-sub">Studenten-Wohngemeinschaften bei der FU</span>
+  </a>
+
+  <!-- Right nav (wide) / hamburger (narrow) -->
+  <div class="header-right">
+    <!-- Wide: right nav links + DE|EN -->
+    <nav class="split-nav split-nav-right" aria-label="Hauptnavigation rechts">
+      <a href={`${base}verfuegbarkeit/`}>
+        <span data-de>Verfügbarkeit</span>
+        <span data-en>Availability</span>
+      </a>
       <a href={`${base}impressum-kontakt/`}>
         <span data-de>Kontakt</span>
         <span data-en>Contact</span>
       </a>
+      <button class="lang-toggle wide-only" id="lang-toggle" aria-label="Sprache wechseln">
+        <span class="lang-opt" id="lang-de">DE</span>
+        <span class="lang-sep">|</span>
+        <span class="lang-opt" id="lang-en">EN</span>
+      </button>
     </nav>
-    <button class="menu-btn" id="menu-toggle" aria-label="Menü öffnen" aria-expanded="false">
+    <!-- Narrow: hamburger -->
+    <button class="menu-btn narrow-only" id="menu-toggle" aria-label="Menü öffnen" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </div>
 
-  <!-- Dropdown nav (narrow screens only) -->
-  <nav class="dropdown-nav" id="site-nav" aria-label="Hauptnavigation">
-    <a href={`${base}home/`}>
-      <span data-de>Home</span>
-      <span data-en>Home</span>
-    </a>
-    <a href={`${base}wohngemeinschaften/`}>
-      <span data-de>Die Wohngemeinschaften</span>
-      <span data-en>Shared Apartments</span>
-    </a>
-    <a href={`${base}verfuegbarkeit/`}>
-      <span data-de>Verfügbarkeit</span>
-      <span data-en>Availability</span>
-    </a>
-    <a href={`${base}lage/`}>
-      <span data-de>Die Lage</span>
-      <span data-en>Location</span>
-    </a>
-    <a href={`${base}haus/`}>
-      <span data-de>Das Haus</span>
-      <span data-en>The Villa</span>
-    </a>
-    <a href={`${base}impressum-kontakt/`}>
-      <span data-de>Impressum & Kontakt</span>
-      <span data-en>Legal & Contact</span>
-    </a>
+  <!-- Dropdown (narrow only) -->
+  <nav class="dropdown-nav" id="site-nav">
+    <a href={`${base}home/`}><span data-de>Home</span><span data-en>Home</span></a>
+    <a href={`${base}wohngemeinschaften/`}><span data-de>Die Wohngemeinschaften</span><span data-en>Shared Apartments</span></a>
+    <a href={`${base}lage/`}><span data-de>Die Lage</span><span data-en>Location</span></a>
+    <a href={`${base}haus/`}><span data-de>Das Haus</span><span data-en>The Villa</span></a>
+    <a href={`${base}verfuegbarkeit/`}><span data-de>Verfügbarkeit</span><span data-en>Availability</span></a>
+    <a href={`${base}impressum-kontakt/`}><span data-de>Impressum & Kontakt</span><span data-en>Legal & Contact</span></a>
   </nav>
+
 </header>
 
 <style>
@@ -88,7 +85,7 @@ const base = import.meta.env.BASE_URL;
   z-index: 200;
 }
 
-/* Wordmark — center */
+/* ── Wordmark ────────────────────────────────────────────────── */
 .wordmark {
   grid-column: 2;
   justify-self: center;
@@ -98,6 +95,7 @@ const base = import.meta.env.BASE_URL;
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
+  padding-inline: 2rem;
 }
 .wordmark-main {
   font-family: var(--font-serif);
@@ -115,46 +113,33 @@ const base = import.meta.env.BASE_URL;
 }
 .wordmark-sub {
   font-family: var(--font-sans);
-  font-size: 0.55rem;
-  letter-spacing: 0.2em;
+  font-size: 0.52rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
+  white-space: nowrap;
 }
 
-/* Left: language toggle */
-.lang-toggle {
+/* ── Left / right containers ─────────────────────────────────── */
+.header-left {
   grid-column: 1;
-  justify-self: start;
-  background: none;
-  border: none;
-  font-family: var(--font-sans);
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
-  color: var(--muted);
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.25rem 0;
-  transition: color var(--ease);
 }
-.lang-toggle:hover { color: var(--ink); }
-.lang-sep { opacity: 0.4; }
-.lang-opt.active { color: var(--ink); font-weight: 500; }
-
-/* Right: container for inline-nav + hamburger */
 .header-right {
   grid-column: 3;
-  justify-self: end;
   display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* ── Split nav (wide screens) ───────────────────────────────── */
+.split-nav {
+  display: none;
   align-items: center;
   gap: 1.5rem;
 }
-
-/* ── Inline nav (wide screens only) ─────────────────────────── */
-.inline-nav {
-  display: none;
-}
-.inline-nav a {
+.split-nav a {
   font-family: var(--font-sans);
   font-size: 0.65rem;
   letter-spacing: 0.14em;
@@ -164,9 +149,32 @@ const base = import.meta.env.BASE_URL;
   white-space: nowrap;
   transition: color var(--ease);
 }
-.inline-nav a:hover { color: var(--ink); }
+.split-nav a:hover { color: var(--ink); }
 
-/* ── Hamburger (narrow screens only) ────────────────────────── */
+/* Right nav also contains the lang toggle */
+.split-nav-right {
+  gap: 1.25rem;
+}
+
+/* ── Language toggle ─────────────────────────────────────────── */
+.lang-toggle {
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0;
+  transition: color var(--ease);
+}
+.lang-toggle:hover { color: var(--ink); }
+.lang-sep { opacity: 0.4; }
+.lang-opt.active { color: var(--ink); font-weight: 500; }
+
+/* ── Hamburger ───────────────────────────────────────────────── */
 .menu-btn {
   width: 28px;
   height: 18px;
@@ -177,7 +185,6 @@ const base = import.meta.env.BASE_URL;
   flex-direction: column;
   justify-content: space-between;
   align-items: stretch;
-  flex-shrink: 0;
 }
 .menu-btn span {
   height: 1px;
@@ -188,7 +195,7 @@ const base = import.meta.env.BASE_URL;
 }
 .menu-btn:hover span { opacity: 0.5; }
 
-/* ── Dropdown nav (narrow screens) ──────────────────────────── */
+/* ── Dropdown (narrow) ───────────────────────────────────────── */
 .dropdown-nav {
   display: none;
   position: absolute;
@@ -216,19 +223,19 @@ const base = import.meta.env.BASE_URL;
 .dropdown-nav a:last-child { border-bottom: none; }
 .dropdown-nav a:hover { background: var(--ink); color: var(--ink-light); }
 
-/* ── Responsive breakpoint ───────────────────────────────────── */
+/* ── Responsive ──────────────────────────────────────────────── */
+.wide-only  { display: none; }
+.narrow-only { display: flex; }
+
 @media (min-width: 920px) {
-  .inline-nav {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-  }
-  .menu-btn { display: none; }
+  .split-nav   { display: flex; }
+  .wide-only   { display: flex; }
+  .narrow-only { display: none; }
 }
 </style>
 
 <script>
-  // Hamburger toggle
+  // Hamburger
   document.addEventListener("DOMContentLoaded", () => {
     const btn = document.getElementById("menu-toggle");
     const nav = document.getElementById("site-nav");
@@ -244,25 +251,22 @@ const base = import.meta.env.BASE_URL;
     });
   });
 
-  // Language toggle
+  // Language toggle — handles both wide and narrow buttons
   function applyLang(lang: string) {
-    const html = document.documentElement;
-    if (lang === 'en') {
-      html.setAttribute('data-lang', 'en');
-    } else {
-      html.removeAttribute('data-lang');
-    }
+    document.documentElement[lang === 'en' ? 'setAttribute' : 'removeAttribute']('data-lang', 'en');
     localStorage.setItem('vt-lang', lang);
-    document.getElementById('lang-de')?.classList.toggle('active', lang === 'de');
-    document.getElementById('lang-en')?.classList.toggle('active', lang === 'en');
+    ['lang-de', 'lang-en', 'lang-de-n', 'lang-en-n'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('active', id.includes(lang === 'en' ? 'en' : 'de'));
+    });
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    const saved = localStorage.getItem('vt-lang') || 'de';
-    applyLang(saved);
-    document.getElementById('lang-toggle')?.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de';
-      applyLang(current === 'de' ? 'en' : 'de');
+    applyLang(localStorage.getItem('vt-lang') || 'de');
+    ['lang-toggle', 'lang-toggle-narrow'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', () => {
+        applyLang(document.documentElement.getAttribute('data-lang') === 'en' ? 'de' : 'en');
+      });
     });
   });
 </script>
