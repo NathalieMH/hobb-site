@@ -271,13 +271,18 @@ const hasAptImages = carouselImages.length > 0;
         <article class="modal-content" data-images={JSON.stringify(imgs)}>
           <div class="modal-left">
             <div class="modal-img-wrap">
-              {hasGallery && <button class="nav prev" aria-label="Vorheriges Bild">‹</button>}
               {cover
                 ? <img class="modal-cover" src={cover} alt={d.title_de} data-index="0" />
                 : <div class="room-placeholder modal-cover" data-index="-1" />
               }
-              {hasGallery && <button class="nav next" aria-label="Nächstes Bild">›</button>}
             </div>
+            {hasGallery && (
+              <div class="modal-nav-row">
+                <button class="nav prev" aria-label="Vorheriges Bild">‹</button>
+                <span class="modal-nav-counter">1 / {imgs.length}</span>
+                <button class="nav next" aria-label="Nächstes Bild">›</button>
+              </div>
+            )}
             <button class="modal-zoom-btn" aria-label="Bild vergrößern">
               <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M1.5 6V1.5H6M12 1.5H16.5V6M16.5 12V16.5H12M6 16.5H1.5V12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
@@ -296,14 +301,12 @@ const hasAptImages = carouselImages.length > 0;
           </div>
           <div class="modal-right">
             <div class="modal-title-row">
-              <h3 data-de>
-                {d.title_de}
-                {!d.available && <span class="badge-taken" data-de>vergeben</span>}
+              <h3>
+                <span data-de>{d.title_de}</span>
+                <span data-en>{d.title_en}</span>
               </h3>
-              <h3 data-en>
-                {d.title_en}
-                {!d.available && <span class="badge-taken" data-en>taken</span>}
-              </h3>
+              {!d.available && <span class="badge-taken" data-de>vergeben</span>}
+              {!d.available && <span class="badge-taken" data-en>taken</span>}
             </div>
             <ul class="room-facts">
               {d.size_m2 && <li><span class="fact-label" data-de>Größe</span><span class="fact-label" data-en>Size</span><span class="fact-val">{d.size_m2} m²</span></li>}
@@ -325,12 +328,18 @@ const hasAptImages = carouselImages.length > 0;
       <button class="img-zoom-ctrl" id="img-zoom-out">−</button>
       <span class="img-zoom-pct" id="img-zoom-pct">100%</span>
       <button class="img-zoom-ctrl" id="img-zoom-in">+</button>
+      <span class="img-zoom-sep"></span>
+      <span class="img-zoom-nav-counter" id="img-zoom-nav-counter"></span>
       <button class="img-zoom-close" id="img-zoom-close" aria-label="Schließen">×</button>
     </div>
-    <div id="img-zoom-stage" class="img-zoom-stage">
-      <div id="img-zoom-wrap" class="img-zoom-wrap">
-        <img id="img-zoom-img" src="" alt="" />
+    <div class="img-zoom-body">
+      <button class="iz-nav iz-prev" id="iz-prev" aria-label="Vorheriges Bild">‹</button>
+      <div id="img-zoom-stage" class="img-zoom-stage">
+        <div id="img-zoom-wrap" class="img-zoom-wrap">
+          <img id="img-zoom-img" src="" alt="" />
+        </div>
       </div>
+      <button class="iz-nav iz-next" id="iz-next" aria-label="Nächstes Bild">›</button>
     </div>
   </div>
 
@@ -665,8 +674,42 @@ const hasAptImages = carouselImages.length > 0;
   align-items: center;
   justify-content: center;
 }
+.img-zoom-sep { flex: 1; }
+.img-zoom-nav-counter {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: rgba(245,242,236,0.4);
+  min-width: 3rem;
+  text-align: center;
+}
+.img-zoom-body {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+}
+.img-zoom-body #img-zoom-stage { flex: 1; }
+.iz-nav {
+  background: none;
+  border: none;
+  border-left: 1px solid rgba(255,255,255,0.08);
+  border-right: 1px solid rgba(255,255,255,0.08);
+  color: rgba(245,242,236,0.4);
+  width: 48px;
+  font-size: 1.6rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color var(--ease), background var(--ease);
+}
+.iz-nav:hover { color: rgba(245,242,236,0.9); background: rgba(255,255,255,0.05); }
+.iz-nav.hidden { visibility: hidden; pointer-events: none; }
 .img-zoom-close {
-  margin-left: auto;
+  margin-left: 0;
   background: none;
   border: none;
   font-size: 1.75rem;
@@ -709,27 +752,44 @@ const hasAptImages = carouselImages.length > 0;
 }
 .thumb.active::after { opacity: 0; }
 .thumb:hover::after { opacity: 0.2; }
-.nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(28,26,23,0.5);
-  color: var(--ink-light);
-  border: none;
-  width: 36px; height: 48px;
-  font-size: 1.5rem;
-  line-height: 1;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  transition: background var(--ease);
-  z-index: 1;
+.modal-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
 }
-.nav:hover { background: rgba(28,26,23,0.75); }
-.nav.prev { left: 0; }
-.nav.next { right: 0; }
+.nav {
+  background: none;
+  border: 1px solid var(--border);
+  width: 34px;
+  height: 34px;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color var(--ease), border-color var(--ease);
+  flex-shrink: 0;
+}
+.nav:hover { color: var(--ink); border-color: var(--ink); }
+.modal-nav-counter {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  min-width: 3rem;
+  text-align: center;
+}
 .modal-right { padding-top: 0.5rem; }
-.modal-title-row h3 { font-size: 1.6rem; font-weight: 300; margin-bottom: 1rem; }
+.modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.modal-title-row h3 { font-size: 1.6rem; font-weight: 300; flex: 1; }
 .room-facts { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem; }
 .room-facts li { display: flex; gap: 1rem; font-size: 0.9rem; }
 .fact-label { color: var(--muted); min-width: 8rem; font-size: 0.8rem; letter-spacing: 0.05em; }
@@ -737,18 +797,12 @@ const hasAptImages = carouselImages.length > 0;
 .modal-teaser { color: var(--muted); font-style: italic; margin-bottom: 0.75rem; }
 
 /* Gold "vergeben" badge — modal only */
-.modal-content .modal-title-row h3 {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
 .modal-content .badge-taken {
   background: var(--gold);
   color: #2a1f00;
   border-color: #8B6E1A;
   font-size: 1.3rem;
   padding: 0.2em 0.7em;
-  margin-left: auto;
   flex-shrink: 0;
   align-self: center;
 }
@@ -857,6 +911,8 @@ const hasAptImages = carouselImages.length > 0;
       cover.setAttribute("data-index", String(newIdx));
       article.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
       article.querySelector<HTMLElement>(`.thumb[data-index="${newIdx}"]`)?.classList.add("active");
+      const counter = article.querySelector(".modal-nav-counter") as HTMLElement | null;
+      if (counter) counter.textContent = `${newIdx + 1} / ${allImgs.length}`;
     }
   });
 
@@ -873,12 +929,16 @@ const hasAptImages = carouselImages.length > 0;
   });
 
   // ── Image zoom overlay ─────────────────────────────────────────
-  const izOverlay = document.getElementById('img-zoom-overlay')!;
-  const izImg     = document.getElementById('img-zoom-img') as HTMLImageElement;
-  const izWrap    = document.getElementById('img-zoom-wrap')!;
-  const izStage   = document.getElementById('img-zoom-stage')!;
-  const izPct     = document.getElementById('img-zoom-pct')!;
+  const izOverlay  = document.getElementById('img-zoom-overlay')!;
+  const izImg      = document.getElementById('img-zoom-img') as HTMLImageElement;
+  const izWrap     = document.getElementById('img-zoom-wrap')!;
+  const izStage    = document.getElementById('img-zoom-stage')!;
+  const izPct      = document.getElementById('img-zoom-pct')!;
+  const izCounter  = document.getElementById('img-zoom-nav-counter')!;
+  const izPrevBtn  = document.getElementById('iz-prev')!;
+  const izNextBtn  = document.getElementById('iz-next')!;
   let izZoom = 1, izPanX = 0, izPanY = 0;
+  let izImages: string[] = [], izIdx = 0;
 
   function izApply(animate = true) {
     if (!animate) izWrap.classList.add('no-transition');
@@ -890,11 +950,24 @@ const hasAptImages = carouselImages.length > 0;
     izPct.textContent = Math.round(izZoom * 100) + '%';
     izApply();
   }
-  function openImgZoom(src: string) {
+  function izGoTo(idx: number) {
+    if (!izImages.length) return;
+    izIdx = (idx + izImages.length) % izImages.length;
+    izImg.src = izImages[izIdx];
+    izZoom = 1; izPanX = 0; izPanY = 0;
+    izApply(); izPct.textContent = '100%';
+    izCounter.textContent = `${izIdx + 1} / ${izImages.length}`;
+  }
+  function openImgZoom(src: string, images: string[] = [], idx: number = 0) {
+    izImages = images;
+    izIdx = idx;
     izImg.src = src;
     izZoom = 1; izPanX = 0; izPanY = 0;
-    izApply();
-    izPct.textContent = '100%';
+    izApply(); izPct.textContent = '100%';
+    const hasMany = images.length > 1;
+    izPrevBtn.classList.toggle('hidden', !hasMany);
+    izNextBtn.classList.toggle('hidden', !hasMany);
+    izCounter.textContent = hasMany ? `${idx + 1} / ${images.length}` : '';
     izOverlay.classList.remove('hidden');
     izOverlay.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -910,6 +983,8 @@ const hasAptImages = carouselImages.length > 0;
   document.getElementById('img-zoom-in')!.addEventListener('click', () => izSetZoom(izZoom + 0.25));
   document.getElementById('img-zoom-out')!.addEventListener('click', () => izSetZoom(izZoom - 0.25));
   document.getElementById('img-zoom-close')!.addEventListener('click', closeImgZoom);
+  izPrevBtn.addEventListener('click', () => izGoTo(izIdx - 1));
+  izNextBtn.addEventListener('click', () => izGoTo(izIdx + 1));
 
   // Scroll to zoom
   let izWheelLocked = false;
@@ -958,7 +1033,7 @@ const hasAptImages = carouselImages.length > 0;
   // Trigger zoom from carousel expand button
   document.getElementById('car-zoom-btn')?.addEventListener('click', () => {
     const img = document.getElementById('car-img') as HTMLImageElement | null;
-    if (img?.src) openImgZoom(img.src);
+    if (img?.src) openImgZoom(img.src, imgs, currentIdx);
   });
 
   // Trigger zoom from room modal zoom button (event delegation)
@@ -966,8 +1041,13 @@ const hasAptImages = carouselImages.length > 0;
     const zBtn = (e.target as Element).closest('.modal-zoom-btn');
     if (zBtn) {
       const body = document.getElementById('modal-body')!;
+      const article = body.querySelector('.modal-content') as HTMLElement | null;
       const cover = body.querySelector('.modal-cover') as HTMLImageElement | null;
-      if (cover?.src) openImgZoom(cover.src);
+      if (cover?.src && article) {
+        const allImgs: string[] = JSON.parse(article.getAttribute('data-images') || '[]');
+        const idx = parseInt(cover.getAttribute('data-index') || '0', 10);
+        openImgZoom(cover.src, allImgs, isNaN(idx) ? 0 : idx);
+      }
     }
   });
 </script>
