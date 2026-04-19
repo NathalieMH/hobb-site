@@ -133,7 +133,7 @@ const hasAptImages = carouselImages.length > 0;
   </section>
 
   <!-- Apartment details: info left, carousel right -->
-  <section class="section apt-detail" style="padding-top:1.5rem">
+  <section class="section apt-detail" style="padding-top:1.5rem; padding-bottom: 1rem">
     <div class="container apt-detail-inner">
 
       <!-- Left: description + shared spaces -->
@@ -208,7 +208,7 @@ const hasAptImages = carouselImages.length > 0;
   </section>
 
   <!-- Rooms grid -->
-  <section class="section rooms-section" style="padding-top: clamp(1rem, 2vw, 1.75rem)">
+  <section class="section rooms-section" style="padding-top: 0">
     <div class="container">
       <DecoRule />
       <div class="rooms-header">
@@ -381,16 +381,19 @@ const hasAptImages = carouselImages.length > 0;
 .apt-carousel { display: flex; flex-direction: column; gap: 0.75rem; }
 .car-stage {
   width: 100%;
-  background: var(--border);
+  aspect-ratio: 4 / 3;
+  background: var(--bg);
   border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 .car-img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
   transition: opacity 0.25s ease;
 }
 .car-placeholder {
@@ -413,13 +416,15 @@ const hasAptImages = carouselImages.length > 0;
   color: var(--muted);
 }
 .car-controls {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   justify-content: center;
 }
 .car-floorplan-btn {
-  margin-left: auto;
+  position: absolute;
+  right: 0;
   background: none;
   border: 1px solid var(--border);
   width: 34px;
@@ -455,7 +460,7 @@ const hasAptImages = carouselImages.length > 0;
 }
 
 /* Rooms */
-.rooms-header { margin: var(--sp-md) 0 var(--sp-sm); text-align: center; }
+.rooms-header { margin: 0.75rem 0 var(--sp-sm); text-align: center; }
 .rooms-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

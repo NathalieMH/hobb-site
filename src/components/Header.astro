@@ -221,6 +221,11 @@ const base = import.meta.env.BASE_URL;
 /* ── Responsive ──────────────────────────────────────────────── */
 .narrow-only { display: flex; }
 
+@media (max-width: 500px) {
+  .wordmark-sub { display: none; }
+  .wordmark { gap: 0.15rem; }
+}
+
 @media (min-width: 920px) {
   .split-nav   { display: flex; }
   .narrow-only { display: none; }
