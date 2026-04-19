@@ -737,10 +737,20 @@ const hasAptImages = carouselImages.length > 0;
 .modal-teaser { color: var(--muted); font-style: italic; margin-bottom: 0.75rem; }
 
 /* Gold "vergeben" badge — modal only */
+.modal-content .modal-title-row h3 {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
 .modal-content .badge-taken {
   background: var(--gold);
   color: #2a1f00;
   border-color: #8B6E1A;
+  font-size: 1.3rem;
+  padding: 0.2em 0.7em;
+  margin-left: auto;
+  flex-shrink: 0;
+  align-self: center;
 }
 
 @media (max-width: 800px) {
