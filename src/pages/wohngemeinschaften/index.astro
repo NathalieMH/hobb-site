@@ -442,9 +442,13 @@ const grundrissMap = Object.fromEntries(
   document.getElementById('fp-zoom-in')!.addEventListener('click',  () => setZoom(zoom + 0.25));
   document.getElementById('fp-zoom-out')!.addEventListener('click', () => setZoom(zoom - 0.25));
 
+  let wheelLocked = false;
   document.getElementById('fp-zoom-stage')!.addEventListener('wheel', (e) => {
     e.preventDefault();
-    setZoom(zoom + (e.deltaY < 0 ? 0.1 : -0.1));
+    if (wheelLocked) return;
+    wheelLocked = true;
+    setZoom(zoom + (e.deltaY < 0 ? 0.15 : -0.15));
+    setTimeout(() => { wheelLocked = false; }, 80);
   }, { passive: false });
 
   document.addEventListener('keydown', (e) => {
