@@ -1,8 +1,17 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import DecoRule from "../components/DecoRule.astro";
+const base = import.meta.env.BASE_URL;
 ---
 <Layout title="Villa Theo — Impressum & Kontakt">
+
+  <section class="kontakt-hero">
+    <img
+      src={`${base}das-haus/Aussenansicht.jpeg`}
+      alt="Villa Theo, Außenansicht"
+      loading="eager"
+    />
+  </section>
 
   <section class="page-header">
     <div class="container page-header-inner">
@@ -28,8 +37,8 @@ import DecoRule from "../components/DecoRule.astro";
         <a class="email-link" href="mailto:kontakt@villa-theo.de">
           kontakt@villa-theo.de
         </a>
-        <p class="email-note" data-de>Wir melden uns in der Regel innerhalb von 2 Werktagen.</p>
-        <p class="email-note" data-en>We usually respond within 2 working days.</p>
+        <p class="email-note" data-de>Eine gültige Immatrikulationsbescheinigung ist Voraussetzung für die Anmietung eines Zimmers.</p>
+        <p class="email-note" data-en>A valid university enrollment certificate is required to rent a room.</p>
       </div>
 
       <DecoRule />
@@ -89,6 +98,19 @@ import DecoRule from "../components/DecoRule.astro";
 </Layout>
 
 <style>
+.kontakt-hero {
+  padding-inline: clamp(2rem, 8vw, 5rem);
+  margin-top: 0;
+  font-size: 0;
+  line-height: 0;
+}
+.kontakt-hero img {
+  display: block;
+  width: 100%;
+  max-height: 520px;
+  object-fit: cover;
+  object-position: center 40%;
+}
 .page-header-inner {
   display: flex;
   flex-direction: column;
