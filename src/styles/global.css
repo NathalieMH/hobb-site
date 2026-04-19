@@ -1,0 +1,91 @@
+/* ── Design tokens ──────────────────────────────────────────── */
+:root {
+  --bg:          #FAF8F3;
+  --ink:         #1C1A17;
+  --gold:        #B8952A;
+  --muted:       #776D60;
+  --border:      #DDD9D0;
+  --bg-dark:     #1C1A17;
+  --ink-light:   #F5F2EC;
+
+  --font-serif:  'Cormorant Garamond', Georgia, serif;
+  --font-sans:   'DM Sans', system-ui, sans-serif;
+
+  --sp-xs:  0.5rem;
+  --sp-sm:  1rem;
+  --sp-md:  2rem;
+  --sp-lg:  4rem;
+  --sp-xl:  7rem;
+
+  --ease: 0.25s ease;
+  --max-w: 1200px;
+}
+
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+img, video { display: block; max-width: 100%; }
+a { color: inherit; }
+button { cursor: pointer; font: inherit; }
+
+/* ── Base ───────────────────────────────────────────────────── */
+html { background: var(--bg); color: var(--ink); scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.75;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── Typography ─────────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+}
+h1 { font-size: clamp(2.75rem, 6vw, 5rem); }
+h2 { font-size: clamp(1.9rem, 3.5vw, 3.25rem); }
+h3 { font-size: clamp(1.35rem, 2.5vw, 2rem); }
+h4 { font-size: clamp(1.1rem, 1.8vw, 1.5rem); }
+
+p { max-width: 68ch; }
+
+/* ── Utility classes ────────────────────────────────────────── */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+}
+
+.container {
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 3rem);
+}
+
+.section {
+  padding-block: clamp(var(--sp-lg), 8vw, var(--sp-xl));
+}
+
+/* ── Bilingual toggle ───────────────────────────────────────── */
+html[data-lang="en"] [data-de] { display: none; }
+html:not([data-lang="en"]) [data-en] { display: none; }
+
+/* ── Badge ──────────────────────────────────────────────────── */
+.badge-taken {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 0.2em 0.6em;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+}

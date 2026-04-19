@@ -1,12 +1,9 @@
 ---
-title: "6 Zimmer / Wohnung 4"
-shared_spaces: ["Bad 1","Bad 2","Küche","Esszimmer","Balkon","Laundry"]
-order: 10
-# Optional (used by the WG list page):
-# thumbnail: "/home-wohngemeinschaften.png"
-# details:
-#   - "Hochparterre / 3 Zimmer"
-#   - "Souterrain / 4 Zimmer"
-#   - "(ab Frühjahr 2026)"
+title_de: "Wohnung 4 · Anbau"
+title_en: "Apartment 4 · Annex"
+description_de: "Moderner Anbau mit sechs Zimmern und direktem Gartenzugang. Lichtdurchflutet mit großen Fenstern, eigenem Eingang und einer ruhigen Terrasse."
+description_en: "Modern annex with six rooms and direct garden access. Light-filled with large windows, a private entrance and a quiet terrace."
+shared_spaces_de: ["Bad 1", "Bad 2", "Küche", "Wohn-Esszimmer", "Gartenterrasse", "Waschküche"]
+shared_spaces_en: ["Bathroom 1", "Bathroom 2", "Kitchen", "Living-Dining Room", "Garden Terrace", "Laundry Room"]
+order: 40
 ---
-Kurze Beschreibung der Wohnung …

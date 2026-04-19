@@ -2,78 +2,206 @@
 const base = import.meta.env.BASE_URL;
 ---
 
-<header class="top-banner">
-  <!-- Centered logo -->
-  <div class="logo">
-    <a href={`${base}home/`}>
-      <img src={`${base}logo.png`} alt="HoBB Logo" height="60" />
-    </a>
-  </div>
+<header class="site-header">
+  <!-- DE | EN toggle (left) -->
+  <button class="lang-toggle" id="lang-toggle" aria-label="Sprache wechseln / Switch language">
+    <span class="lang-opt" id="lang-de">DE</span>
+    <span class="lang-sep">|</span>
+    <span class="lang-opt" id="lang-en">EN</span>
+  </button>
 
-  <!-- Accessible hamburger -->
-  <button id="menu-toggle" class="menu-btn" aria-label="Menü öffnen" aria-expanded="false">
+  <!-- Wordmark (center) -->
+  <a class="wordmark" href={`${base}home/`} aria-label="Villa Theo — Home">
+    <span class="wordmark-main">Villa Theo</span>
+    <span class="wordmark-rule"></span>
+    <span class="wordmark-sub">Berlin · Steglitz · Dahlem</span>
+  </a>
+
+  <!-- Hamburger (right) -->
+  <button class="menu-btn" id="menu-toggle" aria-label="Menü öffnen" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
 
-  <nav class="main-nav" id="site-nav">
-    <a href={`${base}home/`}>Home</a>
-    <a href={`${base}wohngemeinschaften/`}>die Wohngemeinschaften</a>
-    <a href={`${base}lage/`}>die Lage</a>
-    <a href={`${base}haus/`}>das Haus</a>
-    <a href={`${base}impressum-kontakt/`}>Impressum/Kontakt</a>
+  <!-- Dropdown nav -->
+  <nav class="main-nav" id="site-nav" aria-label="Hauptnavigation">
+    <a href={`${base}home/`}>
+      <span data-de>Home</span>
+      <span data-en>Home</span>
+    </a>
+    <a href={`${base}wohngemeinschaften/`}>
+      <span data-de>Die Wohngemeinschaften</span>
+      <span data-en>Shared Apartments</span>
+    </a>
+    <a href={`${base}lage/`}>
+      <span data-de>Die Lage</span>
+      <span data-en>Location</span>
+    </a>
+    <a href={`${base}haus/`}>
+      <span data-de>Das Haus</span>
+      <span data-en>The Villa</span>
+    </a>
+    <a href={`${base}impressum-kontakt/`}>
+      <span data-de>Impressum & Kontakt</span>
+      <span data-en>Legal & Contact</span>
+    </a>
   </nav>
 </header>
 
 <style>
-/* Header layout: grid gives a true centered logo */
-.top-banner{
-  background:#fff; color:#111;
-  display:grid; grid-template-columns: 1fr auto 1fr;
-  align-items:center;
-  padding:.75rem 1rem;
-  position:relative;
-  border-bottom:1px solid #000; /* elegant black bottom line */
+.site-header {
+  background: var(--bg);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 1.25rem clamp(1.25rem, 5vw, 3rem);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 100;
 }
 
-/* Put logo in the middle column, button on the right */
-.logo{ grid-column:2; justify-self:center; }
-.menu-btn{ grid-column:3; justify-self:end; }
-
-/* Dropdown nav (hidden by default) */
-.main-nav{
-  display:none;
-  position:absolute; top:100%; right:0; left:auto;
-  background:#fff;
-  flex-direction:column; gap:1rem;
-  padding:1rem 1.25rem; min-width:240px;
-  border:1px solid #000; border-top:none; /* align with header line */
-  box-shadow:0 10px 18px rgba(0,0,0,.06);
+/* Wordmark — center column */
+.wordmark {
+  grid-column: 2;
+  justify-self: center;
+  text-decoration: none;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  text-align: center;
 }
-.main-nav a{ color:#111; text-decoration:none; font-size:.95rem; }
-.main-nav a:hover{ text-decoration:underline; }
-.main-nav.open{ display:flex; }
-
-/* Hamburger: three bars (now black to match white header) */
-.menu-btn{
-  width:36px; height:28px; padding:0; border:0; background:none; cursor:pointer;
-  display:flex; flex-direction:column; justify-content:space-between; align-items:stretch;
+.wordmark-main {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(1.15rem, 2.5vw, 1.6rem);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  line-height: 1;
 }
-.menu-btn span{ height:2px; background:#111; border-radius:2px; display:block; }
-
-/* Optional: show the nav inline on wide screens
-@media (min-width: 900px){
-  .main-nav{ position:static; display:flex; flex-direction:row; gap:1.5rem; padding:0; border:0; box-shadow:none; }
+.wordmark-rule {
+  display: block;
+  width: 2.5rem;
+  height: 1px;
+  background: var(--gold);
 }
-*/
+.wordmark-sub {
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Language toggle — left */
+.lang-toggle {
+  grid-column: 1;
+  justify-self: start;
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0;
+  transition: color var(--ease);
+}
+.lang-toggle:hover { color: var(--ink); }
+.lang-sep { opacity: 0.4; }
+.lang-opt { transition: color var(--ease); }
+.lang-opt.active { color: var(--ink); font-weight: 500; }
+
+/* Hamburger — right */
+.menu-btn {
+  grid-column: 3;
+  justify-self: end;
+  width: 32px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+}
+.menu-btn span {
+  height: 1.5px;
+  background: var(--ink);
+  border-radius: 1px;
+  display: block;
+  transition: opacity var(--ease);
+}
+.menu-btn:hover span { opacity: 0.5; }
+
+/* Dropdown nav */
+.main-nav {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: clamp(1.25rem, 5vw, 3rem);
+  background: var(--bg);
+  flex-direction: column;
+  gap: 0;
+  min-width: 260px;
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 32px rgba(28, 26, 23, 0.08);
+}
+.main-nav.open { display: flex; }
+.main-nav a {
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 0.9rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--ease), color var(--ease);
+}
+.main-nav a:last-child { border-bottom: none; }
+.main-nav a:hover { background: var(--ink); color: var(--ink-light); }
 </style>
 
 <script>
+  // Hamburger
   document.addEventListener("DOMContentLoaded", () => {
     const btn = document.getElementById("menu-toggle");
     const nav = document.getElementById("site-nav");
-    btn.addEventListener("click", () => {
-      const open = nav.classList.toggle("open");
+    btn?.addEventListener("click", () => {
+      const open = nav?.classList.toggle("open");
       btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    document.addEventListener("click", (e) => {
+      if (!btn?.contains(e.target as Node) && !nav?.contains(e.target as Node)) {
+        nav?.classList.remove("open");
+        btn?.setAttribute("aria-expanded", "false");
+      }
+    });
+  });
+
+  // Language toggle
+  function applyLang(lang: string) {
+    const html = document.documentElement;
+    if (lang === 'en') {
+      html.setAttribute('data-lang', 'en');
+    } else {
+      html.removeAttribute('data-lang');
+    }
+    localStorage.setItem('vt-lang', lang);
+    document.getElementById('lang-de')?.classList.toggle('active', lang === 'de');
+    document.getElementById('lang-en')?.classList.toggle('active', lang === 'en');
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const saved = localStorage.getItem('vt-lang') || 'de';
+    applyLang(saved);
+    document.getElementById('lang-toggle')?.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de';
+      applyLang(current === 'de' ? 'en' : 'de');
     });
   });
 </script>

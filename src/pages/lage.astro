@@ -1,7 +1,139 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import DecoRule from "../components/DecoRule.astro";
 ---
-<Layout title="Die Lage">
-  <h1>Die Lage</h1>
-  <p>Inhalte folgen.</p>
+<Layout title="Villa Theo — Die Lage">
+
+  <section class="section page-header">
+    <div class="container page-header-inner">
+      <span class="eyebrow" data-de>Standort</span>
+      <span class="eyebrow" data-en>Location</span>
+      <h1 data-de>Die Lage</h1>
+      <h1 data-en>Location</h1>
+      <DecoRule />
+    </div>
+  </section>
+
+  <section class="section lage-content">
+    <div class="container lage-inner">
+      <div class="lage-text">
+        <p data-de>
+          Die Villa Theo liegt im Berliner Bezirk Steglitz-Zehlendorf, an der Grenze zu Dahlem — einem der grünsten und ruhigsten Teile der Stadt. Die Lage verbindet das Beste beider Welten: urbane Erreichbarkeit und grüne Stille.
+        </p>
+        <p data-en>
+          Villa Theo is located in Berlin's Steglitz-Zehlendorf district, on the border with Dahlem — one of the city's greenest and quietest areas. The location combines the best of both worlds: urban accessibility and leafy calm.
+        </p>
+
+        <div class="transit-section">
+          <h3 data-de>Universitäten in der Nähe</h3>
+          <h3 data-en>Nearby Universities</h3>
+          <ul class="transit-list">
+            <li>
+              <span class="transit-icon">◆</span>
+              <span data-de><strong>Freie Universität Berlin</strong> — ca. 10 Min. zu Fuß / mit dem Fahrrad</span>
+              <span data-en><strong>Freie Universität Berlin</strong> — approx. 10 min on foot / by bicycle</span>
+            </li>
+            <li>
+              <span class="transit-icon">◆</span>
+              <span data-de><strong>MSB Medical School Berlin</strong> — in unmittelbarer Nähe</span>
+              <span data-en><strong>MSB Medical School Berlin</strong> — in the immediate vicinity</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="transit-section">
+          <h3 data-de>ÖPNV-Anbindung</h3>
+          <h3 data-en>Public Transport</h3>
+          <ul class="transit-list">
+            <li>
+              <span class="transit-badge ubahn">U3</span>
+              <span data-de>Freie Universität (Thielplatz) — ca. 8 Min. zu Fuß</span>
+              <span data-en>Freie Universität (Thielplatz) — approx. 8 min on foot</span>
+            </li>
+            <li>
+              <span class="transit-badge ubahn">U3</span>
+              <span data-de>Dahlem Dorf — ca. 12 Min. zu Fuß</span>
+              <span data-en>Dahlem Dorf — approx. 12 min on foot</span>
+            </li>
+            <li>
+              <span class="transit-badge sbahn">S1</span>
+              <span data-de>Botanischer Garten — ca. 15 Min. zu Fuß</span>
+              <span data-en>Botanischer Garten — approx. 15 min on foot</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="map-wrap">
+        <!--
+          Replace the src below with your actual Google Maps embed URL.
+          Go to Google Maps → search your address → Share → Embed a map → copy the src="..." value.
+          For custom pins (villa + transit stops + FU), create a Google My Maps at mymaps.google.com
+          and use that embed URL instead.
+        -->
+        <iframe
+          class="map-iframe"
+          src="https://maps.google.com/maps?q=Freie+Universit%C3%A4t+Berlin,+Berlin&output=embed&z=14"
+          width="100%"
+          height="480"
+          style="border:0;"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Karte: Villa Theo, Berlin Steglitz-Dahlem"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
 </Layout>
+
+<style>
+.page-header-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+.lage-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+.lage-text { display: flex; flex-direction: column; gap: 2rem; }
+.lage-text > p { color: var(--muted); }
+.transit-section h3 {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+.transit-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+.transit-list li { display: flex; align-items: baseline; gap: 0.75rem; font-size: 0.9rem; }
+.transit-icon { color: var(--gold); font-size: 0.4rem; flex-shrink: 0; position: relative; top: -0.2em; }
+.transit-badge {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.2em 0.5em;
+  border-radius: 3px;
+  min-width: 2rem;
+  text-align: center;
+}
+.ubahn { background: #005CA9; color: #fff; }
+.sbahn { background: #008D4F; color: #fff; }
+.map-wrap {
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.map-iframe { display: block; }
+@media (max-width: 900px) {
+  .lage-inner { grid-template-columns: 1fr; }
+}
+</style>

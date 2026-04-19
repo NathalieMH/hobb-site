@@ -1,12 +1,12 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import DecoRule from "../../components/DecoRule.astro";
 import { getCollection } from "astro:content";
 import fs from "node:fs/promises";
 import path from "node:path";
 const base = import.meta.env.BASE_URL;
 
-// Auto-discover all images under public/rooms/<room-slug>/
-async function loadRoomImages(slug) {
+async function loadRoomImages(slug: string) {
   const dir = path.resolve(process.cwd(), "public", "rooms", slug);
   try {
     const files = await fs.readdir(dir);
@@ -27,11 +27,7 @@ export async function getStaticPaths() {
 const { apartment } = Astro.params;
 const apartments = await getCollection("apartments");
 const apt = apartments.find((a) => a.slug === apartment);
-
-// Get rooms for this apartment
 const rooms = await getCollection("rooms", (r) => r.data.apartment === apartment);
-
-// Pre-render + load images once, reuse for grid and modal
 const renderedRooms = await Promise.all(
   rooms.map(async (r) => {
     const { Content } = await r.render();
@@ -39,383 +35,414 @@ const renderedRooms = await Promise.all(
     return { entry: r, Content, imgs };
   })
 );
-
-// Helper map
-const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs}) => [entry.slug, imgs]));
+const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [entry.slug, imgs]));
 ---
 
-<Layout title={apt?.data.title ?? "Wohngemeinschaft"}>
-  <div class="container">
+<Layout title={`Villa Theo — ${apt?.data.title_de ?? "Wohngemeinschaft"}`}>
 
-    <!-- Header: floorplan + details -->
-    <section class="apartment-header">
-      <div class="apartment-image">
-        {apt?.data.floorplan ? (
-          <img src={`${base}${apt.data.floorplan}`} alt={apt.data.title} />
-        ) : (
-          <div class="placeholder">[Kein Plan vorhanden]</div>
+  <!-- Apartment header -->
+  <section class="section page-header">
+    <div class="container page-header-inner">
+      <a class="back-link" href={`${base}wohngemeinschaften/`}>
+        <span data-de>← Alle Wohnungen</span>
+        <span data-en>← All Apartments</span>
+      </a>
+      <span class="eyebrow" data-de>Wohngemeinschaft</span>
+      <span class="eyebrow" data-en>Shared Apartment</span>
+      <h1 data-de>{apt?.data.title_de}</h1>
+      <h1 data-en>{apt?.data.title_en}</h1>
+      <DecoRule />
+    </div>
+  </section>
+
+  <!-- Apartment details -->
+  <section class="section apt-detail">
+    <div class="container apt-detail-inner">
+
+      {apt?.data.floorplan && (
+        <div class="floorplan-wrap">
+          <img src={`${base}${apt.data.floorplan}`} alt="" />
+        </div>
+      )}
+
+      <div class="apt-info">
+        {apt?.data.description_de && (
+          <p data-de>{apt.data.description_de}</p>
+        )}
+        {apt?.data.description_en && (
+          <p data-en>{apt.data.description_en}</p>
+        )}
+
+        {(apt?.data.shared_spaces_de?.length ?? 0) > 0 && (
+          <div class="shared-spaces">
+            <h3 data-de>Gemeinschaftsräume</h3>
+            <h3 data-en>Shared spaces</h3>
+            <ul data-de>
+              {apt?.data.shared_spaces_de.map(s => <li>{s}</li>)}
+            </ul>
+            <ul data-en>
+              {apt?.data.shared_spaces_en.map(s => <li>{s}</li>)}
+            </ul>
+          </div>
         )}
       </div>
+    </div>
+  </section>
 
-      <div class="apartment-details">
-        <h1>{apt?.data.title}</h1>
-        {apt?.data.details && <p class="details">{apt.data.details.join(" / ")}</p>}
-        <div class="description">
-          {apt?.body ? <Fragment set:html={apt.body} /> : null}
-        </div>
+  <!-- Rooms grid -->
+  <section class="section rooms-section">
+    <div class="container">
+      <DecoRule />
+      <div class="rooms-header">
+        <h2 data-de>Zimmer</h2>
+        <h2 data-en>Rooms</h2>
       </div>
-    </section>
-
-    <!-- Room thumbnails on the apartment page -->
-    <section class="rooms-section">
-      <h2>Zimmer</h2>
       <div class="rooms-grid">
         {rooms.map(({ data, slug }) => {
           const imgs = roomImages[slug] ?? [];
           const cover = imgs[0];
-
           return (
             <button
-              class="room-card open-room"
+              class={`room-card open-room${!data.available ? ' room-taken' : ''}`}
               data-room={slug}
-              aria-label={`Zimmer ${data.title} öffnen`}
+              aria-label={data.title_de}
             >
-              {cover ? (
-                <img src={cover} alt={data.title} />
-              ) : (
-                <div class="room-placeholder">[Kein Bild verfügbar]</div>
-              )}
-              <p><strong>&gt; {data.title}</strong></p>
+              <div class="room-img-wrap">
+                {cover
+                  ? <img src={cover} alt={data.title_de} loading="lazy" />
+                  : <div class="room-placeholder" />
+                }
+                {!data.available && (
+                  <span class="taken-overlay" data-de>vergeben</span>
+                )}
+                {!data.available && (
+                  <span class="taken-overlay" data-en>taken</span>
+                )}
+              </div>
+              <div class="room-meta">
+                <span class="room-title" data-de>
+                  {data.title_de}
+                  {!data.available && <span class="badge-taken" data-de>vergeben</span>}
+                </span>
+                <span class="room-title" data-en>
+                  {data.title_en}
+                  {!data.available && <span class="badge-taken" data-en>taken</span>}
+                </span>
+                {data.size_m2 && <span class="room-size">{data.size_m2} m²</span>}
+              </div>
             </button>
           );
         })}
       </div>
-    </section>
-
-
-    <!-- Hidden templates: one per room (used by the modal) -->
-    {renderedRooms.map(({ entry, Content, imgs }) => {
-      const d = entry.data;
-      const cover = imgs[0] ?? null;
-      const hasGallery = imgs.length > 1;
-
-      return (
-        <template id={`tpl-${entry.slug}`}>
-          <article class="modal-content" data-images={JSON.stringify(imgs)}>
-            <div class="modal-left">
-              {hasGallery && <button class="nav prev" aria-label="Vorheriges Bild">‹</button>}
-
-              {cover ? (
-                <img class="modal-cover" src={cover} alt={d.title} data-index="0" />
-              ) : (
-                <div class="room-placeholder large modal-cover" data-index="-1">[Kein Bild verfügbar]</div>
-              )}
-
-              {hasGallery && <button class="nav next" aria-label="Nächstes Bild">›</button>}
-
-              {hasGallery && (
-                <div class="thumbs" role="list">
-                  {imgs.map((url, i) => (
-                    <button
-                      class={`thumb ${i === 0 ? "active" : ""}`}
-                      data-full={url}
-                      data-index={i}
-                      aria-label={`Bild ${i + 1} ansehen`}
-                      role="listitem"
-                    >
-                      <img src={url} alt={`Vorschau ${i + 1} von {d.title}`} />
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div class="modal-right">
-              <h3>{d.title}</h3>
-              <!-- meta + description unchanged -->
-              <ul class="meta">
-                {d.size_m2 && <li><strong>Größe:</strong> {d.size_m2} m²</li>}
-                {typeof d.cold_rent_eur !== "undefined" && (
-                  <li><strong>Kaltmiete:</strong> {d.cold_rent_eur} €</li>
-                )}
-                {d.available_from && <li><strong>Verfügbar ab:</strong> {d.available_from}</li>}
-                {d.teaser && <li><strong>Info:</strong> {d.teaser}</li>}
-              </ul>
-              <div class="room-description"><Content /></div>
-            </div>
-          </article>
-        </template>
-      );
-    })}
-
-
-    <!-- Shared modal/overlay -->
-    <div id="overlay" class="overlay hidden" aria-hidden="true">
-      <div class="modal-card" role="dialog" aria-modal="true" aria-label="Zimmerdetails">
-        <button class="modal-close" aria-label="Schließen">×</button>
-        <div id="modal-body"></div>
-      </div>
     </div>
+  </section>
 
+  <!-- Room detail templates -->
+  {renderedRooms.map(({ entry, Content, imgs }) => {
+    const d = entry.data;
+    const cover = imgs[0] ?? null;
+    const hasGallery = imgs.length > 1;
+    return (
+      <template id={`tpl-${entry.slug}`}>
+        <article class="modal-content" data-images={JSON.stringify(imgs)}>
+          <div class="modal-left">
+            {hasGallery && <button class="nav prev" aria-label="Vorheriges Bild">‹</button>}
+            {cover
+              ? <img class="modal-cover" src={cover} alt={d.title_de} data-index="0" />
+              : <div class="room-placeholder modal-cover" data-index="-1" />
+            }
+            {hasGallery && <button class="nav next" aria-label="Nächstes Bild">›</button>}
+            {hasGallery && (
+              <div class="thumbs">
+                {imgs.map((url, i) => (
+                  <button class={`thumb${i === 0 ? ' active' : ''}`} data-full={url} data-index={i} aria-label={`Bild ${i+1}`}>
+                    <img src={url} alt="" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <div class="modal-right">
+            <div class="modal-title-row">
+              <h3 data-de>
+                {d.title_de}
+                {!d.available && <span class="badge-taken" data-de>vergeben</span>}
+              </h3>
+              <h3 data-en>
+                {d.title_en}
+                {!d.available && <span class="badge-taken" data-en>taken</span>}
+              </h3>
+            </div>
+            <ul class="room-facts">
+              {d.size_m2 && <li><span class="fact-label" data-de>Größe</span><span class="fact-label" data-en>Size</span><span class="fact-val">{d.size_m2} m²</span></li>}
+              {d.cold_rent_eur && <li><span class="fact-label" data-de>Kaltmiete</span><span class="fact-label" data-en>Cold rent</span><span class="fact-val">{d.cold_rent_eur} €</span></li>}
+              {d.available_from && <li><span class="fact-label" data-de>Verfügbar ab</span><span class="fact-label" data-en>Available from</span><span class="fact-val">{d.available_from}</span></li>}
+            </ul>
+            {d.teaser_de && <p class="modal-teaser" data-de>{d.teaser_de}</p>}
+            {d.teaser_en && <p class="modal-teaser" data-en>{d.teaser_en}</p>}
+            <div class="modal-body-text"><Content /></div>
+          </div>
+        </article>
+      </template>
+    );
+  })}
+
+  <!-- Modal overlay -->
+  <div id="overlay" class="overlay hidden" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <button class="modal-close" aria-label="Schließen">×</button>
+      <div id="modal-body"></div>
+    </div>
   </div>
+
 </Layout>
 
 <style>
-/* Centered page container */
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 1.25rem;
-}
-
-/* Header (floorplan + details) */
-.apartment-header {
+/* Page header */
+.page-header-inner {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 2rem;
-  margin: 2rem 0;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
 }
-.apartment-image {
-  display: flex; justify-content: center;
-  flex: 0 1 600px;
+.back-link {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  margin-bottom: 0.5rem;
 }
-.apartment-image img {
-  max-width: 600px; width: 100%;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+.back-link:hover { color: var(--ink); }
+
+/* Apartment detail */
+.apt-detail-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
 }
-.placeholder {
-  width: 600px; height: 400px;
-  background: #f0f0f0; color: #888; border: 1px dashed #ccc;
-  display: flex; align-items: center; justify-content: center;
+.floorplan-wrap img {
+  width: 100%;
+  border: 1px solid var(--border);
+}
+.apt-info p { color: var(--muted); }
+.shared-spaces { margin-top: var(--sp-md); }
+.shared-spaces h3 { margin-bottom: 0.75rem; font-size: 1rem; font-family: var(--font-sans); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.75rem; color: var(--muted); }
+.shared-spaces ul { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.shared-spaces li {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--border);
+  letter-spacing: 0.05em;
 }
 
-.apartment-details { flex: 1 1 300px; min-width: 260px; }
-.apartment-details h1 { font-size: 1.5rem; font-weight: bold; }
-.details { font-weight: bold; margin: .5rem 0 1rem; }
-
-/* Rooms list on the apartment page */
-.rooms-section { margin-top: 3rem; }
+/* Rooms */
+.rooms-header { margin: var(--sp-md) 0 var(--sp-sm); text-align: center; }
 .rooms-grid {
-  display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 2rem;
 }
 .room-card {
-  width: 220px; background: transparent; border: none; padding: 0;
-  text-align: center; cursor: pointer; color: black;
-}
-.room-card img {
-  width: 100%; border: 1px solid #ccc;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-.room-card p { margin-top: .5rem; font-size: .9rem; }
-
-.room-placeholder {
-  width: 100%; aspect-ratio: 4/3; background: #f0f0f0;
-  color: #888; border: 1px dashed #ccc;
-  display: flex; align-items: center; justify-content: center; font-size: .9rem;
-}
-.room-placeholder.large { aspect-ratio: 4/3; }
-
-/* Modal overlay */
-.overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.45);
-  display: grid; place-items: center; padding: 2rem; z-index: 1000;
-}
-.hidden { display: none; }
-
-.modal-card {
-  background: white; width: min(100%, 960px);
-  max-height: 90vh; overflow: auto; border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.25);
-  position: relative; padding: 1.25rem;
-}
-
-/* Modal internal layout */
-.modal-content {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
-}
-.modal-left { position: relative; }
-.modal-left img.modal-cover {
-  width: 100%; border: 1px solid #ddd;
-  box-shadow: 0 2px 6px rgba(0,0,0,.1);
-}
-
-/* Thumbnails row (only when 2+ images) */
-.thumbs {
-  display: flex; flex-wrap: wrap; gap: .75rem;
-  margin-top: .75rem;
-}
-.thumb {
-  position: relative;                 /* needed for overlay */
-  border: none; padding: 0; background: transparent; cursor: pointer;
-  width: 110px; height: 82px;         /* ≈ 4:3 */
-  display: block; border-radius: 4px; overflow: hidden;
-  outline-offset: 2px;
-}
-.thumb img {
-  width: 100%; height: 100%; object-fit: cover; border: 1px solid #ddd;
-  box-shadow: 0 1px 2px rgba(0,0,0,.08);
-}
-/* White overlay to make non-active thumbs look "blasser" */
-.thumb::after {
-  content: "";
-  position: absolute; inset: 0;
-  background: rgba(255,255,255,0.5);  /* ~50% white */
-  transition: opacity .2s ease;
-  opacity: 1;                         /* default = dimmed */
-}
-.thumb.active::after { opacity: 0; }   /* active = full color */
-.thumb:hover::after { opacity: .15; }  /* slightly less dim on hover */
-
-/* Optional subtle active outline (kept) */
-.thumb.active img { outline: 2px solid #333; }
-
-/* Nav arrows over the large image */
-.nav {
-  position: absolute; top: 45%; transform: translateY(-50%);
-  background: rgba(0,0,0,0.55); color: #fff; border: none;
-  width: 36px; height: 48px; border-radius: 6px; cursor: pointer;
-  font-size: 1.5rem; line-height: 1; display: grid; place-items: center;
-}
-.nav.prev { left: 8px; }
-.nav.next { right: 8px; }
-.nav:hover { background: rgba(0,0,0,0.7); }
-
-/* Right side of modal */
-.modal-right h3 { margin-top: 0; }
-.meta { list-style: none; padding: 0; margin: .5rem 0 1rem; }
-.meta li { margin: .25rem 0; }
-.room-description :where(p, ul, ol){ margin: .5rem 0; }
-
-/* Minimal, elegant close “×” in the top-right of the card */
-.modal-close {
-  position: absolute;
-  top: 8px;
-  right: 10px;
   background: none;
   border: none;
-  color: #000;
-  font-size: 26px;
-  line-height: 1;
-  padding: 4px;
+  padding: 0;
+  text-align: left;
+  color: var(--ink);
   cursor: pointer;
 }
-.modal-close:hover { opacity: .6; }
-.modal-close:focus { outline: 2px solid #000; outline-offset: 2px; }
-
-/* Responsive modal + header stacking */
-@media (max-width: 800px) {
-  .modal-content { grid-template-columns: 1fr; }
+.room-img-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  background: var(--border);
 }
-@media (max-width: 900px) {
-  .apartment-image { flex-basis: 100%; }
-  .apartment-details { flex-basis: 100%; }
+.room-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.room-card:hover .room-img-wrap img { transform: scale(1.04); }
+.room-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--border);
+}
+.room-taken .room-img-wrap img { opacity: 0.45; filter: grayscale(0.5); }
+.taken-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.room-meta { padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0.2rem; }
+.room-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 300; }
+.room-size { font-size: 0.8rem; color: var(--muted); }
+
+/* Modal */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 26, 23, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  z-index: 200;
+}
+.overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg);
+  width: min(100%, 980px);
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+  padding: 2rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 64px rgba(28, 26, 23, 0.2);
+}
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+}
+.modal-close:hover { color: var(--ink); }
+.modal-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+.modal-left { position: relative; }
+.modal-cover { width: 100%; border: 1px solid var(--border); }
+.thumbs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+.thumb {
+  width: 80px; height: 60px;
+  border: none; padding: 0; background: none; cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.5);
+  transition: opacity 0.2s;
+}
+.thumb.active::after { opacity: 0; }
+.thumb:hover::after { opacity: 0.2; }
+.nav {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  background: rgba(28,26,23,0.5);
+  color: var(--ink-light);
+  border: none;
+  width: 36px; height: 48px;
+  font-size: 1.5rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background var(--ease);
+}
+.nav:hover { background: rgba(28,26,23,0.75); }
+.nav.prev { left: 0; }
+.nav.next { right: 0; }
+.modal-right { padding-top: 0.5rem; }
+.modal-title-row h3 { font-size: 1.6rem; font-weight: 300; margin-bottom: 1rem; }
+.room-facts { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem; }
+.room-facts li { display: flex; gap: 1rem; font-size: 0.9rem; }
+.fact-label { color: var(--muted); min-width: 8rem; font-size: 0.8rem; letter-spacing: 0.05em; }
+.fact-val { font-family: var(--font-serif); font-size: 1rem; }
+.modal-teaser { color: var(--muted); font-style: italic; margin-bottom: 0.75rem; }
+
+@media (max-width: 800px) {
+  .apt-detail-inner { grid-template-columns: 1fr; }
+  .modal-content { grid-template-columns: 1fr; }
 }
 </style>
 
 <script>
-  // Open/close modal + thumbnails + left/right navigation
   document.addEventListener("click", (e) => {
-    const btn = e.target.closest(".open-room");
-    const overlay = document.getElementById("overlay");
-    const body = document.getElementById("modal-body");
+    const target = e.target as Element;
+    const btn = target.closest(".open-room") as HTMLElement | null;
+    const overlay = document.getElementById("overlay")!;
+    const body = document.getElementById("modal-body")!;
 
-    // Open modal
     if (btn) {
       e.preventDefault();
       const slug = btn.getAttribute("data-room");
-      const tpl = document.getElementById(`tpl-${slug}`);
+      const tpl = document.getElementById(`tpl-${slug}`) as HTMLTemplateElement | null;
       if (tpl) {
         body.innerHTML = "";
         body.appendChild(tpl.content.cloneNode(true));
         overlay.classList.remove("hidden");
+        overlay.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
-
-        // Ensure initial active thumb state (index 0) if gallery exists
-        const article = body.querySelector(".modal-content");
-        const firstThumb = article?.querySelector('.thumb[data-index="0"]');
+        const firstThumb = body.querySelector<HTMLElement>('.thumb[data-index="0"]');
         if (firstThumb) {
-          article.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
+          body.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
           firstThumb.classList.add("active");
         }
       }
       return;
     }
 
-    // Close modal (× or clicking overlay)
-    if (e.target.matches(".modal-close") || (overlay && e.target === overlay)) {
+    if (target.matches(".modal-close") || target === overlay) {
       overlay.classList.add("hidden");
+      overlay.setAttribute("aria-hidden", "true");
       document.body.style.overflow = "";
       return;
     }
 
-    // Thumbnail click inside modal
-    const thumb = e.target.closest(".thumb");
+    const thumb = target.closest(".thumb") as HTMLElement | null;
     if (thumb && body.contains(thumb)) {
-      const article = thumb.closest(".modal-content");
-      const cover = article.querySelector(".modal-cover");
-      const newUrl = thumb.getAttribute("data-full");
+      const article = thumb.closest(".modal-content") as HTMLElement;
+      const cover = article.querySelector(".modal-cover") as HTMLImageElement;
+      const newUrl = thumb.getAttribute("data-full")!;
       const idx = thumb.getAttribute("data-index") || "0";
-
-      if (cover.tagName !== "IMG") {
-        const img = document.createElement("img");
-        img.className = "modal-cover";
-        img.alt = "";
-        img.src = newUrl;
-        img.setAttribute("data-index", idx);
-        cover.replaceWith(img);
-      } else {
-        cover.setAttribute("src", newUrl);
-        cover.setAttribute("data-index", idx);
-      }
-
+      cover.setAttribute("src", newUrl);
+      cover.setAttribute("data-index", idx);
       article.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
       thumb.classList.add("active");
       return;
     }
 
-    // Left/right nav buttons inside modal
-    const navBtn = e.target.closest(".nav");
+    const navBtn = target.closest(".nav") as HTMLElement | null;
     if (navBtn && body.contains(navBtn)) {
-      const article = navBtn.closest(".modal-content");
-      const cover = article.querySelector(".modal-cover");
-      const imgs = JSON.parse(article.getAttribute("data-images") || "[]");
-      if (!imgs || imgs.length < 2) return;
-
+      const article = navBtn.closest(".modal-content") as HTMLElement;
+      const cover = article.querySelector(".modal-cover") as HTMLImageElement;
+      const imgs: string[] = JSON.parse(article.getAttribute("data-images") || "[]");
+      if (imgs.length < 2) return;
       let idx = parseInt(cover.getAttribute("data-index") || "0", 10);
       if (isNaN(idx) || idx < 0) idx = 0;
-
-      const dir = navBtn.classList.contains("next") ? 1 : -1;
-      const newIdx = (idx + dir + imgs.length) % imgs.length;
-      const newUrl = imgs[newIdx];
-
-      if (cover.tagName !== "IMG") {
-        const img = document.createElement("img");
-        img.className = "modal-cover";
-        img.alt = "";
-        img.src = newUrl;
-        img.setAttribute("data-index", String(newIdx));
-        cover.replaceWith(img);
-      } else {
-        cover.setAttribute("src", newUrl);
-        cover.setAttribute("data-index", String(newIdx));
-      }
-
+      const newIdx = (idx + (navBtn.classList.contains("next") ? 1 : -1) + imgs.length) % imgs.length;
+      cover.setAttribute("src", imgs[newIdx]);
+      cover.setAttribute("data-index", String(newIdx));
       article.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
-      const activeThumb = article.querySelector(`.thumb[data-index="${newIdx}"]`);
-      if (activeThumb) activeThumb.classList.add("active");
-      return;
+      article.querySelector<HTMLElement>(`.thumb[data-index="${newIdx}"]`)?.classList.add("active");
     }
   });
 
-  // Close on Escape
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      const overlay = document.getElementById("overlay");
-      if (overlay && !overlay.classList.contains("hidden")) {
+      const overlay = document.getElementById("overlay")!;
+      if (!overlay.classList.contains("hidden")) {
         overlay.classList.add("hidden");
+        overlay.setAttribute("aria-hidden", "true");
         document.body.style.overflow = "";
       }
     }

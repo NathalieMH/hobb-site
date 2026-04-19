@@ -1,7 +1,7 @@
 name: Deploy Astro to Pages
 on:
   push:
-    branches: [ main ]
+    branches: [ main, villa-theo ]
   workflow_dispatch:
 permissions:
   contents: read

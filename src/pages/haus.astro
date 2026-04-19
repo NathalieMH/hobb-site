@@ -1,7 +1,161 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import DecoRule from "../components/DecoRule.astro";
+const base = import.meta.env.BASE_URL;
 ---
-<Layout title="Das Haus">
-  <h1>Das Haus</h1>
-  <p>Inhalte folgen. (Optional: Abschnitt "Ein Haus mit Geschichte")</p>
+<Layout title="Villa Theo — Das Haus">
+
+  <section class="section page-header">
+    <div class="container page-header-inner">
+      <span class="eyebrow" data-de>Geschichte & Architektur</span>
+      <span class="eyebrow" data-en>History & Architecture</span>
+      <h1 data-de>Das Haus</h1>
+      <h1 data-en>The Villa</h1>
+      <DecoRule />
+    </div>
+  </section>
+
+  <!-- Hero image -->
+  <section class="haus-hero">
+    <img
+      src={`${base}home-dashaus.png`}
+      alt="Villa Theo, Berlin Steglitz-Dahlem"
+      loading="lazy"
+    />
+  </section>
+
+  <!-- Main text -->
+  <section class="section haus-content">
+    <div class="container haus-inner">
+      <div class="haus-text">
+        <div class="pull-quote">
+          <span class="eyebrow" data-de>Art Déco · Berlin · 1920er Jahre</span>
+          <span class="eyebrow" data-en>Art Déco · Berlin · 1920s</span>
+          <blockquote data-de>
+            „Ein Haus, das Studierenden seit seiner Renovierung ein echtes Zuhause bieten soll — mit Geschichte, Charakter und Leben."
+          </blockquote>
+          <blockquote data-en>
+            "A house that, since its renovation, aims to offer students a true home — with history, character, and life."
+          </blockquote>
+        </div>
+
+        <DecoRule />
+
+        <div class="haus-body">
+          <p data-de>
+            Die Villa Theo wurde in den 1920er Jahren im Stil des Berliner Art Déco erbaut — einer Ära, in der Architektur die Spannung zwischen klassischer Strenge und modernistischem Aufbruch verkörperte. Die Villa in Steglitz, an der Grenze zu Dahlem, gehört zu den charaktervollen Zeitzeugen dieser Epoche: mit hohen Stuckdecken, großen Sprossenfenstern und eleganten Proportionen.
+          </p>
+          <p data-en>
+            Villa Theo was built in the 1920s in the Berlin Art Déco style — an era in which architecture embodied the tension between classical restraint and modernist ambition. Situated in Steglitz, on the border with Dahlem, the villa is a characterful witness to this period: high stucco ceilings, large divided-light windows, and elegant proportions.
+          </p>
+          <p data-de>
+            Nach einer umfassenden Renovierung bietet das Haus heute vier Wohngemeinschaften für Studierende. Der Anbau aus späterer Zeit fügt sich harmonisch an den Altbau an und schafft einen fließenden Übergang zwischen historischem Charakter und zeitgemäßem Komfort. Garten, Terrasse und Boule-Bahn laden zum gemeinsamen Leben unter freiem Himmel ein.
+          </p>
+          <p data-en>
+            After a thorough renovation, the house now offers four shared apartments for students. A later annex integrates harmoniously with the original building, creating a seamless transition between historic character and contemporary comfort. The garden, terrace, and pétanque court invite communal life in the open air.
+          </p>
+        </div>
+      </div>
+
+      <div class="haus-sidebar">
+        <img src={`${base}home-wohngemeinschaften.png`} alt="" loading="lazy" class="sidebar-img" />
+        <div class="haus-facts">
+          <dl>
+            <dt data-de>Baujahr</dt>
+            <dt data-en>Built</dt>
+            <dd>1920er Jahre</dd>
+            <dt data-de>Stil</dt>
+            <dt data-en>Style</dt>
+            <dd data-de>Berliner Art Déco</dd>
+            <dd data-en>Berlin Art Déco</dd>
+            <dt data-de>Wohnungen</dt>
+            <dt data-en>Apartments</dt>
+            <dd>4</dd>
+            <dt data-de>Zimmer gesamt</dt>
+            <dt data-en>Total rooms</dt>
+            <dd>22</dd>
+            <dt data-de>Lage</dt>
+            <dt data-en>Location</dt>
+            <dd>Berlin Steglitz · Dahlem</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </Layout>
+
+<style>
+.page-header-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+/* Full-width house photo */
+.haus-hero {
+  width: 100%;
+  max-height: 520px;
+  overflow: hidden;
+}
+.haus-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+}
+
+/* Content */
+.haus-inner {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+.haus-text { display: flex; flex-direction: column; gap: 2.5rem; }
+
+/* Pull quote */
+.pull-quote { display: flex; flex-direction: column; gap: 1rem; }
+.pull-quote blockquote {
+  font-family: var(--font-serif);
+  font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--ink);
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--gold);
+}
+
+/* Body text */
+.haus-body { display: flex; flex-direction: column; gap: 1.25rem; }
+.haus-body p { color: var(--muted); }
+
+/* Sidebar */
+.haus-sidebar { display: flex; flex-direction: column; gap: 2rem; }
+.sidebar-img { width: 100%; border: 1px solid var(--border); }
+.haus-facts dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.5rem 1.5rem;
+}
+.haus-facts dt {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 0.1rem;
+}
+.haus-facts dd {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .haus-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .haus-sidebar { order: -1; }
+}
+</style>

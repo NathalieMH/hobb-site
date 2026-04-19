@@ -1,9 +1,11 @@
 ---
-title: "3.2 Konrad"
-apartment: "apartment-1"  # exactly matches the apartment file name
+title_de: "Zimmer Konrad"
+title_en: "Room Konrad"
+apartment: "apartment-1"
 size_m2: 21
-cold_rent_eur: 3400
-available_from: "2025-12"
-teaser: "Kurzbeschreibung"
+cold_rent_eur: 580
+available_from: "2026-06"
+available: false
+teaser_de: "Großzügiges Eckzimmer mit zwei Fenstern und originalem Parkett."
+teaser_en: "Generous corner room with two windows and original parquet flooring."
 ---
-Eines unserer kleineren Zimmer im 1.Obergeschoss mit viel Licht und Luft nach oben.

@@ -1,22 +1,72 @@
 ---
 import Header from "../components/Header.astro";
-const { title = "HoBB" } = Astro.props;
+import "../styles/global.css";
+const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in einer Berliner Art-Déco-Villa aus den 1920er Jahren." } = Astro.props;
 ---
 <html lang="de">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
     <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <!-- Inline lang-init: runs before paint to avoid DE→EN flash -->
+    <script is:inline>
+      (function() {
+        var lang = localStorage.getItem('vt-lang') || 'de';
+        if (lang === 'en') document.documentElement.setAttribute('data-lang', 'en');
+      })();
+    </script>
   </head>
   <body>
     <Header />
     <main><slot /></main>
-    <footer><small>© HoBB</small></footer>
+    <footer class="site-footer">
+      <div class="container">
+        <span class="footer-wordmark">Villa Theo</span>
+        <nav class="footer-nav">
+          <a href={`${import.meta.env.BASE_URL}impressum-kontakt/`} data-de>Impressum & Kontakt</a>
+          <a href={`${import.meta.env.BASE_URL}impressum-kontakt/`} data-en>Legal Notice & Contact</a>
+        </nav>
+        <small class="footer-copy">© Villa Theo Berlin</small>
+      </div>
+    </footer>
   </body>
 </html>
 
 <style>
-body{margin:0;font-family:system-ui, Arial, sans-serif}
-main{padding:2rem}
-footer{text-align:center;padding:2rem;color:#666}
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding-block: var(--sp-md);
+  margin-top: var(--sp-lg);
+}
+.site-footer .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-sm);
+}
+.footer-wordmark {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+.footer-nav a {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--muted);
+}
+.footer-nav a:hover { color: var(--ink); }
+.footer-copy {
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
 </style>

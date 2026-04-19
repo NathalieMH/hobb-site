@@ -1,7 +1,137 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import DecoRule from "../components/DecoRule.astro";
 ---
-<Layout title="Impressum / Kontakt">
-  <h1>Impressum / Kontakt</h1>
-  <p>Impressum-Inhalte folgen. (MVP1: keine Formular-Einreichung)</p>
+<Layout title="Villa Theo — Impressum & Kontakt">
+
+  <section class="section page-header">
+    <div class="container page-header-inner">
+      <h1 data-de>Impressum & Kontakt</h1>
+      <h1 data-en>Legal Notice & Contact</h1>
+      <DecoRule />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container legal-inner">
+
+      <!-- Contact -->
+      <div class="legal-block">
+        <h2 data-de>Kontakt</h2>
+        <h2 data-en>Contact</h2>
+        <p data-de>
+          Für Zimmeranfragen und allgemeine Fragen wenden Sie sich bitte per E-Mail an uns:
+        </p>
+        <p data-en>
+          For room enquiries and general questions, please contact us by email:
+        </p>
+        <a class="email-link" href="mailto:kontakt@villa-theo.de">
+          kontakt@villa-theo.de
+        </a>
+        <p class="email-note" data-de>Wir melden uns in der Regel innerhalb von 2 Werktagen.</p>
+        <p class="email-note" data-en>We usually respond within 2 working days.</p>
+      </div>
+
+      <DecoRule />
+
+      <!-- Impressum -->
+      <div class="legal-block">
+        <h2>Impressum</h2>
+        <p data-de>Angaben gemäß § 5 TMG</p>
+        <p data-en>Information according to § 5 TMG</p>
+
+        <div class="impressum-body">
+          <p>
+            <strong>Villa Theo</strong><br />
+            [Straße und Hausnummer]<br />
+            [PLZ] Berlin<br />
+            Deutschland
+          </p>
+          <p>
+            <span data-de><strong>Kontakt</strong></span>
+            <span data-en><strong>Contact</strong></span><br />
+            E-Mail: <a href="mailto:kontakt@villa-theo.de">kontakt@villa-theo.de</a>
+          </p>
+          <p data-de>
+            <strong>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:</strong><br />
+            [Name der verantwortlichen Person]<br />
+            [Anschrift wie oben]
+          </p>
+          <p data-en>
+            <strong>Responsible for content under § 55 Para. 2 RStV:</strong><br />
+            [Name of responsible person]<br />
+            [Address as above]
+          </p>
+
+          <h3 data-de>Haftungsausschluss</h3>
+          <h3 data-en>Disclaimer</h3>
+          <p data-de>
+            Die Inhalte dieser Website wurden mit größtmöglicher Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.
+          </p>
+          <p data-en>
+            The content of this website has been compiled with the utmost care. However, we cannot guarantee the accuracy, completeness, or timeliness of the content.
+          </p>
+
+          <h3 data-de>Urheberrecht</h3>
+          <h3 data-en>Copyright</h3>
+          <p data-de>
+            Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.
+          </p>
+          <p data-en>
+            The content and works on these pages are subject to German copyright law. Reproduction, processing, distribution, and any form of commercialisation of such material beyond the scope of the copyright law shall require the written consent of its author or creator.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
 </Layout>
+
+<style>
+.page-header-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+.legal-inner {
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-lg);
+}
+.legal-block { display: flex; flex-direction: column; gap: 1rem; }
+.legal-block h2 { font-size: 1.75rem; }
+.email-link {
+  display: inline-block;
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--gold);
+  padding-bottom: 0.15rem;
+  transition: color var(--ease), border-color var(--ease);
+}
+.email-link:hover { color: var(--gold); }
+.email-note { font-size: 0.85rem; color: var(--muted); max-width: none; }
+.impressum-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.impressum-body p { max-width: none; }
+.impressum-body h3 {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.5rem;
+}
+.impressum-body a { color: var(--ink); }
+</style>

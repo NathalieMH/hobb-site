@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import DecoRule from "../../components/DecoRule.astro";
 import { getCollection } from "astro:content";
 const base = import.meta.env.BASE_URL;
 
@@ -11,16 +12,101 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const room = (await getCollection("rooms")).find(r => r.slug === slug);
 const d = room?.data;
+const { Content } = room ? await room.render() : { Content: null };
 ---
-<Layout title={d?.title ?? "Zimmer"}>
-  <h1>{d?.title ?? "Zimmer"}</h1>
-  {d ? (
-    <>
-      <p>
-        {d.size_m2 ? `${d.size_m2} m²` : ""} {d.cold_rent_eur ? `• €${d.cold_rent_eur}` : ""} {d.available_from ? `• ab ${d.available_from}` : ""}
-      </p>
-      <slot />
-    </>
-  ) : <p>Nicht gefunden.</p>}
+
+<Layout title={`Villa Theo — ${d?.title_de ?? "Zimmer"}`}>
+  <section class="section page-header">
+    <div class="container page-header-inner">
+      <a class="back-link" href={d?.apartment ? `${base}wohngemeinschaften/${d.apartment}/` : `${base}wohngemeinschaften/`}>
+        <span data-de>← Zur Wohnung</span>
+        <span data-en>← Back to apartment</span>
+      </a>
+      {d ? (
+        <>
+          <span class="eyebrow" data-de>Zimmer</span>
+          <span class="eyebrow" data-en>Room</span>
+          <h1 data-de>
+            {d.title_de}
+            {!d.available && <span class="badge-taken" data-de>vergeben</span>}
+          </h1>
+          <h1 data-en>
+            {d.title_en}
+            {!d.available && <span class="badge-taken" data-en>taken</span>}
+          </h1>
+          <DecoRule />
+        </>
+      ) : (
+        <h1 data-de>Zimmer nicht gefunden.</h1>
+      )}
+    </div>
+  </section>
+
+  {d && (
+    <section class="section room-detail">
+      <div class="container room-detail-inner">
+        <dl class="room-facts">
+          {d.size_m2 && (
+            <>
+              <dt data-de>Größe</dt>
+              <dt data-en>Size</dt>
+              <dd>{d.size_m2} m²</dd>
+            </>
+          )}
+          {d.cold_rent_eur && (
+            <>
+              <dt data-de>Kaltmiete</dt>
+              <dt data-en>Cold rent</dt>
+              <dd>{d.cold_rent_eur} €</dd>
+            </>
+          )}
+          {d.available_from && (
+            <>
+              <dt data-de>Verfügbar ab</dt>
+              <dt data-en>Available from</dt>
+              <dd>{d.available_from}</dd>
+            </>
+          )}
+        </dl>
+        {d.teaser_de && <p class="teaser" data-de>{d.teaser_de}</p>}
+        {d.teaser_en && <p class="teaser" data-en>{d.teaser_en}</p>}
+        {Content && <div class="room-body"><Content /></div>}
+      </div>
+    </section>
+  )}
 </Layout>
 
+<style>
+.page-header-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+}
+.back-link {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+}
+.back-link:hover { color: var(--ink); }
+.room-detail-inner {
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.room-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.4rem 2rem;
+  font-size: 0.9rem;
+}
+.room-facts dt { color: var(--muted); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.room-facts dd { font-family: var(--font-serif); font-size: 1.05rem; margin: 0; }
+.teaser { color: var(--muted); font-style: italic; }
+.room-body :where(p) { margin-bottom: 0.75rem; color: var(--muted); }
+</style>
