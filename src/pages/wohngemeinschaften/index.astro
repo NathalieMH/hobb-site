@@ -30,6 +30,14 @@ const grundrissMap = Object.fromEntries(
 
 <Layout title="Villa Theo — Die Wohngemeinschaften">
 
+  <section class="wg-hero">
+    <img
+      src={`${base}das-haus/Eingangsbereich.jpeg`}
+      alt="Villa Theo, Eingangsbereich"
+      loading="eager"
+    />
+  </section>
+
   <section class="page-header">
     <div class="container page-header-inner">
       <span class="eyebrow" data-de>Wohnen</span>
@@ -155,6 +163,21 @@ const grundrissMap = Object.fromEntries(
 </Layout>
 
 <style>
+/* Hero */
+.wg-hero {
+  padding-inline: clamp(2rem, 8vw, 5rem);
+  margin-top: 0;
+  font-size: 0;
+  line-height: 0;
+}
+.wg-hero img {
+  display: block;
+  width: 100%;
+  max-height: 520px;
+  object-fit: cover;
+  object-position: center 40%;
+}
+
 /* Intro */
 .intro-section { padding-top: 0; padding-bottom: clamp(1rem, 2vw, 1.75rem); }
 .intro-cols {
