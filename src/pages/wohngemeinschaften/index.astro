@@ -306,23 +306,22 @@ const grundrissMap = Object.fromEntries(
 .apt-floorplan img[data-iz-open] { cursor: pointer; }
 .fp-zoom-btn {
   position: absolute;
-  bottom: 0.6rem;
-  right: 0.6rem;
-  width: 32px;
-  height: 32px;
-  background: rgba(250, 248, 243, 0.92);
-  border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted);
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 30px;
+  height: 30px;
+  background: rgba(28, 26, 23, 0.45);
+  border: none;
+  display: grid;
+  place-items: center;
+  color: rgba(245, 242, 236, 0.85);
   cursor: pointer;
   opacity: 0;
-  transition: opacity var(--ease), color var(--ease);
+  transition: opacity var(--ease), background var(--ease);
   z-index: 2;
 }
 .apt-card:hover .fp-zoom-btn { opacity: 1; }
-.fp-zoom-btn:hover { color: var(--ink); }
+.fp-zoom-btn:hover { background: rgba(28, 26, 23, 0.75); color: #fff; }
 
 @media (max-width: 860px) {
   .includes li:nth-child(n) { grid-column: span 6; }
