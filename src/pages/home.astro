@@ -201,7 +201,7 @@ const base = import.meta.env.BASE_URL;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
+  gap: clamp(0.67rem, 1.33vw, 1.17rem);
 }
 .card {
   min-width: 0;
