@@ -1,7 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import DecoRule from "../components/DecoRule.astro";
-import FloorplanZoom from "../components/FloorplanZoom.astro";
 import { getCollection } from "astro:content";
 import { promises as fs } from "fs";
 import path from "path";
@@ -94,10 +93,10 @@ function formatDate(s?: string) {
                     </a>
                     <button
                       class={`floorplan-btn${hasFloorplan ? '' : ' fp-placeholder'}`}
-                      data-fp-open
-                      data-fp-src={grundriss}
-                      data-fp-title-de={apt?.title_de ?? ''}
-                      data-fp-title-en={apt?.title_en ?? ''}
+                      data-iz-open
+                      data-iz-src={grundriss}
+                      data-iz-title-de={apt?.title_de ?? ''}
+                      data-iz-title-en={apt?.title_en ?? ''}
                       aria-label="Grundriss ansehen"
                     >
                       <span class="fp-icon" aria-hidden="true">
@@ -156,10 +155,10 @@ function formatDate(s?: string) {
                     </a>
                     <button
                       class={`floorplan-btn${hasFloorplan ? '' : ' fp-placeholder'}`}
-                      data-fp-open
-                      data-fp-src={grundriss}
-                      data-fp-title-de={apt?.title_de ?? ''}
-                      data-fp-title-en={apt?.title_en ?? ''}
+                      data-iz-open
+                      data-iz-src={grundriss}
+                      data-iz-title-de={apt?.title_de ?? ''}
+                      data-iz-title-en={apt?.title_en ?? ''}
                       aria-label="Grundriss ansehen"
                     >
                       <span class="fp-icon" aria-hidden="true">
@@ -187,7 +186,6 @@ function formatDate(s?: string) {
     </div>
   </section>
 
-  <FloorplanZoom />
 
 </Layout>
 

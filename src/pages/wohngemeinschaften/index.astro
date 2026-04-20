@@ -1,7 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import DecoRule from "../../components/DecoRule.astro";
-import FloorplanZoom from "../../components/FloorplanZoom.astro";
 import { getCollection } from "astro:content";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -98,17 +97,17 @@ const grundrissMap = Object.fromEntries(
                       src={`${base}${grundriss}`}
                       alt=""
                       loading="lazy"
-                      data-fp-open
-                      data-fp-src={`${base}${grundriss}`}
-                      data-fp-title-de={data.title_de}
-                      data-fp-title-en={data.title_en}
+                      data-iz-open
+                      data-iz-src={`${base}${grundriss}`}
+                      data-iz-title-de={data.title_de}
+                      data-iz-title-en={data.title_en}
                     />
                     <button
                       class="fp-zoom-btn"
-                      data-fp-open
-                      data-fp-src={`${base}${grundriss}`}
-                      data-fp-title-de={data.title_de}
-                      data-fp-title-en={data.title_en}
+                      data-iz-open
+                      data-iz-src={`${base}${grundriss}`}
+                      data-iz-title-de={data.title_de}
+                      data-iz-title-en={data.title_en}
                       aria-label="Grundriss vergrößern"
                     >
                       <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
@@ -151,7 +150,6 @@ const grundrissMap = Object.fromEntries(
     </div>
   </section>
 
-<FloorplanZoom />
 
 </Layout>
 
@@ -301,7 +299,7 @@ const grundrissMap = Object.fromEntries(
 
 /* Floorplan zoom button */
 .apt-floorplan { position: relative; }
-.apt-floorplan img[data-fp-open] { cursor: pointer; }
+.apt-floorplan img[data-iz-open] { cursor: pointer; }
 .fp-zoom-btn {
   position: absolute;
   bottom: 0.6rem;

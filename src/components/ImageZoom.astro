@@ -1,0 +1,318 @@
+---
+// Unified image zoom overlay — present on every page via Layout.
+//
+// HTML trigger API:
+//   Add to any element: data-iz-open  data-iz-src="url"
+//   Optional:  data-iz-srcs='["url1","url2"]'  data-iz-idx="0"
+//              data-iz-title-de="…"  data-iz-title-en="…"
+//
+// JS trigger API (call from any page script):
+//   document.dispatchEvent(new CustomEvent('iz:open', {
+//     detail: { src, images?, idx?, titleDe?, titleEn? }
+//   }));
+---
+
+<div id="vtiz-overlay" class="vtiz-overlay vtiz-hidden" aria-hidden="true">
+  <div class="vtiz-modal" role="dialog" aria-modal="true">
+    <div class="vtiz-header">
+      <p class="vtiz-title" id="vtiz-title"></p>
+      <button class="vtiz-ctrl vtiz-close-btn" id="vtiz-close" aria-label="Schließen">×</button>
+    </div>
+    <div id="vtiz-stage" class="vtiz-stage">
+      <div id="vtiz-wrap" class="vtiz-wrap">
+        <img id="vtiz-img" src="" alt="" />
+      </div>
+    </div>
+    <div class="vtiz-footer">
+      <button class="vtiz-ctrl" id="vtiz-out" aria-label="Verkleinern">−</button>
+      <span class="vtiz-pct" id="vtiz-pct">100%</span>
+      <button class="vtiz-ctrl" id="vtiz-in" aria-label="Vergrößern">+</button>
+      <span class="vtiz-sep"></span>
+      <span class="vtiz-nav-group" id="vtiz-nav-group">
+        <button class="vtiz-ctrl vtiz-nav" id="vtiz-prev" aria-label="Vorheriges Bild">‹</button>
+        <span class="vtiz-counter" id="vtiz-counter">1 / 1</span>
+        <button class="vtiz-ctrl vtiz-nav" id="vtiz-next" aria-label="Nächstes Bild">›</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<style>
+.vtiz-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 26, 23, 0.6);
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  z-index: 400;
+}
+.vtiz-hidden { display: none !important; }
+.vtiz-modal {
+  background: var(--bg);
+  /* Fixed landscape size — never changes as images cycle */
+  width: min(92vw, 1080px);
+  height: min(88vh, 660px);
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 64px rgba(28, 26, 23, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.vtiz-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.vtiz-title {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex: 1;
+  margin: 0;
+}
+.vtiz-stage {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  user-select: none;
+  background: var(--bg);
+}
+.vtiz-stage.dragging { cursor: grabbing; }
+.vtiz-wrap {
+  transform-origin: center center;
+  transition: transform 0.15s ease;
+  will-change: transform;
+}
+.vtiz-wrap.no-transition { transition: none; }
+.vtiz-wrap img {
+  display: block;
+  /* Constrain image to stage area (modal minus header + footer ~7rem) */
+  max-width: min(88vw, 1040px);
+  max-height: min(74vh, 548px);
+  pointer-events: none;
+}
+.vtiz-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.vtiz-ctrl {
+  background: none;
+  border: 1px solid var(--border);
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color var(--ease), color var(--ease);
+}
+.vtiz-ctrl:hover { border-color: var(--gold); color: var(--ink); }
+.vtiz-pct {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  min-width: 3rem;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vtiz-sep { flex: 1; }
+.vtiz-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.vtiz-counter {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  min-width: 3rem;
+  text-align: center;
+}
+.vtiz-nav-group.vtiz-hidden { display: none !important; }
+</style>
+
+<script>
+(function () {
+  const overlay  = document.getElementById('vtiz-overlay')!;
+  const titleEl  = document.getElementById('vtiz-title')!;
+  const img      = document.getElementById('vtiz-img') as HTMLImageElement;
+  const wrap     = document.getElementById('vtiz-wrap')!;
+  const stage    = document.getElementById('vtiz-stage')!;
+  const pctEl    = document.getElementById('vtiz-pct')!;
+  const navGroup = document.getElementById('vtiz-nav-group')!;
+  const counter  = document.getElementById('vtiz-counter')!;
+  const prevBtn  = document.getElementById('vtiz-prev')!;
+  const nextBtn  = document.getElementById('vtiz-next')!;
+
+  let zoom = 1, panX = 0, panY = 0;
+  let images: string[] = [], idx = 0;
+
+  const lang = () =>
+    document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de';
+
+  function apply(animate = true) {
+    if (!animate) wrap.classList.add('no-transition');
+    wrap.style.transform = `translate(${panX}px,${panY}px) scale(${zoom})`;
+    if (!animate) requestAnimationFrame(() => wrap.classList.remove('no-transition'));
+  }
+
+  function setZoom(z: number) {
+    zoom = Math.min(2.5, Math.max(0.5, z));
+    pctEl.textContent = Math.round(zoom * 100) + '%';
+    apply();
+  }
+
+  function resetView() {
+    zoom = 1; panX = 0; panY = 0;
+    apply(false);
+    pctEl.textContent = '100%';
+  }
+
+  function loadImage(src: string) {
+    img.src = src;
+    resetView();
+  }
+
+  function goTo(i: number) {
+    if (!images.length) return;
+    idx = (i + images.length) % images.length;
+    loadImage(images[idx]);
+    counter.textContent = `${idx + 1} / ${images.length}`;
+  }
+
+  function open(detail: {
+    src: string;
+    images?: string[];
+    idx?: number;
+    titleDe?: string;
+    titleEn?: string;
+  }) {
+    images = detail.images?.length ? detail.images : [detail.src];
+    idx = Math.min(detail.idx ?? 0, images.length - 1);
+    const titleDE = detail.titleDe ?? '';
+    const titleEN = detail.titleEn ?? '';
+    titleEl.textContent = lang() === 'en' ? titleEN : titleDE;
+    const hasMany = images.length > 1;
+    navGroup.classList.toggle('vtiz-hidden', !hasMany);
+    loadImage(images[idx]);
+    if (hasMany) counter.textContent = `${idx + 1} / ${images.length}`;
+    overlay.classList.remove('vtiz-hidden');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    overlay.classList.add('vtiz-hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  // Custom event API
+  document.addEventListener('iz:open', (e) => {
+    open((e as CustomEvent).detail);
+  });
+
+  // HTML data-attribute API
+  document.addEventListener('click', (e) => {
+    const trigger = (e.target as Element).closest('[data-iz-open]') as HTMLElement | null;
+    if (trigger) {
+      e.preventDefault();
+      e.stopPropagation();
+      const src = trigger.getAttribute('data-iz-src') ?? '';
+      const srcsRaw = trigger.getAttribute('data-iz-srcs');
+      const imgs = srcsRaw ? JSON.parse(srcsRaw) : [];
+      open({
+        src,
+        images: imgs.length ? imgs : [src],
+        idx: parseInt(trigger.getAttribute('data-iz-idx') ?? '0', 10) || 0,
+        titleDe: trigger.getAttribute('data-iz-title-de') ?? '',
+        titleEn: trigger.getAttribute('data-iz-title-en') ?? '',
+      });
+      return;
+    }
+    if (
+      (e.target as Element).closest('#vtiz-close') ||
+      e.target === overlay
+    ) { close(); return; }
+    if ((e.target as Element).closest('#vtiz-in'))   { setZoom(zoom + 0.25); return; }
+    if ((e.target as Element).closest('#vtiz-out'))  { setZoom(zoom - 0.25); return; }
+    if ((e.target as Element).closest('#vtiz-prev')) { goTo(idx - 1); return; }
+    if ((e.target as Element).closest('#vtiz-next')) { goTo(idx + 1); return; }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (overlay.classList.contains('vtiz-hidden')) return;
+    if (e.key === 'Escape')      close();
+    if (e.key === 'ArrowLeft')   goTo(idx - 1);
+    if (e.key === 'ArrowRight')  goTo(idx + 1);
+  });
+
+  // Scroll to zoom
+  let wheelLocked = false;
+  stage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (wheelLocked) return;
+    wheelLocked = true;
+    setZoom(zoom + (e.deltaY < 0 ? 0.1 : -0.1));
+    setTimeout(() => { wheelLocked = false; }, 80);
+  }, { passive: false });
+
+  // Mouse drag
+  let dragging = false, dX = 0, dY = 0, pX0 = 0, pY0 = 0;
+  stage.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    dragging = true; dX = e.clientX; dY = e.clientY; pX0 = panX; pY0 = panY;
+    stage.classList.add('dragging'); wrap.classList.add('no-transition');
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    panX = pX0 + (e.clientX - dX); panY = pY0 + (e.clientY - dY);
+    apply(false);
+  });
+  window.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false; stage.classList.remove('dragging'); wrap.classList.remove('no-transition');
+  });
+
+  // Touch drag
+  let touch0: Touch | null = null;
+  stage.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    touch0 = e.touches[0]; pX0 = panX; pY0 = panY;
+    wrap.classList.add('no-transition');
+  }, { passive: true });
+  stage.addEventListener('touchmove', (e) => {
+    if (!touch0 || e.touches.length !== 1) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    panX = pX0 + (t.clientX - touch0.clientX);
+    panY = pY0 + (t.clientY - touch0.clientY);
+    apply(false);
+  }, { passive: false });
+  stage.addEventListener('touchend', () => {
+    touch0 = null; wrap.classList.remove('no-transition');
+  });
+})();
+</script>

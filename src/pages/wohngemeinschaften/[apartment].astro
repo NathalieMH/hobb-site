@@ -320,33 +320,6 @@ const hasAptImages = carouselImages.length > 0;
     );
   })}
 
-  <!-- Image zoom overlay -->
-  <div id="img-zoom-overlay" class="img-zoom-overlay hidden" aria-hidden="true">
-    <div class="img-zoom-modal">
-      <div class="img-zoom-topbar">
-        <button class="img-zoom-close" id="img-zoom-close" aria-label="Schließen">×</button>
-      </div>
-      <div class="img-zoom-body">
-        <div id="img-zoom-stage" class="img-zoom-stage">
-          <div id="img-zoom-wrap" class="img-zoom-wrap">
-            <img id="img-zoom-img" src="" alt="" />
-          </div>
-        </div>
-      </div>
-      <div class="img-zoom-footer">
-        <button class="img-zoom-ctrl" id="img-zoom-out">−</button>
-        <span class="img-zoom-pct" id="img-zoom-pct">100%</span>
-        <button class="img-zoom-ctrl" id="img-zoom-in">+</button>
-        <span class="img-zoom-sep"></span>
-        <span class="iz-nav-group">
-          <button class="img-zoom-ctrl iz-nav iz-prev" id="iz-prev" aria-label="Vorheriges Bild">‹</button>
-          <span class="img-zoom-nav-counter" id="img-zoom-nav-counter"></span>
-          <button class="img-zoom-ctrl iz-nav iz-next" id="iz-next" aria-label="Nächstes Bild">›</button>
-        </span>
-      </div>
-    </div>
-  </div>
-
   <!-- Modal overlay -->
   <div id="overlay" class="overlay hidden" aria-hidden="true">
     <div class="modal-card" role="dialog" aria-modal="true">
@@ -632,125 +605,6 @@ const hasAptImages = carouselImages.length > 0;
 .modal-zoom-btn:hover { border-color: var(--gold); color: var(--ink); }
 .modal-zoom-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
 
-/* Image zoom overlay */
-.img-zoom-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.55);
-  z-index: 400;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-.img-zoom-overlay.hidden { display: none; }
-.img-zoom-modal {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  max-width: 92vw;
-  max-height: 92vh;
-  overflow: hidden;
-}
-.img-zoom-topbar {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0.4rem 0.5rem;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.img-zoom-footer {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1rem;
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.img-zoom-ctrl {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  width: 28px;
-  height: 28px;
-  font-size: 1rem;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: border-color var(--ease), color var(--ease);
-  flex-shrink: 0;
-}
-.img-zoom-ctrl:hover { border-color: var(--gold); color: var(--ink); }
-.img-zoom-pct {
-  font-family: var(--font-sans);
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
-  color: var(--muted);
-  min-width: 3rem;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.img-zoom-sep { flex: 1; }
-.img-zoom-nav-counter {
-  font-family: var(--font-sans);
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  min-width: 3rem;
-  text-align: center;
-}
-.img-zoom-body {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem clamp(2rem, 5vw, 4rem);
-}
-.iz-nav-group {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-.iz-nav.hidden { visibility: hidden; pointer-events: none; }
-.img-zoom-close {
-  background: none;
-  border: 1px solid var(--border);
-  width: 28px;
-  height: 28px;
-  font-size: 1rem;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: border-color var(--ease), color var(--ease);
-}
-.img-zoom-close:hover { border-color: var(--gold); color: var(--ink); }
-.img-zoom-stage {
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: grab;
-  user-select: none;
-  background: var(--bg);
-}
-.img-zoom-stage.dragging { cursor: grabbing; }
-.img-zoom-wrap {
-  transform-origin: center center;
-  transition: transform 0.15s ease;
-  will-change: transform;
-}
-.img-zoom-wrap.no-transition { transition: none; }
-.img-zoom-wrap img { display: block; max-width: min(72vw, 1020px); max-height: min(66vh, 700px); pointer-events: none; }
 .thumbs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
 .thumb {
   width: 80px; height: 60px;
@@ -943,111 +797,14 @@ const hasAptImages = carouselImages.length > 0;
         overlay.setAttribute("aria-hidden", "true");
         document.body.style.overflow = "";
       }
-      closeImgZoom();
     }
   });
 
-  // ── Image zoom overlay ─────────────────────────────────────────
-  const izOverlay  = document.getElementById('img-zoom-overlay')!;
-  const izImg      = document.getElementById('img-zoom-img') as HTMLImageElement;
-  const izWrap     = document.getElementById('img-zoom-wrap')!;
-  const izStage    = document.getElementById('img-zoom-stage')!;
-  const izPct      = document.getElementById('img-zoom-pct')!;
-  const izCounter  = document.getElementById('img-zoom-nav-counter')!;
-  const izPrevBtn  = document.getElementById('iz-prev')!;
-  const izNextBtn  = document.getElementById('iz-next')!;
-  let izZoom = 1, izPanX = 0, izPanY = 0;
-  let izImages: string[] = [], izIdx = 0;
-
-  function izApply(animate = true) {
-    if (!animate) izWrap.classList.add('no-transition');
-    izWrap.style.transform = `translate(${izPanX}px,${izPanY}px) scale(${izZoom})`;
-    if (!animate) requestAnimationFrame(() => izWrap.classList.remove('no-transition'));
-  }
-  function izSetZoom(z: number) {
-    izZoom = Math.min(2.5, Math.max(0.75, z));
-    izPct.textContent = Math.round(izZoom * 100) + '%';
-    izApply();
-  }
-  function izGoTo(idx: number) {
-    if (!izImages.length) return;
-    izIdx = (idx + izImages.length) % izImages.length;
-    izImg.src = izImages[izIdx];
-    izZoom = 1; izPanX = 0; izPanY = 0;
-    izApply(); izPct.textContent = '100%';
-    izCounter.textContent = `${izIdx + 1} / ${izImages.length}`;
-  }
   function openImgZoom(src: string, images: string[] = [], idx: number = 0) {
-    izImages = images;
-    izIdx = idx;
-    izImg.src = src;
-    izZoom = 1; izPanX = 0; izPanY = 0;
-    izApply(); izPct.textContent = '100%';
-    const hasMany = images.length > 1;
-    izPrevBtn.classList.toggle('hidden', !hasMany);
-    izNextBtn.classList.toggle('hidden', !hasMany);
-    izCounter.textContent = hasMany ? `${idx + 1} / ${images.length}` : '';
-    izOverlay.classList.remove('hidden');
-    izOverlay.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+    document.dispatchEvent(new CustomEvent('iz:open', {
+      detail: { src, images, idx }
+    }));
   }
-  function closeImgZoom() {
-    if (!izOverlay.classList.contains('hidden')) {
-      izOverlay.classList.add('hidden');
-      izOverlay.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-  }
-
-  document.getElementById('img-zoom-in')!.addEventListener('click', () => izSetZoom(izZoom + 0.25));
-  document.getElementById('img-zoom-out')!.addEventListener('click', () => izSetZoom(izZoom - 0.25));
-  document.getElementById('img-zoom-close')!.addEventListener('click', closeImgZoom);
-  izPrevBtn.addEventListener('click', () => izGoTo(izIdx - 1));
-  izNextBtn.addEventListener('click', () => izGoTo(izIdx + 1));
-
-  // Scroll to zoom
-  let izWheelLocked = false;
-  izStage.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    if (izWheelLocked) return;
-    izWheelLocked = true;
-    izSetZoom(izZoom + (e.deltaY < 0 ? 0.1 : -0.1));
-    setTimeout(() => { izWheelLocked = false; }, 100);
-  }, { passive: false });
-
-  // Drag to pan
-  let izDragging = false, izDX = 0, izDY = 0, izPX0 = 0, izPY0 = 0;
-  izStage.addEventListener('mousedown', (e) => {
-    if (e.button !== 0) return;
-    izDragging = true; izDX = e.clientX; izDY = e.clientY; izPX0 = izPanX; izPY0 = izPanY;
-    izStage.classList.add('dragging'); izWrap.classList.add('no-transition');
-  });
-  window.addEventListener('mousemove', (e) => {
-    if (!izDragging) return;
-    izPanX = izPX0 + (e.clientX - izDX); izPanY = izPY0 + (e.clientY - izDY);
-    izApply(false);
-  });
-  window.addEventListener('mouseup', () => {
-    if (!izDragging) return;
-    izDragging = false; izStage.classList.remove('dragging'); izWrap.classList.remove('no-transition');
-  });
-
-  // Touch drag
-  let izTouch0: Touch | null = null;
-  izStage.addEventListener('touchstart', (e) => {
-    if (e.touches.length !== 1) return;
-    izTouch0 = e.touches[0]; izPX0 = izPanX; izPY0 = izPanY;
-    izWrap.classList.add('no-transition');
-  }, { passive: true });
-  izStage.addEventListener('touchmove', (e) => {
-    if (!izTouch0 || e.touches.length !== 1) return;
-    e.preventDefault();
-    const t = e.touches[0];
-    izPanX = izPX0 + (t.clientX - izTouch0.clientX);
-    izPanY = izPY0 + (t.clientY - izTouch0.clientY);
-    izApply(false);
-  }, { passive: false });
-  izStage.addEventListener('touchend', () => { izTouch0 = null; izWrap.classList.remove('no-transition'); });
 
   // Trigger zoom from room modal zoom button (event delegation)
   document.addEventListener('click', (e) => {
