@@ -20,7 +20,7 @@
     </div>
     <div id="vtiz-stage" class="vtiz-stage">
       <div id="vtiz-wrap" class="vtiz-wrap">
-        <img id="vtiz-img" src="" alt="" />
+        <img id="vtiz-img" src="" alt="" draggable="false" />
       </div>
     </div>
     <div class="vtiz-footer">
@@ -186,9 +186,11 @@
     const sh = stage.clientHeight;
     const iw = img.offsetWidth * zoom;
     const ih = img.offsetHeight * zoom;
-    const margin = 80;
-    const maxX = Math.max(0, iw / 2 + sw / 2 - margin);
-    const maxY = Math.max(0, ih / 2 + sh / 2 - margin);
+    const visibleFraction = 0.75; // % of image at unzoomed size that must stay in view
+    const marginX = img.offsetWidth * visibleFraction;
+    const marginY = img.offsetHeight * visibleFraction;
+    const maxX = Math.max(0, iw / 2 + sw / 2 - marginX);
+    const maxY = Math.max(0, ih / 2 + sh / 2 - marginY);
     panX = Math.max(-maxX, Math.min(maxX, panX));
     panY = Math.max(-maxY, Math.min(maxY, panY));
   }
