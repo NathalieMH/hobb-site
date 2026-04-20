@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import DecoRule from "../../components/DecoRule.astro";
+import FloorplanZoom from "../../components/FloorplanZoom.astro";
 import { getCollection } from "astro:content";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -92,12 +93,21 @@ const grundrissMap = Object.fromEntries(
             <div class="apt-floorplan">
               {grundriss
                 ? <>
-                    <img src={`${base}${grundriss}`} alt="" loading="lazy" />
+                    <img
+                      src={`${base}${grundriss}`}
+                      alt=""
+                      loading="lazy"
+                      data-fp-open
+                      data-fp-src={`${base}${grundriss}`}
+                      data-fp-title-de={data.title_de}
+                      data-fp-title-en={data.title_en}
+                    />
                     <button
                       class="fp-zoom-btn"
-                      data-src={`${base}${grundriss}`}
-                      data-title-de={data.title_de}
-                      data-title-en={data.title_en}
+                      data-fp-open
+                      data-fp-src={`${base}${grundriss}`}
+                      data-fp-title-de={data.title_de}
+                      data-fp-title-en={data.title_en}
                       aria-label="Grundriss vergrößern"
                     >
                       <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
@@ -140,25 +150,7 @@ const grundrissMap = Object.fromEntries(
     </div>
   </section>
 
-<!-- Floorplan zoom modal -->
-<div id="fp-zoom-overlay" class="fp-zoom-overlay hidden" aria-hidden="true">
-  <div class="fp-zoom-modal" role="dialog" aria-modal="true">
-    <div class="fp-zoom-header">
-      <p class="fp-zoom-title" id="fp-zoom-title"></p>
-      <div class="fp-zoom-controls">
-        <button class="fp-zoom-ctrl" id="fp-zoom-out" aria-label="Verkleinern">−</button>
-        <span class="fp-zoom-pct" id="fp-zoom-pct">100%</span>
-        <button class="fp-zoom-ctrl" id="fp-zoom-in" aria-label="Vergrößern">+</button>
-        <button class="fp-zoom-close" id="fp-zoom-close" aria-label="Schließen">×</button>
-      </div>
-    </div>
-    <div class="fp-zoom-stage" id="fp-zoom-stage">
-      <div class="fp-zoom-img-wrap" id="fp-zoom-img-wrap">
-        <img id="fp-zoom-img" src="" alt="" />
-      </div>
-    </div>
-  </div>
-</div>
+<FloorplanZoom />
 
 </Layout>
 
@@ -305,7 +297,7 @@ const grundrissMap = Object.fromEntries(
 
 /* Floorplan zoom button */
 .apt-floorplan { position: relative; }
-.apt-floorplan img { cursor: pointer; }
+.apt-floorplan img[data-fp-open] { cursor: pointer; }
 .fp-zoom-btn {
   position: absolute;
   bottom: 0.6rem;
@@ -326,96 +318,6 @@ const grundrissMap = Object.fromEntries(
 .apt-card:hover .fp-zoom-btn { opacity: 1; }
 .fp-zoom-btn:hover { color: var(--ink); }
 
-/* Floorplan zoom modal */
-.fp-zoom-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(28, 26, 23, 0.6);
-  display: grid;
-  place-items: center;
-  padding: 2rem;
-  z-index: 400;
-}
-.fp-zoom-overlay.hidden { display: none; }
-.fp-zoom-modal {
-  background: var(--bg);
-  width: min(100%, 800px);
-  max-height: 92vh;
-  border: 1px solid var(--border);
-  box-shadow: 0 24px 64px rgba(28, 26, 23, 0.2);
-  display: flex;
-  flex-direction: column;
-}
-.fp-zoom-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1.25rem;
-  border-bottom: 1px solid var(--border);
-  gap: 1rem;
-  flex-shrink: 0;
-}
-.fp-zoom-title {
-  font-family: var(--font-sans);
-  font-size: 0.68rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.fp-zoom-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.fp-zoom-ctrl {
-  background: none;
-  border: 1px solid var(--border);
-  width: 28px;
-  height: 28px;
-  font-size: 1rem;
-  line-height: 1;
-  color: var(--muted);
-  cursor: pointer;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color var(--ease), border-color var(--ease);
-}
-.fp-zoom-ctrl:hover { color: var(--ink); border-color: var(--ink); }
-.fp-zoom-pct {
-  font-size: 0.72rem;
-  color: var(--muted);
-  min-width: 3rem;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.fp-zoom-close {
-  background: none;
-  border: none;
-  font-size: 1.6rem;
-  line-height: 1;
-  color: var(--muted);
-  cursor: pointer;
-  padding: 0 0.25rem;
-}
-.fp-zoom-close:hover { color: var(--ink); }
-.fp-zoom-stage {
-  overflow: auto;
-  flex: 1;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 1.5rem;
-}
-.fp-zoom-img-wrap {
-  transform-origin: top center;
-  transition: transform 0.2s ease;
-}
-.fp-zoom-img-wrap img { display: block; max-width: 100%; border: 1px solid var(--border); }
-
 @media (max-width: 860px) {
   .includes li:nth-child(n) { grid-column: span 6; }
   .apt-grid { grid-template-columns: 1fr; }
@@ -424,71 +326,3 @@ const grundrissMap = Object.fromEntries(
   .includes li:nth-child(n) { grid-column: span 12; }
 }
 </style>
-
-<script>
-  const overlay  = document.getElementById('fp-zoom-overlay')!;
-  const zoomImg  = document.getElementById('fp-zoom-img') as HTMLImageElement;
-  const imgWrap  = document.getElementById('fp-zoom-img-wrap')!;
-  const titleEl  = document.getElementById('fp-zoom-title')!;
-  const pctEl    = document.getElementById('fp-zoom-pct')!;
-  const lang     = () => document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de';
-  let zoom = 1;
-
-  function setZoom(z: number) {
-    zoom = Math.min(2.5, Math.max(0.75, z));
-    imgWrap.style.transform = `scale(${zoom})`;
-    pctEl.textContent = Math.round(zoom * 100) + '%';
-  }
-
-  document.addEventListener('click', (e) => {
-    const target = e.target as Element;
-    const btn = target.closest('.fp-zoom-btn, .apt-floorplan img') as HTMLElement | null;
-    if (btn) {
-      e.preventDefault();
-      e.stopPropagation();
-      const source = btn.classList.contains('fp-zoom-btn')
-        ? btn
-        : btn.closest('.apt-floorplan')?.querySelector('.fp-zoom-btn') as HTMLElement | null;
-      if (!source) return;
-      const src   = source.getAttribute('data-src') || '';
-      const title = lang() === 'en'
-        ? (source.getAttribute('data-title-en') || '')
-        : (source.getAttribute('data-title-de') || '');
-      titleEl.textContent = title;
-      zoomImg.src = src;
-      zoom = 1;
-      imgWrap.style.transform = 'scale(1)';
-      pctEl.textContent = '100%';
-      overlay.classList.remove('hidden');
-      overlay.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-      return;
-    }
-
-    if ((e.target as Element).closest('#fp-zoom-close') || e.target === overlay) {
-      overlay.classList.add('hidden');
-      overlay.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-  });
-
-  document.getElementById('fp-zoom-in')!.addEventListener('click',  () => setZoom(zoom + 0.25));
-  document.getElementById('fp-zoom-out')!.addEventListener('click', () => setZoom(zoom - 0.25));
-
-  let wheelLocked = false;
-  document.getElementById('fp-zoom-stage')!.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    if (wheelLocked) return;
-    wheelLocked = true;
-    setZoom(zoom + (e.deltaY < 0 ? 0.1 : -0.1));
-    setTimeout(() => { wheelLocked = false; }, 80);
-  }, { passive: false });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !overlay.classList.contains('hidden')) {
-      overlay.classList.add('hidden');
-      overlay.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }
-  });
-</script>
