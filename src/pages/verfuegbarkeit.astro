@@ -462,16 +462,22 @@ function formatDate(s?: string) {
       const nameDE = btn.getAttribute('data-apt-de') || '';
       const nameEN = btn.getAttribute('data-apt-en') || '';
       aptName.textContent = lang() === 'en' ? nameEN : nameDE;
-      zoom = 1; panX = 0; panY = 0;
-      pctEl.textContent = '100%';
+      panX = 0; panY = 0;
       // Preload first so image is ready when modal opens
       const preload = new Image();
       const showModal = () => {
         zoomImg.src = src;
-        applyTransform();
         overlay.classList.remove('hidden');
         overlay.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+        // Fit image to stage so full floorplan is visible on open
+        const sw = zoomStage.clientWidth;
+        const sh = zoomStage.clientHeight;
+        const iw = preload.naturalWidth  || zoomImg.naturalWidth;
+        const ih = preload.naturalHeight || zoomImg.naturalHeight;
+        zoom = (sw && sh && iw && ih) ? Math.min(1, Math.min(sw / iw, sh / ih)) : 1;
+        pctEl.textContent = Math.round(zoom * 100) + '%';
+        applyTransform(false);
       };
       preload.onload = showModal;
       preload.onerror = showModal;
