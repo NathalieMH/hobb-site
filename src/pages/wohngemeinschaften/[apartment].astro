@@ -323,7 +323,17 @@ const hasAptImages = carouselImages.length > 0;
   <!-- Image zoom overlay -->
   <div id="img-zoom-overlay" class="img-zoom-overlay hidden" aria-hidden="true">
     <div class="img-zoom-modal">
-      <div class="img-zoom-bar">
+      <div class="img-zoom-topbar">
+        <button class="img-zoom-close" id="img-zoom-close" aria-label="Schließen">×</button>
+      </div>
+      <div class="img-zoom-body">
+        <div id="img-zoom-stage" class="img-zoom-stage">
+          <div id="img-zoom-wrap" class="img-zoom-wrap">
+            <img id="img-zoom-img" src="" alt="" />
+          </div>
+        </div>
+      </div>
+      <div class="img-zoom-footer">
         <button class="img-zoom-ctrl" id="img-zoom-out">−</button>
         <span class="img-zoom-pct" id="img-zoom-pct">100%</span>
         <button class="img-zoom-ctrl" id="img-zoom-in">+</button>
@@ -333,14 +343,6 @@ const hasAptImages = carouselImages.length > 0;
           <span class="img-zoom-nav-counter" id="img-zoom-nav-counter"></span>
           <button class="img-zoom-ctrl iz-nav iz-next" id="iz-next" aria-label="Nächstes Bild">›</button>
         </span>
-        <button class="img-zoom-close" id="img-zoom-close" aria-label="Schließen">×</button>
-      </div>
-      <div class="img-zoom-body">
-        <div id="img-zoom-stage" class="img-zoom-stage">
-          <div id="img-zoom-wrap" class="img-zoom-wrap">
-            <img id="img-zoom-img" src="" alt="" />
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -651,12 +653,18 @@ const hasAptImages = carouselImages.length > 0;
   max-height: 92vh;
   overflow: hidden;
 }
-.img-zoom-bar {
+.img-zoom-topbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.4rem 0.5rem;
+  flex-shrink: 0;
+}
+.img-zoom-footer {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 1rem;
-  border-bottom: 1px solid var(--border);
+  border-top: 1px solid var(--border);
   flex-shrink: 0;
 }
 .img-zoom-ctrl {
@@ -696,7 +704,12 @@ const hasAptImages = carouselImages.length > 0;
   text-align: center;
 }
 .img-zoom-body {
+  flex: 1;
+  min-height: 0;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem clamp(2rem, 5vw, 4rem);
 }
 .iz-nav-group {
   display: flex;
@@ -705,7 +718,6 @@ const hasAptImages = carouselImages.length > 0;
 }
 .iz-nav.hidden { visibility: hidden; pointer-events: none; }
 .img-zoom-close {
-  margin-left: 0;
   background: none;
   border: none;
   font-size: 1.5rem;
@@ -716,8 +728,6 @@ const hasAptImages = carouselImages.length > 0;
 }
 .img-zoom-close:hover { color: var(--ink); }
 .img-zoom-stage {
-  width: min(78vw, 1050px);
-  height: min(70vh, 680px);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -733,7 +743,7 @@ const hasAptImages = carouselImages.length > 0;
   will-change: transform;
 }
 .img-zoom-wrap.no-transition { transition: none; }
-.img-zoom-wrap img { display: block; max-width: min(78vw, 1050px); max-height: min(70vh, 680px); pointer-events: none; }
+.img-zoom-wrap img { display: block; max-width: min(72vw, 1020px); max-height: min(66vh, 700px); pointer-events: none; }
 .thumbs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
 .thumb {
   width: 80px; height: 60px;
