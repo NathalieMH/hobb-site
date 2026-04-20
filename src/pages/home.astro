@@ -43,7 +43,7 @@ const base = import.meta.env.BASE_URL;
   </section>
 
   <!-- Three nav cards -->
-  <section class="section cards-section">
+  <section class="section cards-section" id="cards-section">
     <div class="container">
       <DecoRule />
       <div class="cards">
@@ -86,6 +86,23 @@ const base = import.meta.env.BASE_URL;
     </div>
   </section>
 
+  <!-- CTA section -->
+  <section class="section cta-section">
+    <div class="container cta-inner">
+      <DecoRule />
+      <div class="cta-row">
+        <a class="cta-btn" href={`${base}verfuegbarkeit/`}>
+          <span data-de>Verfügbarkeit ansehen</span>
+          <span data-en>Check Availability</span>
+        </a>
+        <a class="cta-btn cta-btn--secondary" href={`${base}impressum-kontakt/`}>
+          <span data-de>Kontakt aufnehmen</span>
+          <span data-en>Get in Touch</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
 </Layout>
 
 <style>
@@ -94,7 +111,8 @@ const base = import.meta.env.BASE_URL;
   position: relative;
   height: clamp(480px, 85vh, 900px);
   overflow: hidden;
-  background: var(--bg);
+  background: #fff;
+  margin-top: 0;
 }
 .hero-img {
   width: 100%;
@@ -197,8 +215,43 @@ const base = import.meta.env.BASE_URL;
   letter-spacing: 0.06em;
 }
 
+/* ── CTA ────────────────────────────────────────────────────── */
+.cta-section { padding-top: 0; }
+.cta-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+.cta-row {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.cta-btn {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.85rem 2.5rem;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  transition: background var(--ease), color var(--ease), border-color var(--ease);
+  white-space: nowrap;
+}
+.cta-btn:hover { background: var(--gold); color: var(--bg); }
+.cta-btn--secondary {
+  border-color: var(--border);
+  color: var(--muted);
+}
+.cta-btn--secondary:hover { background: var(--ink); color: var(--ink-light); border-color: var(--ink); }
+
 @media (max-width: 800px) {
   .cards { grid-template-columns: 1fr; gap: 3rem; }
   .card-img-wrap { aspect-ratio: 4 / 3; width: 100%; }
+  .cta-row { flex-direction: column; align-items: center; }
+  .hero { background: #fff; }
 }
 </style>

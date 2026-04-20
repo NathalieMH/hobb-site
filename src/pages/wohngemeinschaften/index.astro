@@ -162,7 +162,11 @@ const grundrissMap = Object.fromEntries(
   line-height: 0;
   min-height: clamp(160px, 32vw, 480px);
   overflow: hidden;
-  background: var(--bg);
+  background: #fff;
+}
+@media (max-width: 600px) {
+  .wg-hero { padding-inline: 0; }
+  .wg-hero img { max-height: none; height: 56vw; }
 }
 .wg-hero img {
   display: block;

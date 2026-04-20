@@ -275,11 +275,11 @@ const hasAptImages = carouselImages.length > 0;
                 ? <img class="modal-cover" src={cover} alt={d.title_de} data-index="0" />
                 : <div class="room-placeholder modal-cover" data-index="-1" />
               }
+              {hasGallery && <button class="nav prev modal-nav-prev" aria-label="Vorheriges Bild">‹</button>}
+              {hasGallery && <button class="nav next modal-nav-next" aria-label="Nächstes Bild">›</button>}
+              {hasGallery && <span class="modal-nav-counter modal-counter-overlay">{`1 / ${imgs.length}`}</span>}
             </div>
             <div class="modal-controls-row">
-              {hasGallery && <button class="nav prev" aria-label="Vorheriges Bild">‹</button>}
-              {hasGallery && <span class="modal-nav-counter">1 / {imgs.length}</span>}
-              {hasGallery && <button class="nav next" aria-label="Nächstes Bild">›</button>}
               <button class="modal-zoom-btn" aria-label="Bild vergrößern">
                 <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M1.5 6V1.5H6M12 1.5H16.5V6M16.5 12V16.5H12M6 16.5H1.5V12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
@@ -590,8 +590,37 @@ const hasAptImages = carouselImages.length > 0;
   gap: 2rem;
 }
 .modal-left { display: flex; flex-direction: column; gap: 0; }
-.modal-img-wrap { position: relative; }
+.modal-img-wrap { position: relative; overflow: hidden; }
 .modal-cover { width: 100%; border: 1px solid var(--border); display: block; }
+
+/* Overlaid nav arrows on image */
+.modal-nav-prev, .modal-nav-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  opacity: 0;
+  transition: opacity var(--ease), color var(--ease), border-color var(--ease);
+}
+.modal-nav-prev { left: 0.5rem; }
+.modal-nav-next { right: 0.5rem; }
+.modal-img-wrap:hover .modal-nav-prev,
+.modal-img-wrap:hover .modal-nav-next { opacity: 1; }
+
+/* Counter overlay bottom-left of image */
+.modal-counter-overlay {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  background: rgba(28, 26, 23, 0.5);
+  color: rgba(245, 242, 236, 0.92);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.55rem;
+  pointer-events: none;
+  line-height: 1.6;
+}
 .modal-zoom-btn {
   margin-left: auto;
   display: flex;
@@ -649,13 +678,6 @@ const hasAptImages = carouselImages.length > 0;
   flex-shrink: 0;
 }
 .nav:hover { color: var(--ink); border-color: var(--ink); }
-.modal-nav-counter {
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  min-width: 3rem;
-  text-align: center;
-}
 .modal-right { padding-top: 0.5rem; }
 .modal-title-row {
   display: flex;
@@ -685,6 +707,22 @@ const hasAptImages = carouselImages.length > 0;
 @media (max-width: 800px) {
   .apt-detail-inner { grid-template-columns: 1fr; }
   .modal-content { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .overlay { padding: 0; align-items: flex-start; }
+  .modal-card {
+    width: 100%;
+    min-height: 100%;
+    max-height: none;
+    padding: 1.25rem;
+    padding-top: 2.75rem;
+    border: none;
+    box-shadow: none;
+  }
+  .modal-close { top: 0.6rem; right: 0.6rem; }
+  .modal-nav-prev, .modal-nav-next { display: none; }
+  .modal-counter-overlay { opacity: 1; }
+  .thumbs { display: none; }
 }
 </style>
 
@@ -770,10 +808,14 @@ const hasAptImages = carouselImages.length > 0;
     if (thumb && body.contains(thumb)) {
       const article = thumb.closest(".modal-content") as HTMLElement;
       const cover = article.querySelector(".modal-cover") as HTMLImageElement;
+      const newIdx = thumb.getAttribute("data-index") || "0";
       cover.setAttribute("src", thumb.getAttribute("data-full")!);
-      cover.setAttribute("data-index", thumb.getAttribute("data-index") || "0");
+      cover.setAttribute("data-index", newIdx);
       article.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
       thumb.classList.add("active");
+      const allImgs: string[] = JSON.parse(article.getAttribute("data-images") || "[]");
+      const counter = article.querySelector(".modal-nav-counter") as HTMLElement | null;
+      if (counter) counter.textContent = `${parseInt(newIdx, 10) + 1} / ${allImgs.length}`;
       return;
     }
 
@@ -826,4 +868,31 @@ const hasAptImages = carouselImages.length > 0;
       }
     }
   });
+
+  // Swipe left/right in room modal (mobile)
+  let modalSwipeX = 0;
+  const overlayEl = document.getElementById('overlay')!;
+  overlayEl.addEventListener('touchstart', (e) => {
+    modalSwipeX = e.touches[0].clientX;
+  }, { passive: true });
+  overlayEl.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - modalSwipeX;
+    modalSwipeX = 0;
+    if (Math.abs(dx) < 40) return;
+    const bodyEl = document.getElementById('modal-body')!;
+    const article = bodyEl.querySelector('.modal-content') as HTMLElement | null;
+    const cover = bodyEl.querySelector('.modal-cover') as HTMLImageElement | null;
+    if (!article || !cover) return;
+    const allImgs: string[] = JSON.parse(article.getAttribute('data-images') || '[]');
+    if (allImgs.length < 2) return;
+    let idx = parseInt(cover.getAttribute('data-index') || '0', 10);
+    if (isNaN(idx) || idx < 0) idx = 0;
+    const newIdx = (idx + (dx < 0 ? 1 : -1) + allImgs.length) % allImgs.length;
+    cover.setAttribute('src', allImgs[newIdx]);
+    cover.setAttribute('data-index', String(newIdx));
+    article.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    article.querySelector<HTMLElement>(`.thumb[data-index="${newIdx}"]`)?.classList.add('active');
+    const counter = article.querySelector('.modal-nav-counter') as HTMLElement | null;
+    if (counter) counter.textContent = `${newIdx + 1} / ${allImgs.length}`;
+  }, { passive: true });
 </script>

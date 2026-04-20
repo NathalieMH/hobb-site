@@ -100,7 +100,6 @@ const roomCount = allRooms.length;
   gap: 1rem;
 }
 
-/* Hero with Benson-style side whitespace */
 .haus-hero {
   padding-inline: clamp(2rem, 8vw, 5rem);
   margin-top: 0;
@@ -108,7 +107,7 @@ const roomCount = allRooms.length;
   line-height: 0;
   min-height: clamp(160px, 32vw, 480px);
   overflow: hidden;
-  background: var(--bg);
+  background: #fff;
 }
 .haus-hero img {
   display: block;
@@ -116,6 +115,10 @@ const roomCount = allRooms.length;
   max-height: 600px;
   object-fit: cover;
   object-position: center 35%;
+}
+@media (max-width: 600px) {
+  .haus-hero { padding-inline: 0; }
+  .haus-hero img { max-height: none; height: 56vw; }
 }
 
 /* Content */
