@@ -86,6 +86,7 @@
   cursor: grab;
   user-select: none;
   background: var(--bg);
+  touch-action: none;
 }
 .vtiz-stage.dragging { cursor: grabbing; }
 .vtiz-wrap {
@@ -321,24 +322,46 @@
     dragging = false; stage.classList.remove('dragging'); wrap.classList.remove('no-transition');
   });
 
-  // Touch drag
+  // Touch drag + pinch zoom
   let touch0: Touch | null = null;
+  let pinchDist0 = 0, zoom0 = 1;
+
   stage.addEventListener('touchstart', (e) => {
-    if (e.touches.length !== 1) return;
-    touch0 = e.touches[0]; pX0 = panX; pY0 = panY;
-    wrap.classList.add('no-transition');
-  }, { passive: true });
-  stage.addEventListener('touchmove', (e) => {
-    if (!touch0 || e.touches.length !== 1) return;
     e.preventDefault();
-    const t = e.touches[0];
-    panX = pX0 + (t.clientX - touch0.clientX);
-    panY = pY0 + (t.clientY - touch0.clientY);
-    clampPan();
-    apply(false);
+    if (e.touches.length === 1) {
+      touch0 = e.touches[0]; pX0 = panX; pY0 = panY;
+    } else if (e.touches.length === 2) {
+      touch0 = null;
+      const dx = e.touches[1].clientX - e.touches[0].clientX;
+      const dy = e.touches[1].clientY - e.touches[0].clientY;
+      pinchDist0 = Math.hypot(dx, dy);
+      zoom0 = zoom;
+    }
+    wrap.classList.add('no-transition');
   }, { passive: false });
+
+  stage.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (e.touches.length === 1 && touch0) {
+      const t = e.touches[0];
+      panX = pX0 + (t.clientX - touch0.clientX);
+      panY = pY0 + (t.clientY - touch0.clientY);
+      clampPan();
+      apply(false);
+    } else if (e.touches.length === 2 && pinchDist0 > 0) {
+      const dx = e.touches[1].clientX - e.touches[0].clientX;
+      const dy = e.touches[1].clientY - e.touches[0].clientY;
+      const dist = Math.hypot(dx, dy);
+      zoom = Math.min(2.5, Math.max(0.5, zoom0 * dist / pinchDist0));
+      pctEl.textContent = Math.round(zoom * 100) + '%';
+      clampPan();
+      apply(false);
+    }
+  }, { passive: false });
+
   stage.addEventListener('touchend', () => {
-    touch0 = null; wrap.classList.remove('no-transition');
+    touch0 = null; pinchDist0 = 0;
+    wrap.classList.remove('no-transition');
   });
 })();
 </script>
