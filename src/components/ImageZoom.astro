@@ -187,7 +187,7 @@
     const sh = stage.clientHeight;
     const iw = img.offsetWidth * zoom;
     const ih = img.offsetHeight * zoom;
-    const visibleFraction = 0.75; // % of image at unzoomed size that must stay in view
+    const visibleFraction = 1.0; // % of image at unzoomed size that must stay in view
     const marginX = img.offsetWidth * visibleFraction;
     const marginY = img.offsetHeight * visibleFraction;
     const maxX = Math.max(0, iw / 2 + sw / 2 - marginX);
