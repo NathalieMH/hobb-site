@@ -32,74 +32,92 @@ const roomCount = allRooms.length;
     </div>
   </section>
 
-  <!-- Pull quote + intro -->
-  <section class="section intro-section">
-    <div class="container intro-inner">
-      <div class="pull-quote">
-        <span class="eyebrow" data-de>Berlin · 1920er Jahre · Architekt Leo Nachtlicht</span>
-        <span class="eyebrow" data-en>Berlin · 1920s · Architect Leo Nachtlicht</span>
-        <blockquote data-de>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </blockquote>
-        <blockquote data-en>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </blockquote>
+  <!-- Middle: big display text + body | staircase -->
+  <section class="section haus-middle">
+    <div class="container middle-grid">
+
+      <div class="middle-text">
+        <!-- Display block -->
+        <div class="display-block">
+          <p class="display-text" data-de>EINE HISTORISCHE STADTVILLA</p>
+          <p class="display-text" data-en>A HISTORIC CITY VILLA</p>
+          <div class="display-aside">
+            <span class="eyebrow" data-de>Geschichte & Architektur</span>
+            <span class="eyebrow" data-en>History & Architecture</span>
+            <p class="aside-title" data-de>Eine historische Stadtvilla in Berlin Steglitz-Dahlem</p>
+            <p class="aside-title" data-en>A historic villa in Berlin Steglitz-Dahlem</p>
+          </div>
+        </div>
+
+        <!-- Body text -->
+        <div class="body-cols">
+          <p data-de>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </p>
+          <p data-en>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </p>
+          <p data-de>
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim.
+          </p>
+          <p data-en>
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim.
+          </p>
+        </div>
+
+        <!-- Pull quote -->
+        <div class="pull-quote">
+          <span class="eyebrow" data-de>Berlin · 1920er Jahre · Architekt Leo Nachtlicht</span>
+          <span class="eyebrow" data-en>Berlin · 1920s · Architect Leo Nachtlicht</span>
+          <blockquote data-de>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </blockquote>
+          <blockquote data-en>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </blockquote>
+        </div>
       </div>
+
+      <!-- Staircase image -->
+      <div class="middle-img">
+        <img src={`${base}das-haus/staircase.jpg`} alt="" loading="lazy" data-always-fade />
+      </div>
+
     </div>
   </section>
 
-  <!-- Full-width image: staircase -->
-  <section class="full-img-section">
-    <img
-      src={`${base}das-haus/staircase.jpg`}
-      alt=""
-      loading="lazy"
-      data-always-fade
-    />
-  </section>
+  <!-- Bottom: large image | image + facts -->
+  <section class="haus-bottom">
+    <div class="bottom-grid">
 
-  <!-- Body text + facts -->
-  <section class="section body-section">
-    <div class="container body-inner">
-      <div class="body-text">
-        <p data-de>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
-        </p>
-        <p data-en>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
-        </p>
-        <p data-de>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.
-        </p>
-        <p data-en>
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.
-        </p>
+      <div class="bottom-left">
+        <img src={`${base}das-haus/vonoben.png`} alt="" loading="lazy" data-always-fade />
       </div>
 
-      <div class="haus-facts">
-        <dl>
-          <dt><span data-de>Baujahr</span><span data-en>Built</span></dt>
-          <dd>1920er Jahre</dd>
-          <dt><span data-de>Architekt</span><span data-en>Architect</span></dt>
-          <dd>
-            <a class="wiki-link" href="https://de.wikipedia.org/wiki/Leo_Nachtlicht" target="_blank" rel="noopener">Leo Nachtlicht</a>
-          </dd>
-          <dt><span data-de>Wohnungen</span><span data-en>Apartments</span></dt>
-          <dd>{aptCount}</dd>
-          <dt><span data-de>Zimmer gesamt</span><span data-en>Total rooms</span></dt>
-          <dd>{roomCount}</dd>
-          <dt><span data-de>Lage</span><span data-en>Location</span></dt>
-          <dd>Berlin Steglitz · Dahlem</dd>
-        </dl>
+      <div class="bottom-right">
+        <div class="bottom-img">
+          <img src={`${base}das-haus/houseaesthetic.jpg`} alt="" loading="lazy" data-always-fade />
+        </div>
+        <div class="facts-box">
+          <div class="facts-watermark" aria-hidden="true" data-de>GESCHICHTE</div>
+          <div class="facts-watermark" aria-hidden="true" data-en>HISTORY</div>
+          <h2 data-de>Ein Haus mit Geschichte</h2>
+          <h2 data-en>A House with History</h2>
+          <dl class="facts-dl">
+            <dt><span data-de>Baujahr</span><span data-en>Built</span></dt>
+            <dd>1920er Jahre</dd>
+            <dt><span data-de>Architekt</span><span data-en>Architect</span></dt>
+            <dd><a class="wiki-link" href="https://de.wikipedia.org/wiki/Leo_Nachtlicht" target="_blank" rel="noopener">Leo Nachtlicht</a></dd>
+            <dt><span data-de>Wohnungen</span><span data-en>Apartments</span></dt>
+            <dd>{aptCount}</dd>
+            <dt><span data-de>Zimmer gesamt</span><span data-en>Total rooms</span></dt>
+            <dd>{roomCount}</dd>
+            <dt><span data-de>Lage</span><span data-en>Location</span></dt>
+            <dd>Berlin Steglitz · Dahlem</dd>
+          </dl>
+        </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Two-image row -->
-  <section class="img-pair-section">
-    <div class="img-pair">
-      <img src={`${base}das-haus/vonoben.png`} alt="" loading="lazy" data-always-fade />
-      <img src={`${base}das-haus/houseaesthetic.jpg`} alt="" loading="lazy" data-always-fade />
     </div>
   </section>
 
@@ -114,7 +132,7 @@ const roomCount = allRooms.length;
   gap: 1rem;
 }
 
-/* Hero */
+/* ── Hero ── */
 .haus-hero {
   padding-inline: clamp(2rem, 8vw, 5rem);
   margin-top: 0;
@@ -136,69 +154,168 @@ const roomCount = allRooms.length;
   .haus-hero img { max-height: none; height: 56vw; }
 }
 
+/* ── Middle section ── */
+.haus-middle { padding-top: 0; }
+.middle-grid {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: stretch;
+}
+
+.middle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Display block */
+.display-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: end;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.display-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  font-weight: 300;
+  line-height: 1.05;
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.display-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.aside-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.35;
+}
+
+/* Body cols */
+.body-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.body-cols p { color: var(--muted); font-size: 0.88rem; line-height: 1.65; }
+
 /* Pull quote */
-.intro-section { padding-top: 0; padding-bottom: 0; }
-.intro-inner { max-width: 680px; }
-.pull-quote { display: flex; flex-direction: column; gap: 1rem; }
+.pull-quote { display: flex; flex-direction: column; gap: 0.75rem; }
 .pull-quote blockquote {
-  font-family: var(--font-serif);
-  font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1rem, 1.8vw, 1.3rem);
   font-weight: 300;
   font-style: italic;
-  line-height: 1.4;
+  line-height: 1.5;
   color: var(--ink);
-  padding-left: 1.5rem;
+  padding-left: 1.25rem;
   border-left: 2px solid var(--gold);
 }
 
-/* Full-width staircase image */
-.full-img-section {
-  padding-inline: clamp(2rem, 8vw, 5rem);
-  margin-block: 3rem;
-  font-size: 0;
-  line-height: 0;
+/* Staircase image */
+.middle-img {
   overflow: hidden;
+  min-height: 400px;
 }
-.full-img-section img {
+.middle-img img {
   display: block;
   width: 100%;
-  max-height: 540px;
+  height: 100%;
   object-fit: cover;
-  object-position: center 40%;
-}
-@media (max-width: 600px) {
-  .full-img-section { padding-inline: 0; margin-block: 2rem; }
-  .full-img-section img { max-height: none; height: 62vw; }
+  object-position: center;
 }
 
-/* Body text + facts */
-.body-section { padding-top: 0; }
-.body-inner {
+/* ── Bottom section ── */
+.haus-bottom {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+.bottom-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 5rem;
-  align-items: start;
+  grid-template-columns: 1fr 1fr;
+  min-height: clamp(400px, 55vw, 700px);
 }
-.body-text { display: flex; flex-direction: column; gap: 1.25rem; }
-.body-text p { color: var(--muted); }
+.bottom-left {
+  overflow: hidden;
+}
+.bottom-left img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.bottom-right {
+  display: flex;
+  flex-direction: column;
+}
+.bottom-img {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+.bottom-img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-.haus-facts dl {
+/* Facts box */
+.facts-box {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 2.5rem);
+  background: var(--bg);
+}
+.facts-watermark {
+  position: absolute;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(4rem, 9vw, 8rem);
+  font-weight: 300;
+  color: var(--ink);
+  opacity: 0.05;
+  right: -0.5rem;
+  bottom: -0.5rem;
+  line-height: 1;
+  text-transform: uppercase;
+  user-select: none;
+  pointer-events: none;
+  letter-spacing: 0.05em;
+}
+.facts-box h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  margin-bottom: 1.25rem;
+  color: var(--ink);
+}
+.facts-dl {
   display: grid;
   grid-template-columns: max-content 1fr;
-  gap: 0.5rem 1.5rem;
-  align-items: baseline;
+  gap: 0.45rem 1.5rem;
+  position: relative;
+  z-index: 1;
 }
-.haus-facts dt {
-  font-size: 0.7rem;
+.facts-dl dt {
+  font-size: 0.68rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--muted);
-  padding-top: 0.1rem;
 }
-.haus-facts dd {
-  font-family: var(--font-serif);
-  font-size: 1.05rem;
+.facts-dl dd {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1rem;
   margin: 0;
+  color: var(--ink);
 }
 .wiki-link {
   color: inherit;
@@ -208,32 +325,13 @@ const roomCount = allRooms.length;
 }
 .wiki-link:hover { color: var(--gold); }
 
-/* Two-image pair */
-.img-pair-section {
-  padding-inline: clamp(2rem, 8vw, 5rem);
-  margin-top: 3.5rem;
-  font-size: 0;
-  line-height: 0;
-}
-.img-pair {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-.img-pair img {
-  display: block;
-  width: 100%;
-  height: clamp(220px, 28vw, 420px);
-  object-fit: cover;
-}
-
+/* ── Responsive ── */
 @media (max-width: 900px) {
-  .body-inner { grid-template-columns: 1fr; gap: 3rem; }
-  .haus-facts { order: -1; }
-  .img-pair { grid-template-columns: 1fr; }
-  .img-pair img { height: 56vw; }
-}
-@media (max-width: 600px) {
-  .img-pair-section { padding-inline: 0; }
+  .middle-grid { grid-template-columns: 1fr; }
+  .middle-img { min-height: 50vw; order: -1; }
+  .display-block { grid-template-columns: 1fr; }
+  .body-cols { grid-template-columns: 1fr; }
+  .bottom-grid { grid-template-columns: 1fr; }
+  .bottom-img { min-height: 50vw; }
 }
 </style>
