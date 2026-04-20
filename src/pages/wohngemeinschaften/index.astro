@@ -161,6 +161,9 @@ const grundrissMap = Object.fromEntries(
   margin-top: 0;
   font-size: 0;
   line-height: 0;
+  min-height: clamp(160px, 32vw, 480px);
+  overflow: hidden;
+  background: var(--bg);
 }
 .wg-hero img {
   display: block;
@@ -255,7 +258,7 @@ const grundrissMap = Object.fromEntries(
   height: 100%;
   object-fit: contain;
   padding: 1rem;
-  transition: transform 0.5s ease;
+  transition: transform 0.5s ease, opacity 0.7s ease;
 }
 .apt-card:hover .apt-floorplan img { transform: scale(1.02); }
 

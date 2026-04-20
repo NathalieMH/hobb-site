@@ -35,6 +35,33 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
         <small class="footer-copy">© Villa Theo Berlin</small>
       </div>
     </footer>
+    <script is:inline>
+      (function () {
+        function revealImg(img) { img.classList.add('img-loaded'); }
+        function watchImg(img) {
+          if (img.complete && img.naturalWidth > 0) { revealImg(img); return; }
+          img.addEventListener('load', function () { revealImg(img); }, { once: true });
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+          document.querySelectorAll('img').forEach(watchImg);
+          new MutationObserver(function (mutations) {
+            mutations.forEach(function (m) {
+              if (m.type === 'attributes' && m.target.nodeName === 'IMG') {
+                var img = m.target;
+                img.classList.remove('img-loaded');
+                watchImg(img);
+              }
+              if (m.type === 'childList') {
+                m.addedNodes.forEach(function (n) {
+                  if (n.nodeName === 'IMG') watchImg(n);
+                  else if (n.querySelectorAll) n.querySelectorAll('img').forEach(watchImg);
+                });
+              }
+            });
+          }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
+        });
+      })();
+    </script>
   </body>
 </html>
 

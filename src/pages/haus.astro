@@ -103,8 +103,11 @@ const roomCount = allRooms.length;
 .haus-hero {
   padding-inline: clamp(2rem, 8vw, 5rem);
   margin-top: 0;
-  font-size: 0; /* kill any inline gap */
+  font-size: 0;
   line-height: 0;
+  min-height: clamp(160px, 32vw, 480px);
+  overflow: hidden;
+  background: var(--bg);
 }
 .haus-hero img {
   display: block;
