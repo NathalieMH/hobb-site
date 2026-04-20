@@ -36,6 +36,7 @@ const grundrissMap = Object.fromEntries(
       src={`${base}das-haus/Eingangsbereich.jpeg`}
       alt="Villa Theo, Eingangsbereich"
       loading="eager"
+      data-always-fade
     />
   </section>
 
@@ -165,16 +166,12 @@ const grundrissMap = Object.fromEntries(
   overflow: hidden;
   background: var(--bg);
 }
-@keyframes hero-fade-in { from { opacity: 0; } to { opacity: 1; } }
 .wg-hero img {
   display: block;
   width: 100%;
   max-height: 600px;
   object-fit: cover;
   object-position: center 60%;
-  opacity: 1;
-  transition: none;
-  animation: hero-fade-in 0.77s ease both;
 }
 
 /* Intro */

@@ -39,8 +39,16 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
       (function () {
         function revealImg(img) { img.classList.add('img-loaded'); }
         function watchImg(img) {
-          if (img.complete && img.naturalWidth > 0) { revealImg(img); return; }
-          img.addEventListener('load', function () { revealImg(img); }, { once: true });
+          var alwaysFade = img.hasAttribute('data-always-fade');
+          function reveal() {
+            if (alwaysFade) {
+              requestAnimationFrame(function () { requestAnimationFrame(function () { revealImg(img); }); });
+            } else {
+              revealImg(img);
+            }
+          }
+          if (img.complete && img.naturalWidth > 0) { reveal(); return; }
+          img.addEventListener('load', reveal, { once: true });
         }
         document.addEventListener('DOMContentLoaded', function () {
           document.querySelectorAll('img').forEach(watchImg);
