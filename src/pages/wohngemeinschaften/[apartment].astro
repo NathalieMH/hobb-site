@@ -568,16 +568,22 @@ const hasAptImages = carouselImages.length > 0;
 }
 .modal-close {
   position: absolute;
-  top: 1rem;
-  right: 1.25rem;
+  top: 0.75rem;
+  right: 0.75rem;
   background: none;
-  border: none;
-  font-size: 1.75rem;
+  border: 1px solid var(--gold);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
   line-height: 1;
-  color: var(--muted);
+  color: var(--gold);
   cursor: pointer;
+  transition: background var(--ease), color var(--ease);
 }
-.modal-close:hover { color: var(--ink); }
+.modal-close:hover { background: var(--gold); color: var(--bg); }
 .modal-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
