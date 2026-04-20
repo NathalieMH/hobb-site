@@ -657,6 +657,7 @@ const hasAptImages = carouselImages.length > 0;
   display: flex;
   justify-content: flex-end;
   padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
 .img-zoom-footer {
@@ -719,14 +720,20 @@ const hasAptImages = carouselImages.length > 0;
 .iz-nav.hidden { visibility: hidden; pointer-events: none; }
 .img-zoom-close {
   background: none;
-  border: none;
-  font-size: 1.5rem;
+  border: 1px solid var(--border);
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--muted);
   cursor: pointer;
-  transition: color var(--ease);
+  flex-shrink: 0;
+  transition: border-color var(--ease), color var(--ease);
 }
-.img-zoom-close:hover { color: var(--ink); }
+.img-zoom-close:hover { border-color: var(--gold); color: var(--ink); }
 .img-zoom-stage {
   overflow: hidden;
   display: flex;
