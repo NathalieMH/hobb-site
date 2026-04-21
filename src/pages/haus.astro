@@ -21,24 +21,44 @@ const roomCount = allRooms.length;
     />
   </section>
 
-  <!-- Middle -->
+  <!-- Middle: text + facts left | staircase right -->
   <section class="haus-middle">
     <div class="middle-grid">
 
-      <!-- LEFT TEXT -->
-      <div class="middle-text">
+      <!-- LEFT: title text + facts pushed to bottom -->
+      <div class="middle-left">
         <div class="text-anchor">
           <h2 class="middle-title">
             EINE HISTORISCHE<br> STADTVILLA
           </h2>
-
           <p class="middle-body">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </p>
         </div>
+
+        <div class="haus-facts">
+          <h3 class="facts-heading" data-de>Ein Haus mit Geschichte</h3>
+          <h3 class="facts-heading" data-en>A House with History</h3>
+          <dl>
+            <dt><span data-de>Baujahr</span><span data-en>Built</span></dt>
+            <dd>1920er Jahre</dd>
+            <dt><span data-de>Architekt</span><span data-en>Architect</span></dt>
+            <dd>
+              <a class="wiki-link" href="https://de.wikipedia.org/wiki/Leo_Nachtlicht" target="_blank" rel="noopener">
+                Leo Nachtlicht
+              </a>
+            </dd>
+            <dt><span data-de>Wohnungen</span><span data-en>Apartments</span></dt>
+            <dd>{aptCount}</dd>
+            <dt><span data-de>Zimmer gesamt</span><span data-en>Total rooms</span></dt>
+            <dd>{roomCount}</dd>
+            <dt><span data-de>Lage</span><span data-en>Location</span></dt>
+            <dd>Berlin Steglitz · Dahlem</dd>
+          </dl>
+        </div>
       </div>
 
-      <!-- RIGHT IMAGE -->
+      <!-- RIGHT: staircase image -->
       <div class="middle-img">
         <img
           src={`${base}das-haus/staircase.jpg`}
@@ -51,47 +71,11 @@ const roomCount = allRooms.length;
     </div>
   </section>
 
-  <!-- Bottom -->
+  <!-- Bottom: two images -->
   <section class="haus-bottom">
-    <div class="bottom-grid">
-
-      <div class="bottom-left">
-        <img src={`${base}das-haus/vonoben.png`} alt="" loading="lazy" data-always-fade />
-      </div>
-
-      <div class="bottom-right">
-        <div class="bottom-img">
-          <img src={`${base}das-haus/houseaesthetic.jpg`} alt="" loading="lazy" data-always-fade />
-        </div>
-
-        <div class="facts-box">
-          <div class="facts-watermark" aria-hidden="true">GESCHICHTE</div>
-
-          <h2>Ein Haus mit Geschichte</h2>
-
-          <dl class="facts-dl">
-            <dt>Baujahr</dt>
-            <dd>1920er Jahre</dd>
-
-            <dt>Architekt</dt>
-            <dd>
-              <a class="wiki-link" href="https://de.wikipedia.org/wiki/Leo_Nachtlicht" target="_blank" rel="noopener">
-                Leo Nachtlicht
-              </a>
-            </dd>
-
-            <dt>Wohnungen</dt>
-            <dd>{aptCount}</dd>
-
-            <dt>Zimmer gesamt</dt>
-            <dd>{roomCount}</dd>
-
-            <dt>Lage</dt>
-            <dd>Berlin Steglitz · Dahlem</dd>
-          </dl>
-        </div>
-      </div>
-
+    <div class="img-pair">
+      <img src={`${base}das-haus/vonoben.png`} alt="" loading="lazy" data-always-fade />
+      <img src={`${base}das-haus/houseaesthetic.jpg`} alt="" loading="lazy" data-always-fade />
     </div>
   </section>
 
@@ -99,15 +83,10 @@ const roomCount = allRooms.length;
 
 <style>
 
-/* ── Design tokens ── */
-:root {
-  --stair-width: 60%;
-  --stair-anchor: 66.666%;
-}
-
-/* ── Shared frame alignment ── */
+/* ── Shared horizontal padding ── */
 .haus-hero,
-.haus-middle {
+.haus-middle,
+.haus-bottom {
   padding-inline: clamp(2rem, 8vw, 5rem);
 }
 
@@ -119,7 +98,6 @@ const roomCount = allRooms.length;
   overflow: hidden;
   background: #fff;
 }
-
 .haus-hero img {
   display: block;
   width: 100%;
@@ -127,31 +105,36 @@ const roomCount = allRooms.length;
   object-fit: cover;
   object-position: center 35%;
 }
+@media (max-width: 600px) {
+  .haus-hero { padding-inline: 0; }
+  .haus-hero img { height: 56vw; }
+}
 
-/* ── Middle layout ── */
+/* ── Middle section ── */
+.haus-middle {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+}
+
 .middle-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  align-items: start;
+  grid-template-columns: 2fr 3fr;
+  align-items: stretch;
+  min-height: clamp(480px, 60vw, 780px);
 }
 
-/* LEFT TEXT */
-.middle-text {
-  grid-column: 1 / 3;
+/* Left column: title at top, facts at bottom */
+.middle-left {
   display: flex;
   flex-direction: column;
-  padding: 0;
+  padding-right: clamp(1.5rem, 3vw, 2.5rem);
 }
 
-/* shared vertical alignment anchor */
 .text-anchor {
-  padding-top: clamp(2rem, 4vw, 3.5rem);
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-/* typography */
 .middle-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.8rem, 3vw, 2.5rem);
@@ -164,71 +147,94 @@ const roomCount = allRooms.length;
 }
 
 .middle-body {
-  max-width: 38rem;
   font-size: 0.95rem;
   line-height: 1.7;
   color: var(--muted);
   margin: 0;
 }
 
-/* ── STAIRCASE IMAGE (CRITICAL ALIGNMENT) ── */
-.middle-img {
-  grid-column: 1 / -1;
-  align-self: start;
-  padding-top: clamp(2rem, 4vw, 3.5rem);
+/* Facts — pushed to bottom of left column */
+.haus-facts {
+  margin-top: auto;
 }
 
-.middle-img img {
-  width: var(--stair-width);
-  margin-left: var(--stair-anchor);
-  transform: translateX(-50%);
-  display: block;
-  height: auto;
-  object-fit: cover;
+.facts-heading {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1rem, 1.8vw, 1.3rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  margin: 0 0 0.75rem;
 }
 
-/* ── Bottom section ── */
-.haus-bottom { margin-top: 0; }
-
-.bottom-grid {
+.haus-facts dl {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: clamp(500px, 65vw, 860px);
+  grid-template-columns: max-content 1fr;
+  gap: 0.5rem 1.5rem;
+  align-items: baseline;
+}
+.haus-facts dt {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 0.1rem;
+}
+.haus-facts dd {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.05rem;
+  margin: 0;
 }
 
-.bottom-left img,
-.bottom-img img {
+.wiki-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--gold);
+  text-underline-offset: 3px;
+}
+.wiki-link:hover { color: var(--gold); }
+
+/* Staircase image — fills right column height */
+.middle-img {
+  overflow: hidden;
+}
+.middle-img img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
-/* Facts */
-.facts-box {
-  position: relative;
-  padding: clamp(1.5rem, 3vw, 2.5rem);
-  background: var(--bg);
+/* ── Bottom two images ── */
+.haus-bottom {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+.img-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.img-pair img {
+  display: block;
+  width: 100%;
+  height: clamp(220px, 28vw, 420px);
+  object-fit: cover;
 }
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .middle-grid {
     grid-template-columns: 1fr;
+    min-height: auto;
   }
-
-  .middle-text {
-    grid-column: auto;
-  }
-
-  .middle-img img {
-    width: 100%;
-    margin-left: 0;
-    transform: none;
-  }
-
-  .bottom-grid {
-    grid-template-columns: 1fr;
-  }
+  .middle-img { min-height: 50vw; order: -1; }
+  .middle-img img { height: 100%; min-height: 50vw; }
+  .img-pair { grid-template-columns: 1fr; }
+  .img-pair img { height: 56vw; }
+}
+@media (max-width: 600px) {
+  .haus-bottom { padding-inline: 0; }
 }
 
 </style>
