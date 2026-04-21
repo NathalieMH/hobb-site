@@ -36,6 +36,37 @@ const roomCount = allRooms.length;
           </p>
         </div>
 
+        <div class="pull-quote">
+          <span class="eyebrow" data-de>Berlin · 1920er Jahre · Architekt Leo Nachtlicht</span>
+          <span class="eyebrow" data-en>Berlin · 1920s · Architect Leo Nachtlicht</span>
+          <blockquote data-de>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </blockquote>
+          <blockquote data-en>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </blockquote>
+        </div>
+      </div>
+
+      <!-- RIGHT: staircase image -->
+      <div class="middle-img">
+        <img
+          src={`${base}das-haus/staircase.jpg`}
+          alt=""
+          loading="lazy"
+          data-always-fade
+        />
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Bottom: aerial left | aesthetic image + facts right -->
+  <section class="haus-bottom">
+    <div class="img-pair">
+      <img src={`${base}das-haus/vonoben.png`} alt="" loading="lazy" data-always-fade />
+      <div class="bottom-right-col">
+        <img src={`${base}das-haus/houseaesthetic.jpg`} alt="" loading="lazy" data-always-fade />
         <div class="haus-facts">
           <h3 class="facts-heading" data-de>Ein Haus mit Geschichte</h3>
           <h3 class="facts-heading" data-en>A House with History</h3>
@@ -57,25 +88,6 @@ const roomCount = allRooms.length;
           </dl>
         </div>
       </div>
-
-      <!-- RIGHT: staircase image -->
-      <div class="middle-img">
-        <img
-          src={`${base}das-haus/staircase.jpg`}
-          alt=""
-          loading="lazy"
-          data-always-fade
-        />
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Bottom: two images -->
-  <section class="haus-bottom">
-    <div class="img-pair">
-      <img src={`${base}das-haus/vonoben.png`} alt="" loading="lazy" data-always-fade />
-      <img src={`${base}das-haus/houseaesthetic.jpg`} alt="" loading="lazy" data-always-fade />
     </div>
   </section>
 
@@ -153,11 +165,63 @@ const roomCount = allRooms.length;
   margin: 0;
 }
 
-/* Facts — pushed to bottom of left column */
-.haus-facts {
+/* Pull-quote — pushed to bottom of left column */
+.pull-quote {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   margin-top: auto;
 }
+.pull-quote blockquote {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--ink);
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--gold);
+  margin: 0;
+}
 
+/* Staircase image — fills right column height */
+.middle-img {
+  overflow: hidden;
+}
+.middle-img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ── Bottom section ── */
+.haus-bottom {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+.img-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+.img-pair > img,
+.bottom-right-col img {
+  display: block;
+  width: 100%;
+  height: clamp(220px, 28vw, 420px);
+  object-fit: cover;
+}
+
+.bottom-right-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.haus-facts {
+  margin-top: 1.5rem;
+}
 .facts-heading {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1rem, 1.8vw, 1.3rem);
@@ -166,7 +230,6 @@ const roomCount = allRooms.length;
   color: var(--ink);
   margin: 0 0 0.75rem;
 }
-
 .haus-facts dl {
   display: grid;
   grid-template-columns: max-content 1fr;
@@ -185,7 +248,6 @@ const roomCount = allRooms.length;
   font-size: 1.05rem;
   margin: 0;
 }
-
 .wiki-link {
   color: inherit;
   text-decoration: underline;
@@ -193,34 +255,6 @@ const roomCount = allRooms.length;
   text-underline-offset: 3px;
 }
 .wiki-link:hover { color: var(--gold); }
-
-/* Staircase image — fills right column height */
-.middle-img {
-  overflow: hidden;
-}
-.middle-img img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-/* ── Bottom two images ── */
-.haus-bottom {
-  margin-top: clamp(2rem, 4vw, 3.5rem);
-}
-.img-pair {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-.img-pair img {
-  display: block;
-  width: 100%;
-  height: clamp(220px, 28vw, 420px);
-  object-fit: cover;
-}
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
@@ -231,7 +265,8 @@ const roomCount = allRooms.length;
   .middle-img { min-height: 50vw; order: -1; }
   .middle-img img { height: 100%; min-height: 50vw; }
   .img-pair { grid-template-columns: 1fr; }
-  .img-pair img { height: 56vw; }
+  .img-pair > img,
+  .bottom-right-col img { height: 56vw; }
 }
 @media (max-width: 600px) {
   .haus-bottom { padding-inline: 0; }
