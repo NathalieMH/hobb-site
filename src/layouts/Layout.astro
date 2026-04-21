@@ -86,11 +86,17 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
           }, 800);
         }, { once: true });
 
+        var _vtSwapping = false;
+
         function revealImg(img) { img.classList.add('img-loaded'); }
         function watchImg(img) {
           var alwaysFade = img.hasAttribute('data-always-fade');
           function reveal() {
-            if (alwaysFade) {
+            // During astro:after-swap (inside the VT callback): reveal synchronously
+            // so the img is visible in the VT new-state snapshot.
+            // On initial page load: use double-rAF for data-always-fade so the
+            // CSS opacity transition fires correctly.
+            if (alwaysFade && !_vtSwapping) {
               requestAnimationFrame(function () { requestAnimationFrame(function () { revealImg(img); }); });
             } else {
               revealImg(img);
@@ -100,9 +106,17 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
           img.addEventListener('load', reveal, { once: true });
         }
 
-        // astro:page-load fires on initial load AND after every ViewTransition navigation.
-        // This re-watches all images on the new page (handles cached images that
-        // are already complete when added to the DOM).
+        // astro:after-swap fires inside the ViewTransition callback, BEFORE the
+        // browser takes its new-state snapshot. Revealing cached images here makes
+        // them visible in the snapshot, preventing the blank-then-flash effect.
+        document.addEventListener('astro:after-swap', function () {
+          _vtSwapping = true;
+          document.querySelectorAll('img').forEach(watchImg);
+          _vtSwapping = false;
+        });
+
+        // astro:page-load fires after the VT animation completes (also on initial load).
+        // Picks up any images that weren't cached yet when after-swap ran.
         document.addEventListener('astro:page-load', function () {
           document.querySelectorAll('img').forEach(watchImg);
           // Re-apply language preference after navigation.
