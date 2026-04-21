@@ -155,6 +155,11 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
   </body>
 </html>
 
+<script>
+  import { initBlendReveal } from '../scripts/blend-reveal';
+  document.addEventListener('astro:page-load', () => initBlendReveal());
+</script>
+
 <style>
 /* Page transition — fast fade-out, gentle fade-up on enter */
 ::view-transition-old(root) {
