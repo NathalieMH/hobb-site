@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import ImageZoom from "../components/ImageZoom.astro";
+import { ViewTransitions } from "astro:transitions";
 import "../styles/global.css";
 const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in einer Berliner Art-Déco-Villa aus den 1920er Jahren." } = Astro.props;
 ---
@@ -13,6 +14,7 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <ViewTransitions fallback="animate" />
     <!-- Cursor hint: ensures pointer cursor on interactive elements before external CSS loads -->
     <style>a,button{cursor:pointer}</style>
     <!-- Inline lang-init: runs before paint to avoid DE→EN flash -->
@@ -39,21 +41,51 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
     </footer>
     <script is:inline>
       (function () {
-        var heroImages = [
+        // All site images — prefetched in background after page load
+        var allSiteImages = [
           'first-image.png',
+          'das-haus/staircase.jpg',
+          'das-haus/houseaesthetic.jpg',
+          'das-haus/vonoben.png',
           'das-haus/Eingangsbereich.jpeg',
-          'das-haus/Aussenansicht.jpeg'
+          'das-haus/Aussenansicht.jpeg',
+          'das-haus/dashaus-wohngemeinschaften.png',
+          'das-haus/dashaus-lage.jpg',
+          'das-haus/ehepaar_nachtlicht.jpg',
+          'wohngemeinschaften/wohnung-2OG/grundriss.png',
+          'wohngemeinschaften/wohnung-2OG/kitchen-1.jpeg',
+          'wohngemeinschaften/wohnung-2OG/dining-room-1.jpeg',
+          'wohngemeinschaften/wohnung-2OG/bathroom-1.jpg',
+          'wohngemeinschaften/wohnung-1OG/grundriss.png',
+          'wohngemeinschaften/wohnung-1OG/dining-room-1.jpeg',
+          'zimmer/2og-zimmer-1/cover.jpeg',
+          'zimmer/2og-zimmer-2/cover.png',
+          'zimmer/2og-zimmer-2/2a.png'
         ];
         var base = document.documentElement.getAttribute('data-base') || '/';
+
+        // After load: prefetch all site images into HTTP cache.
+        // Current-page images are already loading; these fill the cache for
+        // every other page the user might navigate to next.
         window.addEventListener('load', function () {
-          heroImages.forEach(function (src) {
-            var link = document.createElement('link');
-            link.rel = 'prefetch';
-            link.as = 'image';
-            link.href = base + src;
-            document.head.appendChild(link);
-          });
-        });
+          var alreadyPrefetched = new Set(
+            Array.from(document.querySelectorAll('link[rel="prefetch"][as="image"]'))
+              .map(function(l) { return l.getAttribute('href'); })
+          );
+          // Short delay so we don't compete with the current page finishing up
+          setTimeout(function () {
+            allSiteImages.forEach(function (src) {
+              var href = base + src;
+              if (alreadyPrefetched.has(href)) return;
+              var link = document.createElement('link');
+              link.rel = 'prefetch';
+              link.as = 'image';
+              link.href = href;
+              document.head.appendChild(link);
+            });
+          }, 800);
+        }, { once: true });
+
         function revealImg(img) { img.classList.add('img-loaded'); }
         function watchImg(img) {
           var alwaysFade = img.hasAttribute('data-always-fade');
@@ -67,8 +99,27 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
           if (img.complete && img.naturalWidth > 0) { reveal(); return; }
           img.addEventListener('load', reveal, { once: true });
         }
-        document.addEventListener('DOMContentLoaded', function () {
+
+        // astro:page-load fires on initial load AND after every ViewTransition navigation.
+        // This re-watches all images on the new page (handles cached images that
+        // are already complete when added to the DOM).
+        document.addEventListener('astro:page-load', function () {
           document.querySelectorAll('img').forEach(watchImg);
+          // Re-apply language preference after navigation.
+          // Remove attribute for DE to match Header's contract (html:not([data-lang="en"]) handles DE).
+          var lang = localStorage.getItem('vt-lang') || 'de';
+          if (lang === 'en') {
+            document.documentElement.setAttribute('data-lang', 'en');
+          } else {
+            document.documentElement.removeAttribute('data-lang');
+          }
+        });
+
+        // MutationObserver watches for images injected dynamically (room modals, etc.)
+        // Guard prevents duplicate observers if this script block ever re-executes.
+        document.addEventListener('DOMContentLoaded', function () {
+          if (window.__vtMutObserver) return;
+          window.__vtMutObserver = true;
           new MutationObserver(function (mutations) {
             mutations.forEach(function (m) {
               if (m.type === 'attributes' && m.target.nodeName === 'IMG') {
@@ -91,6 +142,21 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
 </html>
 
 <style>
+/* Page transition — fast fade-out, gentle fade-up on enter */
+::view-transition-old(root) {
+  animation: vt-out 0.18s cubic-bezier(0.4, 0, 1, 1) both;
+}
+::view-transition-new(root) {
+  animation: vt-in 0.32s cubic-bezier(0, 0, 0.2, 1) both;
+}
+@keyframes vt-out {
+  to { opacity: 0; }
+}
+@keyframes vt-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .site-footer {
   border-top: 1px solid var(--border);
   padding-block: var(--sp-md);
