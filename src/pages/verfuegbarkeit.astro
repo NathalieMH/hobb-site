@@ -309,12 +309,17 @@ function formatDate(s?: string) {
 
 @media (max-width: 720px) {
   .room-row-main {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.65rem;
   }
-  .room-name { grid-column: 1 / -1; }
-  .floorplan-btn { justify-self: start; }
-  .room-from { text-align: left; }
+  .room-name  { flex: 0 0 100%; }
+  .apt-name   { flex: 1 1 auto; }
+  .room-from  { display: none; }
+}
+@media (max-width: 500px) {
+  .fp-label { display: none; }
 }
 </style>
 

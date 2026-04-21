@@ -27,8 +27,8 @@ main { display: block; }
 img, video { display: block; max-width: 100%; }
 img { opacity: 0; transition: opacity 0.77s ease; }
 img.img-loaded { opacity: 1; }
-a { color: inherit; }
-button { cursor: pointer; font: inherit; }
+a { color: inherit; touch-action: manipulation; }
+button { cursor: pointer; font: inherit; touch-action: manipulation; }
 
 /* ── Base ───────────────────────────────────────────────────── */
 html { background: var(--bg); color: var(--ink); scroll-behavior: smooth; }

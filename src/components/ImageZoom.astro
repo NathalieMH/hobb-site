@@ -161,6 +161,15 @@
   text-align: center;
 }
 .vtiz-nav-group.vtiz-hidden { display: none !important; }
+
+@media (max-width: 600px) {
+  .vtiz-overlay { padding: 0.5rem; }
+  .vtiz-modal { width: 100%; }
+  .vtiz-wrap img {
+    max-width: calc(100vw - 2rem);
+    max-height: min(60vh, 480px);
+  }
+}
 </style>
 
 <script>
