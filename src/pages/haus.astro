@@ -165,12 +165,13 @@ const roomCount = allRooms.length;
   margin: 0;
 }
 
-/* Pull-quote — pushed to bottom of left column */
+/* Pull-quote — pushed to bottom of left column, right-aligned */
 .pull-quote {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   margin-top: auto;
+  text-align: right;
 }
 .pull-quote blockquote {
   font-family: 'Cormorant Garamond', Georgia, serif;
@@ -179,8 +180,8 @@ const roomCount = allRooms.length;
   font-style: italic;
   line-height: 1.4;
   color: var(--ink);
-  padding-left: 1.5rem;
-  border-left: 2px solid var(--gold);
+  padding-right: 1.5rem;
+  border-right: 2px solid var(--gold);
   margin: 0;
 }
 
@@ -202,15 +203,15 @@ const roomCount = allRooms.length;
 }
 .img-pair {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: 2fr 3fr;
+  gap: 0;
   align-items: start;
 }
 .img-pair > img,
 .bottom-right-col img {
   display: block;
   width: 100%;
-  height: clamp(220px, 28vw, 420px);
+  height: clamp(330px, 42vw, 630px);
   object-fit: cover;
 }
 
@@ -266,7 +267,7 @@ const roomCount = allRooms.length;
   .middle-img img { height: 100%; min-height: 50vw; }
   .img-pair { grid-template-columns: 1fr; }
   .img-pair > img,
-  .bottom-right-col img { height: 56vw; }
+  .bottom-right-col img { height: 84vw; }
 }
 @media (max-width: 600px) {
   .haus-bottom { padding-inline: 0; }
