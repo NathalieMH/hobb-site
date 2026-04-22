@@ -25,13 +25,33 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 main { display: block; }
 img, video { display: block; max-width: 100%; }
-img { opacity: 0; transition: opacity 0.77s ease; }
-img.img-loaded { opacity: 1; }
+/* All images: hidden until loaded, then crossfade in.
+   This prevents ugly row-by-row progressive rendering.
+   Combined with aspect-ratio containers (Task 2) and
+   background placeholder colors, users see a colored
+   rectangle that smoothly reveals the image. */
+img {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+img.loaded {
+  opacity: 1;
+}
+/* No-JS fallback: show images if JS fails to load */
+.no-js img {
+  opacity: 1 !important;
+}
+/* Images inside clip-path reveals don't need the fade-in —
+   the clip-path IS the reveal animation. */
+.reveal-image img,
+img.reveal-image {
+  opacity: 1;
+}
 a { color: inherit; touch-action: manipulation; }
 button { cursor: pointer; font: inherit; touch-action: manipulation; }
 
 /* ── Base ───────────────────────────────────────────────────── */
-html { background: var(--bg); color: var(--ink); scroll-behavior: smooth; }
+html { background: var(--bg); color: var(--ink); }
 body {
   font-family: var(--font-sans);
   font-size: 1rem;

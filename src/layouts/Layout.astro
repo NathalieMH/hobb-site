@@ -5,7 +5,7 @@ import { ViewTransitions } from "astro:transitions";
 import "../styles/global.css";
 const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in einer Berliner Art-Déco-Villa aus den 1920er Jahren." } = Astro.props;
 ---
-<html lang="de" data-base={import.meta.env.BASE_URL}>
+<html lang="de" data-base={import.meta.env.BASE_URL} class="no-js">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -26,6 +26,24 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
     </script>
   </head>
   <body>
+    <script is:inline>
+      document.documentElement.classList.remove('no-js');
+
+      // Fade-in all images when loaded. Handles cached images
+      // (complete check) and fresh loads (event listener).
+      function initImageFadeIn() {
+        document.querySelectorAll('img').forEach(function(img) {
+          if (img.complete && img.naturalHeight > 0) {
+            img.classList.add('loaded');
+          } else {
+            img.addEventListener('load', function() { img.classList.add('loaded'); });
+            img.addEventListener('error', function() { img.classList.add('loaded'); });
+          }
+        });
+      }
+      initImageFadeIn();
+      document.addEventListener('astro:page-load', initImageFadeIn);
+    </script>
     <Header />
     <main><slot /></main>
     <ImageZoom />
@@ -86,69 +104,15 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
           }, 800);
         }, { once: true });
 
-        var _vtSwapping = false;
-
-        function revealImg(img) { img.classList.add('img-loaded'); }
-        function watchImg(img) {
-          var alwaysFade = img.hasAttribute('data-always-fade');
-          function reveal() {
-            // During astro:after-swap (inside the VT callback): reveal synchronously
-            // so the img is visible in the VT new-state snapshot.
-            // On initial page load: use double-rAF for data-always-fade so the
-            // CSS opacity transition fires correctly.
-            if (alwaysFade && !_vtSwapping) {
-              requestAnimationFrame(function () { requestAnimationFrame(function () { revealImg(img); }); });
-            } else {
-              revealImg(img);
-            }
-          }
-          if (img.complete && img.naturalWidth > 0) { reveal(); return; }
-          img.addEventListener('load', reveal, { once: true });
-        }
-
-        // astro:after-swap fires inside the ViewTransition callback, BEFORE the
-        // browser takes its new-state snapshot. Revealing cached images here makes
-        // them visible in the snapshot, preventing the blank-then-flash effect.
-        document.addEventListener('astro:after-swap', function () {
-          _vtSwapping = true;
-          document.querySelectorAll('img').forEach(watchImg);
-          _vtSwapping = false;
-        });
-
-        // astro:page-load fires after the VT animation completes (also on initial load).
-        // Picks up any images that weren't cached yet when after-swap ran.
+        // Re-apply language preference after View Transitions navigation.
+        // Remove attribute for DE to match Header's contract (html:not([data-lang="en"]) handles DE).
         document.addEventListener('astro:page-load', function () {
-          document.querySelectorAll('img').forEach(watchImg);
-          // Re-apply language preference after navigation.
-          // Remove attribute for DE to match Header's contract (html:not([data-lang="en"]) handles DE).
           var lang = localStorage.getItem('vt-lang') || 'de';
           if (lang === 'en') {
             document.documentElement.setAttribute('data-lang', 'en');
           } else {
             document.documentElement.removeAttribute('data-lang');
           }
-        });
-
-        // MutationObserver watches for images injected dynamically (room modals, etc.)
-        // Guard prevents duplicate observers if this script block ever re-executes.
-        document.addEventListener('DOMContentLoaded', function () {
-          if (window.__vtMutObserver) return;
-          window.__vtMutObserver = true;
-          new MutationObserver(function (mutations) {
-            mutations.forEach(function (m) {
-              if (m.type === 'attributes' && m.target.nodeName === 'IMG') {
-                var img = m.target;
-                img.classList.remove('img-loaded');
-                watchImg(img);
-              }
-              if (m.type === 'childList') {
-                m.addedNodes.forEach(function (n) {
-                  if (n.nodeName === 'IMG') watchImg(n);
-                  else if (n.querySelectorAll) n.querySelectorAll('img').forEach(watchImg);
-                });
-              }
-            });
-          }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
         });
       })();
     </script>
