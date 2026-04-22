@@ -30,13 +30,13 @@ const base = import.meta.env.BASE_URL;
   <section class="section intro-section">
     <div class="container intro-wrap">
       <div class="intro-text">
-        <span class="eyebrow">Haderslebener Str. 26, 12163 Berlin</span>
-        <h2 data-de>Eine Villa mit Geschichte</h2>
-        <h2 data-en>A Villa with History</h2>
-        <p data-de>
+        <span class="eyebrow reveal">Haderslebener Str. 26, 12163 Berlin</span>
+        <h2 class="reveal" data-de>Eine Villa mit Geschichte</h2>
+        <h2 class="reveal" data-en>A Villa with History</h2>
+        <p class="reveal" data-de>
           Die Villa Theo ist ein wunderschöner Altbau aus den 1920er Jahren mit Anbau in Berlin Steglitz, an der Grenze zu Dahlem. Sie liegt in der Nähe der Freien Universität und der MSB und bietet vier Wohngemeinschaften für Studierende — mit insgesamt 22 Zimmern, gemeinsamen Küchen, Bädern, Wohn-Esszimmern und einem Garten. Die Miete ist all-inclusive.
         </p>
-        <p data-en>
+        <p class="reveal" data-en>
           Villa Theo is a beautiful 1920s building with annex in Berlin Steglitz, bordering Dahlem. Close to the Freie Universität and MSB, it offers four shared apartments for students — 22 rooms in total, with shared kitchens, bathrooms, living-dining rooms, and a garden. Rent is all-inclusive.
         </p>
       </div>
@@ -46,9 +46,9 @@ const base = import.meta.env.BASE_URL;
   <!-- Three nav cards -->
   <section class="cards-section" id="cards-section">
     <div class="cards-inner">
-      <div class="cards">
-        <a class="card" href={`${base}wohngemeinschaften/`} data-astro-prefetch>
-          <div class="card-img-wrap">
+      <div class="cards reveal-stagger">
+        <a class="card reveal-child" href={`${base}wohngemeinschaften/`} data-astro-prefetch>
+          <div class="card-img-wrap tile-image-wrap">
             <img src={`${base}das-haus/dashaus-wohngemeinschaften.png`} alt="" loading="lazy" decoding="async" style="object-position: center bottom;" />
           </div>
           <div class="card-caption">
@@ -59,8 +59,8 @@ const base = import.meta.env.BASE_URL;
           </div>
         </a>
 
-        <a class="card" href={`${base}lage/`} data-astro-prefetch>
-          <div class="card-img-wrap">
+        <a class="card reveal-child" href={`${base}lage/`} data-astro-prefetch>
+          <div class="card-img-wrap tile-image-wrap">
             <img src={`${base}das-haus/dashaus-lage.jpg`} alt="" loading="lazy" decoding="async" />
           </div>
           <div class="card-caption">
@@ -71,8 +71,8 @@ const base = import.meta.env.BASE_URL;
           </div>
         </a>
 
-        <a class="card" href={`${base}haus/`} data-astro-prefetch>
-          <div class="card-img-wrap">
+        <a class="card reveal-child" href={`${base}haus/`} data-astro-prefetch>
+          <div class="card-img-wrap tile-image-wrap">
             <img src={`${base}first-image.png`} alt="" loading="lazy" decoding="async" />
           </div>
           <div class="card-caption">
@@ -89,7 +89,7 @@ const base = import.meta.env.BASE_URL;
   <!-- CTA section -->
   <section class="section cta-section">
     <div class="container cta-inner">
-      <DecoRule />
+      <DecoRule class="reveal" />
       <div class="cta-row">
         <a class="cta-btn" href={`${base}verfuegbarkeit/`}>
           <span data-de>Verfügbarkeit ansehen</span>
