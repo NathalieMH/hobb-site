@@ -171,7 +171,7 @@ const hasAptImages = carouselImages.length > 0;
       <div class="apt-carousel" id="apt-carousel" data-images={JSON.stringify(carouselImages)} data-space-indices={JSON.stringify(spaceStartIndices)}>
         <div class="car-stage" id="car-stage">
           {hasAptImages
-            ? <img class="car-img" id="car-img" src={carouselImages[0]} alt="" data-index="0" loading="lazy" />
+            ? <img class="car-img" id="car-img" src={carouselImages[0]} alt="" data-index="0" loading="eager" decoding="sync" />
             : <div class="car-placeholder">
                 <svg viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <rect x="10" y="10" width="140" height="100" stroke="#B8952A" stroke-opacity="0.35" stroke-width="1.5"/>
@@ -240,7 +240,7 @@ const hasAptImages = carouselImages.length > 0;
             >
               <div class="room-img-wrap">
                 {cover
-                  ? <img src={cover} alt={data.title_de} loading="lazy" />
+                  ? <img src={cover} alt={data.title_de} loading="lazy" decoding="async" />
                   : <div class="room-placeholder" />
                 }
                 {!data.available && <span class="taken-overlay" data-de>vergeben</span>}
@@ -278,7 +278,7 @@ const hasAptImages = carouselImages.length > 0;
           <div class="modal-left">
             <div class="modal-img-wrap">
               {cover
-                ? <img class="modal-cover" src={cover} alt={d.title_de} data-index="0" />
+                ? <img class="modal-cover" src={cover} alt={d.title_de} data-index="0" loading="lazy" decoding="async" />
                 : <div class="room-placeholder modal-cover" data-index="-1" />
               }
               <button class="modal-zoom-btn" aria-label="Bild vergrößern">
@@ -297,7 +297,7 @@ const hasAptImages = carouselImages.length > 0;
               <div class="thumbs">
                 {imgs.map((url, i) => (
                   <button class={`thumb${i === 0 ? ' active' : ''}`} data-full={url} data-index={i} aria-label={`Bild ${i+1}`}>
-                    <img src={url} alt="" />
+                    <img src={url} alt="" loading="lazy" decoding="async" />
                   </button>
                 ))}
               </div>

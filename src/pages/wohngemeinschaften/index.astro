@@ -36,6 +36,7 @@ const grundrissMap = Object.fromEntries(
       src={`${base}das-haus/Eingangsbereich.jpeg`}
       alt="Villa Theo, Eingangsbereich"
       loading="eager"
+      fetchpriority="high"
       data-always-fade
     />
   </section>
@@ -100,6 +101,7 @@ const grundrissMap = Object.fromEntries(
                       src={`${base}${grundriss}`}
                       alt=""
                       loading="lazy"
+                      decoding="async"
                       data-iz-open
                       data-iz-src={`${base}${grundriss}`}
                       data-iz-title-de={data.title_de}

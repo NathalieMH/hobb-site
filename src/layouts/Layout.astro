@@ -116,6 +116,28 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
         });
       })();
     </script>
+    <script>
+      function preloadLazyImages() {
+        // Wait until page is fully interactive, then quietly load
+        // all lazy images on this page in the background.
+        // Uses new Image() to preload into browser cache — more
+        // reliable cross-browser than changing the loading attribute.
+        requestIdleCallback(() => {
+          document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+            if (!img.complete) {
+              const preload = new Image();
+              preload.src = img.src;
+            }
+          });
+        }, { timeout: 3000 });
+      }
+      // requestIdleCallback fallback for Safari
+      if (!window.requestIdleCallback) {
+        window.requestIdleCallback = (cb) => setTimeout(cb, 200);
+      }
+      preloadLazyImages();
+      document.addEventListener('astro:page-load', preloadLazyImages);
+    </script>
   </body>
 </html>
 

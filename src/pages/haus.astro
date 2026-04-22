@@ -17,6 +17,7 @@ const roomCount = allRooms.length;
       src={`${base}first-image.png`}
       alt="Villa Theo, Berlin Steglitz-Dahlem"
       loading="eager"
+      fetchpriority="high"
     />
   </section>
 
@@ -53,6 +54,7 @@ const roomCount = allRooms.length;
           src={`${base}das-haus/staircase.jpg`}
           alt=""
           loading="lazy"
+          decoding="async"
         />
       </div>
 
@@ -63,10 +65,10 @@ const roomCount = allRooms.length;
   <section class="haus-bottom">
     <div class="img-pair">
       <div class="aerial-wrap" data-blend>
-        <img src={`${base}das-haus/vonoben.png`} alt="" loading="lazy" />
+        <img src={`${base}das-haus/vonoben.png`} alt="" loading="lazy" decoding="async" />
       </div>
       <div class="bottom-right-col" data-blend data-bd="120ms">
-        <img src={`${base}das-haus/houseaesthetic.jpg`} alt="" loading="lazy" />
+        <img src={`${base}das-haus/houseaesthetic.jpg`} alt="" loading="lazy" decoding="async" />
         <div class="haus-facts" data-blend data-bd="260ms">
           <h3 class="facts-heading" data-de>Ein Haus mit Geschichte</h3>
           <h3 class="facts-heading" data-en>A House with History</h3>
