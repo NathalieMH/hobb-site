@@ -1,7 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import ImageZoom from "../components/ImageZoom.astro";
-import { ClientRouter } from "astro:transitions";
+import { ViewTransitions } from "astro:transitions";
 import "../styles/global.css";
 const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in einer Berliner Art-Déco-Villa aus den 1920er Jahren." } = Astro.props;
 ---
@@ -11,7 +11,7 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
-    <ClientRouter fallback="animate" />
+    <ViewTransitions fallback="animate" />
     <!-- Cursor hint: ensures pointer cursor on interactive elements before external CSS loads -->
     <style>a,button{cursor:pointer}</style>
     <!-- Inline lang-init: runs before paint to avoid DE→EN flash -->
@@ -135,6 +135,71 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
       preloadLazyImages();
       document.addEventListener('astro:page-load', preloadLazyImages);
     </script>
+    <script>
+      import Lenis from 'lenis';
+      import gsap from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      let lenis;
+
+      function initLenis() {
+        lenis?.destroy();
+        lenis = new Lenis({
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+        });
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      function initReveals() {
+        ScrollTrigger.getAll().forEach(t => t.kill());
+
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reducedMotion) {
+          document.querySelectorAll('.reveal, .reveal-child').forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+          });
+          document.querySelectorAll('.deco-rule').forEach(r => r.classList.add('is-visible'));
+          return;
+        }
+
+        gsap.utils.toArray('.reveal').forEach(el => {
+          const tw = gsap.to(el, { y: 0, opacity: 1, duration: 1, ease: 'power3.out', paused: true });
+          ScrollTrigger.create({ trigger: el, start: 'top 88%', onEnter: () => tw.play(), onEnterBack: () => tw.play() });
+          ScrollTrigger.create({ trigger: el, start: 'top bottom+=200', onLeaveBack: () => tw.pause(0) });
+        });
+
+        gsap.utils.toArray('.reveal-stagger').forEach(parent => {
+          const children = parent.querySelectorAll('.reveal-child');
+          const tw = gsap.to(children, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', stagger: 0.15, paused: true });
+          ScrollTrigger.create({ trigger: parent, start: 'top 85%', onEnter: () => tw.play(), onEnterBack: () => tw.play() });
+          ScrollTrigger.create({ trigger: parent, start: 'top bottom+=200', onLeaveBack: () => tw.pause(0) });
+        });
+
+        gsap.utils.toArray('.reveal-image').forEach(el => {
+          ScrollTrigger.create({ trigger: el, start: 'top 90%', onEnter: () => { el.classList.remove('is-hidden'); el.classList.add('is-visible'); }, onEnterBack: () => { el.classList.remove('is-hidden'); el.classList.add('is-visible'); } });
+          ScrollTrigger.create({ trigger: el, start: 'top bottom+=200', onLeaveBack: () => { el.classList.remove('is-visible'); el.classList.add('is-hidden'); } });
+        });
+
+        document.querySelectorAll('.deco-rule').forEach(r => {
+          ScrollTrigger.create({ trigger: r, start: 'top 90%', onEnter: () => r.classList.add('is-visible'), onEnterBack: () => r.classList.add('is-visible') });
+          ScrollTrigger.create({ trigger: r, start: 'top bottom+=200', onLeaveBack: () => r.classList.remove('is-visible') });
+        });
+
+        ScrollTrigger.refresh();
+      }
+
+      initLenis();
+      initReveals();
+      document.addEventListener('astro:page-load', () => { initLenis(); initReveals(); });
+      document.addEventListener('astro:after-swap', () => { lenis?.scrollTo(0, { immediate: true }); });
+    </script>
   </body>
 </html>
 
@@ -144,21 +209,6 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
 </script>
 
 <style>
-/* Page transition — fast fade-out, gentle fade-up on enter */
-::view-transition-old(root) {
-  animation: vt-out 0.18s cubic-bezier(0.4, 0, 1, 1) both;
-}
-::view-transition-new(root) {
-  animation: vt-in 0.32s cubic-bezier(0, 0, 0.2, 1) both;
-}
-@keyframes vt-out {
-  to { opacity: 0; }
-}
-@keyframes vt-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 .site-footer {
   border-top: 1px solid var(--border);
   padding-block: var(--sp-md);

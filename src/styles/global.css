@@ -223,3 +223,47 @@ html:not([data-lang="en"]) [data-en] { display: none; }
   height: 100%;
   object-fit: cover;
 }
+
+/* ── Lenis ─────────────────────────────────────────────── */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto; }
+
+/* ── Reveals: CSS sets initial hidden state ─────────────── */
+.reveal, .reveal-child {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: none; /* GSAP controls animation, not CSS */
+}
+.no-js .reveal, .no-js .reveal-child {
+  opacity: 1 !important;
+  transform: none !important;
+}
+.reveal-image {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-image.is-visible { clip-path: inset(0 0 0 0); }
+.reveal-image.is-hidden { clip-path: inset(100% 0 0 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-child {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ── Page transitions ──────────────────────────────────── */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeSlideOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+::view-transition-old(root) {
+  animation: fadeSlideOut 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+::view-transition-new(root) {
+  animation: fadeSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
