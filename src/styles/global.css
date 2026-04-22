@@ -268,43 +268,12 @@ html.lenis, html.lenis body { height: auto; }
   animation: fadeSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* ── Hero ──────────────────────────────────────────────────── */
-.hero {
-  position: relative; width: 100%;
-  height: 100vh; height: 100dvh;
-  min-height: 500px; overflow: hidden;
-}
+/* ── Hero image wrap (parallax + fade-in) ──────────────── */
 .hero-image-wrap {
-  position: absolute; inset: 0; height: 130%; top: -15%;
-  background: #1C1A17;
+  overflow: hidden;
 }
-.hero-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
-.hero-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(28,26,23,0.7) 0%, rgba(28,26,23,0.2) 40%, transparent 70%);
-  display: flex; align-items: flex-end; justify-content: center;
-  padding-bottom: clamp(3rem, 8vh, 6rem);
-}
-.hero-content { text-align: center; color: var(--ink-light); }
-.hero-eyebrow { color: rgba(245,242,236,0.7); margin-bottom: 0.75rem; }
-.hero-title {
-  font-size: clamp(3rem, 8vw, 6.5rem); font-weight: 300;
-  letter-spacing: 0.08em; line-height: 1; margin-bottom: 1rem;
-  color: var(--ink-light); text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-.hero-subtitle {
-  font-family: var(--font-sans); font-size: clamp(0.9rem, 1.5vw, 1.15rem);
-  color: rgba(245,242,236,0.8); max-width: 40ch; margin-inline: auto; line-height: 1.6;
-}
-.hero-address {
-  display: block; margin-top: 1.5rem; font-family: var(--font-sans);
-  font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(245,242,236,0.5);
-}
-.subpage-hero {
-  position: relative; width: 100%; height: 50vh;
-  min-height: 350px; overflow: hidden;
-}
+
+/* Subpage hero — no parallax */
 .subpage-hero .hero-image-wrap {
   height: 100%; top: 0;
 }
