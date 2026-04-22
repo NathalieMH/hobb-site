@@ -19,6 +19,9 @@
 
   --ease: 0.25s ease;
   --max-w: 1200px;
+
+  --blend-speed: 0.85s;
+  --blend-move-speed: 1.15s;
 }
 
 /* ── Reset ──────────────────────────────────────────────────── */
@@ -117,6 +120,26 @@ p { max-width: 68ch; }
 /* ── Bilingual toggle ───────────────────────────────────────── */
 html[data-lang="en"] [data-de] { display: none; }
 html:not([data-lang="en"]) [data-en] { display: none; }
+
+/* ── Blend-reveal ───────────────────────────────────────────── */
+.blend-hidden {
+  opacity: 0;
+  transition: opacity var(--blend-speed) cubic-bezier(0.22, 1, 0.36, 1);
+}
+.blend-hidden.blend-visible {
+  opacity: 1;
+}
+
+.blend-move-hidden {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity var(--blend-move-speed) cubic-bezier(0.22, 1, 0.36, 1),
+              transform var(--blend-move-speed) cubic-bezier(0.22, 1, 0.36, 1);
+}
+.blend-move-hidden.blend-move-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 /* ── Badge ──────────────────────────────────────────────────── */
 .badge-taken {
