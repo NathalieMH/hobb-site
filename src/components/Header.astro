@@ -12,11 +12,11 @@ const base = import.meta.env.BASE_URL;
       <span class="lang-opt" id="lang-en">EN</span>
     </button>
     <nav class="split-nav split-nav-left" aria-label="Hauptnavigation links">
-      <a href={`${base}haus/`}>
+      <a href={`${base}haus/`} data-astro-prefetch>
         <span data-de>Das Haus</span>
         <span data-en>The Villa</span>
       </a>
-      <a href={`${base}wohngemeinschaften/`}>
+      <a href={`${base}wohngemeinschaften/`} data-astro-prefetch>
         <span data-de>Wohngemeinschaften</span>
         <span data-en>Apartments</span>
       </a>
@@ -36,15 +36,15 @@ const base = import.meta.env.BASE_URL;
   <!-- Right group: right nav left-aligned against wordmark + hamburger far-right on narrow -->
   <div class="header-right">
     <nav class="split-nav split-nav-right" aria-label="Hauptnavigation rechts">
-      <a href={`${base}lage/`}>
+      <a href={`${base}lage/`} data-astro-prefetch>
         <span data-de>Lage</span>
         <span data-en>Location</span>
       </a>
-      <a href={`${base}verfuegbarkeit/`}>
+      <a href={`${base}verfuegbarkeit/`} data-astro-prefetch>
         <span data-de>Verfügbarkeit</span>
         <span data-en>Availability</span>
       </a>
-      <a href={`${base}impressum-kontakt/`}>
+      <a href={`${base}impressum-kontakt/`} data-astro-prefetch>
         <span data-de>Kontakt</span>
         <span data-en>Contact</span>
       </a>

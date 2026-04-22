@@ -4,7 +4,7 @@ export default defineConfig({
   site: "https://nathaliemh.github.io",
   base: "/hobb-site/",
   prefetch: {
-    prefetchAll: true,
+    prefetchAll: false,
     defaultStrategy: "hover",
   },
 });

@@ -45,7 +45,7 @@ const base = import.meta.env.BASE_URL;
   <section class="cards-section" id="cards-section">
     <div class="cards-inner">
       <div class="cards">
-        <a class="card" href={`${base}wohngemeinschaften/`}>
+        <a class="card" href={`${base}wohngemeinschaften/`} data-astro-prefetch>
           <div class="card-img-wrap">
             <img src={`${base}das-haus/dashaus-wohngemeinschaften.png`} alt="" loading="lazy" decoding="async" style="object-position: center bottom;" />
           </div>
@@ -57,7 +57,7 @@ const base = import.meta.env.BASE_URL;
           </div>
         </a>
 
-        <a class="card" href={`${base}lage/`}>
+        <a class="card" href={`${base}lage/`} data-astro-prefetch>
           <div class="card-img-wrap">
             <img src={`${base}das-haus/dashaus-lage.jpg`} alt="" loading="lazy" decoding="async" />
           </div>
@@ -69,7 +69,7 @@ const base = import.meta.env.BASE_URL;
           </div>
         </a>
 
-        <a class="card" href={`${base}haus/`}>
+        <a class="card" href={`${base}haus/`} data-astro-prefetch>
           <div class="card-img-wrap">
             <img src={`${base}first-image.png`} alt="" loading="lazy" decoding="async" />
           </div>
