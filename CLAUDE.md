@@ -1,4 +1,4 @@
-# Villa Theo — CLAUDE.md
+# Theodor — CLAUDE.md
 
 Project context for agents picking up work on this codebase.
 
@@ -6,7 +6,7 @@ Project context for agents picking up work on this codebase.
 
 ## What this is
 
-A static Astro site for **Villa Theo**, a student shared-apartment property in Berlin Steglitz-Dahlem. It markets rooms/apartments to students and provides info about the building, location, and availability.
+A static Astro site for **Theodor**, a student shared-apartment property in Berlin Steglitz-Dahlem. It markets rooms/apartments to students and provides info about the building, location, and availability.
 
 - **Live URL:** https://nathaliemh.github.io/hobb-site/
 - **Repo:** https://github.com/NathalieMH/hobb-site
