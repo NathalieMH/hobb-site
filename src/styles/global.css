@@ -233,6 +233,7 @@ html.lenis, html.lenis body { height: auto; }
   opacity: 0;
   transform: translateY(50px);
   transition: none; /* GSAP controls animation, not CSS */
+  will-change: transform, opacity;
 }
 .no-js .reveal, .no-js .reveal-child {
   opacity: 1 !important;

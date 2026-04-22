@@ -10,7 +10,7 @@ const base = import.meta.env.BASE_URL;
     <div class="hero-image-wrap" id="hero-img-wrap">
       <img
         class="hero-img"
-        src={`${base}first-image.png`}
+        src={`${base}home-hero.webp`}
         alt="Villa Theo, Berlin Steglitz-Dahlem"
         loading="eager"
         fetchpriority="high"
@@ -49,7 +49,7 @@ const base = import.meta.env.BASE_URL;
       <div class="cards reveal-stagger">
         <a class="card reveal-child" href={`${base}wohngemeinschaften/`} data-astro-prefetch>
           <div class="card-img-wrap tile-image-wrap">
-            <img src={`${base}das-haus/dashaus-wohngemeinschaften.png`} alt="" loading="lazy" decoding="async" style="object-position: center bottom;" />
+            <img src={`${base}das-haus/dashaus-wohngemeinschaften.webp`} alt="" loading="lazy" decoding="async" style="object-position: center bottom;" />
           </div>
           <div class="card-caption">
             <span class="card-title" data-de>Die Wohngemeinschaften</span>
@@ -73,7 +73,7 @@ const base = import.meta.env.BASE_URL;
 
         <a class="card reveal-child" href={`${base}haus/`} data-astro-prefetch>
           <div class="card-img-wrap tile-image-wrap">
-            <img src={`${base}first-image.png`} alt="" loading="lazy" decoding="async" />
+            <img src={`${base}home-hero.webp`} alt="" loading="lazy" decoding="async" />
           </div>
           <div class="card-caption">
             <span class="card-title" data-de>Das Haus</span>
@@ -90,7 +90,7 @@ const base = import.meta.env.BASE_URL;
   <section class="section cta-section">
     <div class="container cta-inner">
       <DecoRule class="reveal" />
-      <div class="cta-row">
+      <div class="cta-row reveal">
         <a class="cta-btn" href={`${base}verfuegbarkeit/`}>
           <span data-de>Verfügbarkeit ansehen</span>
           <span data-en>Check Availability</span>
