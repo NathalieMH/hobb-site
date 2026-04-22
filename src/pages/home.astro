@@ -3,24 +3,27 @@ import Layout from "../layouts/Layout.astro";
 import DecoRule from "../components/DecoRule.astro";
 const base = import.meta.env.BASE_URL;
 ---
-<Layout title="Villa Theo — Berlin">
+<Layout title="Villa Theo — Berlin" noPadding={true}>
 
   <!-- Hero -->
-  <section class="hero" data-blend-move>
-    <img
-      class="hero-img"
-      src={`${base}first-image.png`}
-      alt="Villa Theo, Berlin Steglitz-Dahlem"
-      loading="eager"
-      fetchpriority="high"
-    />
+  <section class="hero">
+    <div class="hero-image-wrap" id="hero-img-wrap">
+      <img
+        src={`${base}home-hero.png`}
+        alt="Villa Theo, Berlin Steglitz-Dahlem"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
     <div class="hero-overlay">
-      <span class="eyebrow" data-de>Berlin · Steglitz · Dahlem</span>
-      <span class="eyebrow" data-en>Berlin · Steglitz · Dahlem</span>
-      <h1 class="hero-title">Villa Theo</h1>
-      <DecoRule />
-      <p class="hero-tagline" data-de>Studenten-Wohngemeinschaften in einer Stadtvilla der 1920er Jahre</p>
-      <p class="hero-tagline" data-en>Student Shared Apartments in a 1920s Berlin Villa</p>
+      <div class="hero-content">
+        <span class="eyebrow hero-eyebrow" data-de>Berlin · Steglitz · Dahlem</span>
+        <span class="eyebrow hero-eyebrow" data-en>Berlin · Steglitz · Dahlem</span>
+        <h1 class="hero-title">Villa Theo</h1>
+        <p class="hero-subtitle" data-de>Studenten-Wohngemeinschaften in einer Stadtvilla der 1920er Jahre</p>
+        <p class="hero-subtitle" data-en>Student Shared Apartments in a 1920s Berlin Villa</p>
+        <span class="hero-address">Haderslebener Str. 26, 12163 Berlin</span>
+      </div>
     </div>
   </section>
 
@@ -101,63 +104,35 @@ const base = import.meta.env.BASE_URL;
     </div>
   </section>
 
+
+  <script>
+    import gsap from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    gsap.registerPlugin(ScrollTrigger);
+
+    function initHero() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const heroWrap = document.querySelector('.hero-image-wrap');
+      if (heroWrap) {
+        gsap.to(heroWrap, {
+          yPercent: 12, ease: 'none',
+          scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true },
+        });
+      }
+
+      gsap.from('.hero-title', { opacity: 0, y: 30, duration: 1.2, ease: 'power3.out', delay: 0.3 });
+      gsap.from('.hero-eyebrow', { opacity: 0, y: 20, duration: 0.8, ease: 'power2.out', delay: 0.1 });
+      gsap.from('.hero-subtitle', { opacity: 0, y: 30, duration: 1.0, ease: 'power3.out', delay: 0.9 });
+      gsap.from('.hero-address', { opacity: 0, duration: 1.0, ease: 'power2.out', delay: 1.3 });
+    }
+
+    initHero();
+    document.addEventListener('astro:page-load', initHero);
+  </script>
 </Layout>
 
 <style>
-/* ── Hero ───────────────────────────────────────────────────── */
-.hero {
-  position: relative;
-  height: clamp(480px, 85vh, 900px);
-  overflow: hidden;
-  background: #fff;
-  margin-top: 0;
-}
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: none;
-  pointer-events: none;
-  z-index: 1;
-}
-.hero-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
-  filter: brightness(0.62);
-}
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.9rem;
-  color: var(--ink-light);
-  text-align: center;
-  padding-inline: 1.5rem;
-  z-index: 2;
-}
-.hero-overlay .eyebrow { color: rgba(245, 242, 236, 0.7); }
-.hero-title {
-  font-family: var(--font-serif);
-  font-weight: 300;
-  font-size: clamp(3.5rem, 9vw, 7.5rem);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-light);
-  line-height: 1;
-}
-.hero-tagline {
-  font-family: var(--font-sans);
-  font-size: clamp(0.8rem, 1.5vw, 1rem);
-  letter-spacing: 0.1em;
-  color: rgba(245, 242, 236, 0.85);
-  max-width: none;
-}
-
 /* ── Intro ──────────────────────────────────────────────────── */
 .intro-section { text-align: center; padding-top: 2.5rem; padding-bottom: 0; }
 .intro-wrap {
@@ -285,6 +260,5 @@ const base = import.meta.env.BASE_URL;
   .cards-inner { padding-inline: clamp(1.5rem, 6vw, 3rem); }
   .card-img-wrap { aspect-ratio: 4 / 3; width: 100%; }
   .cta-row { flex-direction: column; align-items: center; }
-  .hero { background: #969999; }
 }
 </style>

@@ -3,7 +3,7 @@ import Header from "../components/Header.astro";
 import ImageZoom from "../components/ImageZoom.astro";
 import { ViewTransitions } from "astro:transitions";
 import "../styles/global.css";
-const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in einer Berliner Art-Déco-Villa aus den 1920er Jahren." } = Astro.props;
+const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in einer Berliner Art-Déco-Villa aus den 1920er Jahren.", noPadding = false } = Astro.props;
 ---
 <html lang="de" data-base={import.meta.env.BASE_URL} class="no-js">
   <head>
@@ -42,7 +42,7 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
       document.addEventListener('astro:page-load', initImageFadeIn);
     </script>
     <Header />
-    <main><slot /></main>
+    <main style={noPadding ? '' : 'padding-top: 5rem;'}><slot /></main>
     <ImageZoom />
     <footer class="site-footer">
       <div class="container">
