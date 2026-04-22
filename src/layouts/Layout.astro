@@ -1,7 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import ImageZoom from "../components/ImageZoom.astro";
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in einer Berliner Art-Déco-Villa aus den 1920er Jahren." } = Astro.props;
 ---
@@ -14,7 +14,7 @@ const { title = "Villa Theo", description = "Studenten-Wohngemeinschaften in ein
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-    <ViewTransitions fallback="animate" />
+    <ClientRouter fallback="animate" />
     <!-- Cursor hint: ensures pointer cursor on interactive elements before external CSS loads -->
     <style>a,button{cursor:pointer}</style>
     <!-- Inline lang-init: runs before paint to avoid DE→EN flash -->

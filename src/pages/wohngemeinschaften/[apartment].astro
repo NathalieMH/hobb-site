@@ -1,10 +1,11 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import DecoRule from "../../components/DecoRule.astro";
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import fs from "node:fs/promises";
 import path from "node:path";
 const base = import.meta.env.BASE_URL;
+function entrySlug(id: string) { return id.replace(/\.[^.]+$/, '').toLowerCase(); }
 
 async function loadImages(folder: string) {
   const dir = path.resolve(process.cwd(), "public", folder);
@@ -43,12 +44,12 @@ function getPrefix(filename: string): string {
 
 export async function getStaticPaths() {
   const apartments = await getCollection("apartments");
-  return apartments.map(({ slug }) => ({ params: { apartment: slug } }));
+  return apartments.map((a) => ({ params: { apartment: a.id.replace(/\.[^.]+$/, '').toLowerCase() } }));
 }
 
 const { apartment } = Astro.params;
 const apartments = await getCollection("apartments");
-const apt = apartments.find((a) => a.slug === apartment);
+const apt = apartments.find((a) => entrySlug(a.id) === apartment);
 
 // Available rooms first, taken rooms last
 const rooms = (await getCollection("rooms", (r) => r.data.apartment.toLowerCase() === apartment.toLowerCase()))
@@ -59,15 +60,15 @@ const rooms = (await getCollection("rooms", (r) => r.data.apartment.toLowerCase(
 
 const renderedRooms = await Promise.all(
   rooms.map(async (r) => {
-    const { Content } = await r.render();
-    const allImgs = await loadImages(`zimmer/${r.slug}`);
+    const { Content } = await render(r);
+    const allImgs = await loadImages(`zimmer/${entrySlug(r.id)}`);
     const coverUrl = allImgs.find(url => /\/cover\.[^/]+$/i.test(url)) ?? null;
     const galleryImgs = allImgs.filter(url => !/\/cover\.[^/]+$/i.test(url));
     const imgs = coverUrl ? [coverUrl, ...galleryImgs] : galleryImgs;
     return { entry: r, Content, imgs };
   })
 );
-const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [entry.slug, imgs]));
+const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [entrySlug(entry.id), imgs]));
 
 // Apartment images from wohngemeinschaften/[image_folder]/
 const aptFolder = apt?.data.image_folder ? `wohngemeinschaften/${apt.data.image_folder}` : '';
@@ -226,7 +227,9 @@ const hasAptImages = carouselImages.length > 0;
         <h2 data-en>Rooms</h2>
       </div>
       <div class="rooms-grid">
-        {rooms.map(({ data, slug }) => {
+        {rooms.map((room) => {
+          const slug = entrySlug(room.id);
+          const { data } = room;
           const imgs = roomImages[slug] ?? [];
           const cover = imgs[0];
           return (
@@ -270,7 +273,7 @@ const hasAptImages = carouselImages.length > 0;
     const cover = imgs[0] ?? null;
     const hasGallery = imgs.length > 1;
     return (
-      <template id={`tpl-${entry.slug}`}>
+      <template id={`tpl-${entrySlug(entry.id)}`}>
         <article class="modal-content" data-images={JSON.stringify(imgs)}>
           <div class="modal-left">
             <div class="modal-img-wrap">

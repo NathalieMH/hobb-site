@@ -1,18 +1,20 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import DecoRule from "../../components/DecoRule.astro";
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 const base = import.meta.env.BASE_URL;
+
+function entrySlug(id: string) { return id.replace(/\.[^.]+$/, '').toLowerCase(); }
 
 export async function getStaticPaths() {
   const rooms = await getCollection("rooms");
-  return rooms.map(({ slug }) => ({ params: { slug } }));
+  return rooms.map((r) => ({ params: { slug: r.id.replace(/\.[^.]+$/, '').toLowerCase() } }));
 }
 
 const { slug } = Astro.params;
-const room = (await getCollection("rooms")).find(r => r.slug === slug);
+const room = (await getCollection("rooms")).find(r => entrySlug(r.id) === slug);
 const d = room?.data;
-const { Content } = room ? await room.render() : { Content: null };
+const { Content } = room ? await render(room) : { Content: null };
 ---
 
 <Layout title={`Villa Theo — ${d?.title_de ?? "Zimmer"}`}>
