@@ -113,6 +113,23 @@ import DecoRule from "../components/DecoRule.astro";
     </div>
   </section>
 
+
+<script>
+  function initMap() {
+    document.querySelectorAll('.map-wrap iframe').forEach(function(iframe) {
+      iframe.addEventListener('load', function() {
+        iframe.classList.add('loaded');
+      }, { once: true });
+      // Fallback: if load already fired (cached), reveal after 2s
+      setTimeout(function() {
+        iframe.classList.add('loaded');
+      }, 2000);
+    });
+  }
+  initMap();
+  document.addEventListener('astro:page-load', initMap);
+</script>
+
 </Layout>
 
 <style>
@@ -165,11 +182,6 @@ import DecoRule from "../components/DecoRule.astro";
 .ubahn { background: #005CA9; color: #fff; }
 .sbahn { background: #008D4F; color: #fff; }
 .bus   { background: #F0A800; color: #1C1A17; }
-.map-wrap {
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-.map-iframe { display: block; }
 @media (max-width: 900px) {
   .lage-inner { grid-template-columns: 1fr; }
 }
