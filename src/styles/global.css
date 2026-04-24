@@ -285,3 +285,19 @@ html.lenis, html.lenis body { height: auto; }
 .subpage-hero .hero-image-wrap {
   height: 100%; top: 0;
 }
+
+/* ── CTA link hover ─────────────────────────────────────── */
+.cta-btn {
+  transition: opacity 0.3s ease;
+}
+.cta-btn:hover {
+  opacity: 0.7;
+}
+
+/* ── Footer link hover ──────────────────────────────────── */
+footer a {
+  transition: color 0.3s ease;
+}
+footer a:hover {
+  color: var(--gold);
+}
