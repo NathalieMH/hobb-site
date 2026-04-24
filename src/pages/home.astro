@@ -105,6 +105,29 @@ const base = import.meta.env.BASE_URL;
 
   <script>
     import gsap from 'gsap';
+
+    function initTileStagger() {
+      const parent = document.querySelector('.cards');
+      if (!parent) return;
+      const children = parent.querySelectorAll('.reveal-child');
+      if (!children.length) return;
+
+      gsap.set(children, { opacity: 0, y: 40 });
+
+      setTimeout(() => {
+        gsap.to(children, {
+          opacity: 1, y: 0, duration: 0.8,
+          ease: 'power3.out', stagger: 0.15,
+        });
+      }, 300);
+    }
+
+    initTileStagger();
+    document.addEventListener('astro:page-load', initTileStagger);
+  </script>
+
+  <script>
+    import gsap from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
     gsap.registerPlugin(ScrollTrigger);
 

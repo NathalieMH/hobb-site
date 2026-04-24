@@ -12,6 +12,8 @@ const { title = "Theodor", description = "Studenten-Wohngemeinschaften in einer 
     <meta name="description" content={description} />
     <title>{title}</title>
     <ViewTransitions fallback="animate" />
+    <link rel="preconnect" href="https://maps.googleapis.com" />
+    <link rel="preconnect" href="https://maps.gstatic.com" crossorigin />
     <!-- Cursor hint: ensures pointer cursor on interactive elements before external CSS loads -->
     <style>a,button{cursor:pointer}</style>
     <!-- Inline lang-init: runs before paint to avoid DE→EN flash -->
@@ -176,6 +178,7 @@ const { title = "Theodor", description = "Studenten-Wohngemeinschaften in einer 
         });
 
         gsap.utils.toArray('.reveal-stagger').forEach(parent => {
+          if (parent.classList.contains('cards')) return;
           const children = parent.querySelectorAll('.reveal-child');
           const tw = gsap.to(children, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', stagger: 0.15, paused: true });
           ScrollTrigger.create({ trigger: parent, start: 'top 85%', onEnter: () => tw.play(), onEnterBack: () => tw.play() });
