@@ -13,12 +13,14 @@ const roomCount = allRooms.length;
 
   <!-- Hero -->
   <section class="haus-hero" data-blend-move>
-    <img
-      src={`${base}first-image.png`}
-      alt="Theodor, Berlin Steglitz-Dahlem"
-      loading="eager"
-      fetchpriority="high"
-    />
+    <div class="hero-image-wrap">
+      <img
+        src={`${base}first-image.png`}
+        alt="Theodor, Berlin Steglitz-Dahlem"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
   </section>
 
   <!-- Middle: text + pull-quote left | staircase right -->
@@ -28,21 +30,21 @@ const roomCount = allRooms.length;
       <!-- LEFT: title text + pull-quote pushed to bottom -->
       <div class="middle-left" data-blend>
         <div class="text-anchor">
-          <h2 class="middle-title">
+          <h2 class="middle-title reveal">
             EINE HISTORISCHE<br> STADTVILLA
           </h2>
-          <p class="middle-body">
+          <p class="middle-body reveal">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </p>
         </div>
 
         <div class="pull-quote">
-          <span class="eyebrow" data-de>Berlin · 1920er Jahre · Architekt Leo Nachtlicht</span>
-          <span class="eyebrow" data-en>Berlin · 1920s · Architect Leo Nachtlicht</span>
-          <blockquote data-de>
+          <span class="eyebrow reveal" data-de>Berlin · 1920er Jahre · Architekt Leo Nachtlicht</span>
+          <span class="eyebrow reveal" data-en>Berlin · 1920s · Architect Leo Nachtlicht</span>
+          <blockquote class="reveal" data-de>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </blockquote>
-          <blockquote data-en>
+          <blockquote class="reveal" data-en>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </blockquote>
         </div>
@@ -51,6 +53,7 @@ const roomCount = allRooms.length;
       <!-- RIGHT: staircase image -->
       <div class="middle-img" data-blend data-bd="110ms">
         <img
+          class="reveal"
           src={`${base}das-haus/staircase.jpg`}
           alt=""
           loading="lazy"
@@ -65,14 +68,14 @@ const roomCount = allRooms.length;
   <section class="haus-bottom">
     <div class="img-pair">
       <div class="aerial-wrap" data-blend>
-        <img src={`${base}das-haus/vonoben.png`} alt="" loading="lazy" decoding="async" />
+        <img class="reveal" src={`${base}das-haus/vonoben.png`} alt="" loading="lazy" decoding="async" />
       </div>
       <div class="bottom-right-col" data-blend data-bd="120ms">
-        <img src={`${base}das-haus/houseaesthetic.jpg`} alt="" loading="lazy" decoding="async" />
+        <img class="reveal" src={`${base}das-haus/houseaesthetic.jpg`} alt="" loading="lazy" decoding="async" />
         <div class="haus-facts" data-blend data-bd="260ms">
-          <h3 class="facts-heading" data-de>Ein Haus mit Geschichte</h3>
-          <h3 class="facts-heading" data-en>A House with History</h3>
-          <dl>
+          <h3 class="facts-heading reveal" data-de>Ein Haus mit Geschichte</h3>
+          <h3 class="facts-heading reveal" data-en>A House with History</h3>
+          <dl class="reveal">
             <dt><span data-de>Baujahr</span><span data-en>Built</span></dt>
             <dd>1920er Jahre</dd>
             <dt><span data-de>Architekt</span><span data-en>Architect</span></dt>

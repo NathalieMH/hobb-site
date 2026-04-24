@@ -32,21 +32,23 @@ const grundrissMap = Object.fromEntries(
 <Layout title="Theodor — Die Wohngemeinschaften">
 
   <section class="wg-hero">
-    <img
-      src={`${base}das-haus/Eingangsbereich.jpeg`}
-      alt="Theodor, Eingangsbereich"
-      loading="eager"
-      fetchpriority="high"
-      data-always-fade
-    />
+    <div class="hero-image-wrap">
+      <img
+        src={`${base}das-haus/Eingangsbereich.jpeg`}
+        alt="Theodor, Eingangsbereich"
+        loading="eager"
+        fetchpriority="high"
+        data-always-fade
+      />
+    </div>
   </section>
 
   <section class="page-header">
     <div class="container page-header-inner">
-      <span class="eyebrow" data-de>Wohnen</span>
-      <span class="eyebrow" data-en>Living</span>
-      <h1 data-de>Die Wohngemeinschaften</h1>
-      <h1 data-en>Shared Apartments</h1>
+      <span class="eyebrow reveal" data-de>Wohnen</span>
+      <span class="eyebrow reveal" data-en>Living</span>
+      <h1 class="reveal" data-de>Die Wohngemeinschaften</h1>
+      <h1 class="reveal" data-en>Shared Apartments</h1>
       <DecoRule />
     </div>
   </section>
@@ -54,22 +56,22 @@ const grundrissMap = Object.fromEntries(
   <!-- Intro + includes -->
   <section class="section intro-section">
     <div class="container intro-cols">
-      <p data-de>
+      <p class="reveal" data-de>
         Die Vermietung der ersten beiden Wohnungen mit insgesamt neun Zimmern im ersten und zweiten Obergeschoss ist im April 2026 gestartet. Mittelfristig wächst das Angebot auf insgesamt fünf WGs für Studierende sowie zwei privat bewohnte Wohnungen in Stadtvilla und Anbau. Für ein gut organisiertes Zusammenleben steht eine WG-App zur Koordination gemeinsamer Aufgaben wie Reinigung oder Einkauf zur Verfügung. Der Vermieter ist jederzeit persönlich ansprechbar bei organisatorischen Fragen.
       </p>
-      <p data-en>
+      <p class="reveal" data-en>
         Rental of the first two apartments with a total of nine rooms on the first and second floors started in April 2026. In the medium term, the property will offer five student shared apartments as well as two privately occupied apartments in the villa and annex. A WG app is available to coordinate shared tasks such as cleaning and shopping. The landlord is available at all times for organizational questions.
       </p>
       <div class="includes">
-        <span class="eyebrow" data-de>In der Miete inbegriffen</span>
-        <span class="eyebrow" data-en>Included in the rent</span>
-        <ul>
-          <li><span data-de>Möblierung: Bett, Schrank, Schreibtisch, Stuhl, Vorhänge, Lampen sowie viel Raum für euren eigenen Stil</span><span data-en>Furnishings: bed, wardrobe, desk, chair, curtains, lamps — plus plenty of room for your own style</span></li>
-          <li><span data-de>Wasser, Heizung, Strom</span><span data-en>Water, heating, electricity</span></li>        
-          <li><span data-de>Wäscheraum im Haus mit Waschmaschine, Trockner, Bügelbrett und -eisen</span><span data-en>In-house laundry room with washing machine, dryer, ironing board and iron</span></li>
-          <li><span data-de>Digitales Schloss / Chipschlüssel für jedes Zimmer</span><span data-en>Digital lock / chip key for each room</span></li>
-          <li><span data-de>Internetzugang</span><span data-en>Internet access</span></li>
-          <li><span data-de>Regelmäßige Grundreinigung der Gemeinschaftsräume (tägliches Putzen ist WG-Aufgabe, Putz-App verfügbar)</span><span data-en>Regular cleaning of shared areas (daily cleaning is a shared responsibility, cleaning app available)</span></li>
+        <span class="eyebrow reveal" data-de>In der Miete inbegriffen</span>
+        <span class="eyebrow reveal" data-en>Included in the rent</span>
+        <ul class="reveal-stagger">
+          <li class="reveal-child"><span data-de>Möblierung: Bett, Schrank, Schreibtisch, Stuhl, Vorhänge, Lampen sowie viel Raum für euren eigenen Stil</span><span data-en>Furnishings: bed, wardrobe, desk, chair, curtains, lamps — plus plenty of room for your own style</span></li>
+          <li class="reveal-child"><span data-de>Wasser, Heizung, Strom</span><span data-en>Water, heating, electricity</span></li>
+          <li class="reveal-child"><span data-de>Wäscheraum im Haus mit Waschmaschine, Trockner, Bügelbrett und -eisen</span><span data-en>In-house laundry room with washing machine, dryer, ironing board and iron</span></li>
+          <li class="reveal-child"><span data-de>Digitales Schloss / Chipschlüssel für jedes Zimmer</span><span data-en>Digital lock / chip key for each room</span></li>
+          <li class="reveal-child"><span data-de>Internetzugang</span><span data-en>Internet access</span></li>
+          <li class="reveal-child"><span data-de>Regelmäßige Grundreinigung der Gemeinschaftsräume (tägliches Putzen ist WG-Aufgabe, Putz-App verfügbar)</span><span data-en>Regular cleaning of shared areas (daily cleaning is a shared responsibility, cleaning app available)</span></li>
         </ul>
       </div>
     </div>
@@ -78,8 +80,8 @@ const grundrissMap = Object.fromEntries(
   <!-- Requirements callout -->
   <section class="requirements-section">
     <div class="container">
-      <p class="requirements-note" data-de>Eine gültige Immatrikulationsbescheinigung ist Voraussetzung für die Anmietung eines Zimmers. Die Kaution beträgt [#] Monatskomplettmieten und wird nach Auszug unkompliziert und zeitnah zurückerstattet.</p>
-      <p class="requirements-note" data-en>A valid university enrollment certificate is required to rent a room. The deposit is [#] months' total rent and will be returned promptly and without complications after moving out.</p>
+      <p class="requirements-note reveal" data-de>Eine gültige Immatrikulationsbescheinigung ist Voraussetzung für die Anmietung eines Zimmers. Die Kaution beträgt [#] Monatskomplettmieten und wird nach Auszug unkompliziert und zeitnah zurückerstattet.</p>
+      <p class="requirements-note reveal" data-en>A valid university enrollment certificate is required to rent a room. The deposit is [#] months' total rent and will be returned promptly and without complications after moving out.</p>
     </div>
   </section>
 
@@ -87,13 +89,13 @@ const grundrissMap = Object.fromEntries(
 
   <section class="section apt-section">
     <div class="container">
-      <div class="apt-grid">
+      <div class="apt-grid reveal-stagger">
         {apartments.map((apt) => {
           const slug = entrySlug(apt.id);
           const { data } = apt;
           const grundriss = grundrissMap[slug];
           return (
-          <a class="apt-card" href={`${base}wohngemeinschaften/${slug}/`}>
+          <a class="apt-card reveal-child" href={`${base}wohngemeinschaften/${slug}/`}>
             <div class="apt-floorplan">
               {grundriss
                 ? <>

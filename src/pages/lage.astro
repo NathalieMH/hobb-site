@@ -17,17 +17,17 @@ import DecoRule from "../components/DecoRule.astro";
   <section class="section lage-content" style="padding-top:1.5rem">
     <div class="container lage-inner">
       <div class="lage-text">
-        <p data-de>
+        <p class="reveal" data-de>
           Das Theodor liegt im Bezirk Steglitz-Zehlendorf, direkt an der Grenze zu Dahlem, einem der grünsten Viertel Berlins. Mehrere Universitäten sind von hier aus schnell und bequem zu Fuß oder mit dem Fahrrad erreichbar. Ebenso besteht eine ausgezeichnete Anbindung an die BVG mit der U3 (Krumme Lanke-Warschauer Straße), S-Bahnen und Buslinien.
         </p>
-        <p data-en>
+        <p class="reveal" data-en>
           The Theodor is in the Steglitz-Zehlendorf district, on the border with Dahlem. One of the city's greenest neighborhoods, with multiple universities in walking and biking distance. It also has excellent public transport connections via the BVG, including the U3 line (Krumme Lanke–Warschauer Straße), as well as S-Bahn and bus services.
         </p>
 
         <div class="transit-section">
-          <h3 data-de>Adresse</h3>
-          <h3 data-en>Address</h3>
-          <p class="address-block">
+          <h3 class="reveal" data-de>Adresse</h3>
+          <h3 class="reveal" data-en>Address</h3>
+          <p class="address-block reveal">
             Haderslebener Straße 26<br />
             12163 Berlin, 
             <span data-de>Steglitz-Zehlendorf</span>
@@ -36,25 +36,25 @@ import DecoRule from "../components/DecoRule.astro";
         </div>
 
         <div class="transit-section">
-          <h3 data-de>In der Nähe</h3>
-          <h3 data-en>In the Area</h3>
-          <ul class="transit-list">
-            <li>
+          <h3 class="reveal" data-de>In der Nähe</h3>
+          <h3 class="reveal" data-en>In the Area</h3>
+          <ul class="transit-list reveal-stagger">
+            <li class="reveal-child">
               <span class="transit-icon">◆</span>
               <span data-de>Freie Universität Berlin — ca. 10–15 Min. zu Fuß</span>
               <span data-en>Freie Universität Berlin — approx. 10–15 min walk</span>
             </li>
-            <li>
+            <li class="reveal-child">
               <span class="transit-icon">◆</span>
               <span data-de>MSB Medical School Berlin — ca. 10 Min. zu Fuß</span>
               <span data-en>MSB Medical School Berlin — approx. 10 min walk</span>
             </li>
-            <li>
+            <li class="reveal-child">
               <span class="transit-icon">◆</span>
               <span data-de>Botanischer Garten Berlin / Botanisches Institut FU — ca. 10 Min. zu Fuß</span>
               <span data-en>Botanic Garden / Botanical Institute FU Berlin — approx. 10 min walk</span>
             </li>
-            <li>
+            <li class="reveal-child">
               <span class="transit-icon">◆</span>
               <span data-de>TU Berlin – Institut für Lebensmitteltechnologie und Lebensmittelchemie — ca. 15 Min. zu Fuß</span>
               <span data-en>TU Berlin – Institute of Food Technology and Food Chemistry — approx. 15 min walk</span>
@@ -63,20 +63,20 @@ import DecoRule from "../components/DecoRule.astro";
         </div>
 
         <div class="transit-section">
-          <h3 data-de>ÖPNV-Anbindung</h3>
-          <h3 data-en>Public Transport</h3>
-          <ul class="transit-list">
-            <li>
+          <h3 class="reveal" data-de>ÖPNV-Anbindung</h3>
+          <h3 class="reveal" data-en>Public Transport</h3>
+          <ul class="transit-list reveal-stagger">
+            <li class="reveal-child">
               <span class="transit-badge ubahn">U3</span>
               <span data-de>Breitenbachplatz — ca. 7 Min. zu Fuß</span>
               <span data-en>Breitenbachplatz — approx. 7 min walk</span>
             </li>
-            <li>
+            <li class="reveal-child">
               <span class="transit-badge bus">Bus 101</span>
               <span data-de>Rohlfsstr. — ca. 3 Min. zu Fuß</span>
               <span data-en>Rohlfsstr. — approx. 3 min walk</span>
             </li>
-            <li>
+            <li class="reveal-child">
               <span class="transit-badges">
                 <span class="transit-badge ubahn">U9</span>
                 <span class="transit-badge sbahn">S1</span>
@@ -97,7 +97,7 @@ import DecoRule from "../components/DecoRule.astro";
 
            The current embed shows only the villa location.
       -->
-      <div class="map-wrap">
+      <div class="map-wrap reveal">
         <iframe
           class="map-iframe"
           src="https://maps.google.com/maps?q=Haderslebener+Stra%C3%9Fe+26,+12163+Berlin&output=embed&z=15"

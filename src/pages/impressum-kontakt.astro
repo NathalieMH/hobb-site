@@ -6,13 +6,15 @@ const base = import.meta.env.BASE_URL;
 <Layout title="Theodor — Impressum & Kontakt">
 
   <section class="kontakt-hero">
-    <img
-      src={`${base}das-haus/Aussenansicht.jpeg`}
-      alt="Theodor, Außenansicht"
-      loading="eager"
-      fetchpriority="high"
-      data-always-fade
-    />
+    <div class="hero-image-wrap">
+      <img
+        src={`${base}das-haus/Aussenansicht.jpeg`}
+        alt="Theodor, Außenansicht"
+        loading="eager"
+        fetchpriority="high"
+        data-always-fade
+      />
+    </div>
   </section>
 
   <section class="section" style="padding-top:2.5rem">
@@ -20,69 +22,69 @@ const base = import.meta.env.BASE_URL;
 
       <!-- Contact -->
       <div class="legal-block">
-        <h2 data-de>Kontakt</h2>
-        <h2 data-en>Contact</h2>
-        <p data-de>
+        <h2 class="reveal" data-de>Kontakt</h2>
+        <h2 class="reveal" data-en>Contact</h2>
+        <p class="reveal" data-de>
           Für Zimmeranfragen und allgemeine Fragen wenden Sie sich bitte per E-Mail an uns:
         </p>
-        <p data-en>
+        <p class="reveal" data-en>
           For room enquiries and general questions, please contact us by email:
         </p>
-        <a class="email-link" href="mailto:kontakt@villa-theo.de">
+        <a class="email-link reveal" href="mailto:kontakt@villa-theo.de">
           kontakt@villa-theo.de
         </a>
-        <p class="email-note" data-de>Eine gültige Immatrikulationsbescheinigung ist Voraussetzung für die Anmietung eines Zimmers.</p>
-        <p class="email-note" data-en>A valid university enrollment certificate is required to rent a room.</p>
+        <p class="email-note reveal" data-de>Eine gültige Immatrikulationsbescheinigung ist Voraussetzung für die Anmietung eines Zimmers.</p>
+        <p class="email-note reveal" data-en>A valid university enrollment certificate is required to rent a room.</p>
       </div>
 
-      <div style="margin-block: -1.5rem;">
+      <div class="reveal" style="margin-block: -1.5rem;">
         <DecoRule />
       </div>
 
       <!-- Impressum -->
       <div class="legal-block">
-        <h2>Impressum</h2>
-        <p data-de>Angaben gemäß § 5 TMG</p>
-        <p data-en>Information according to § 5 TMG</p>
+        <h2 class="reveal">Impressum</h2>
+        <p class="reveal" data-de>Angaben gemäß § 5 TMG</p>
+        <p class="reveal" data-en>Information according to § 5 TMG</p>
 
         <div class="impressum-body">
-          <p>
+          <p class="reveal">
             <strong>Theodor</strong><br />
             Haderslebener Straße 26<br />
             12163 Berlin<br />
             Deutschland
           </p>
-          <p>
+          <p class="reveal">
             <span data-de><strong>Kontakt</strong></span>
             <span data-en><strong>Contact</strong></span><br />
             E-Mail: <a href="mailto:kontakt@villa-theo.de">kontakt@villa-theo.de</a>
           </p>
-          <p data-de>
+          <p class="reveal" data-de>
             <strong>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:</strong><br />
             [Name der verantwortlichen Person]<br />
             [Anschrift wie oben]
           </p>
-          <p data-en>
+          <p class="reveal" data-en>
             <strong>Responsible for content under § 55 Para. 2 RStV:</strong><br />
             [Name of responsible person]<br />
             [Address as above]
           </p>
 
-          <h3 data-de>Haftungsausschluss</h3>
-          <h3 data-en>Disclaimer</h3>
-          <p data-de>
+          <h3 class="reveal" data-de>Haftungsausschluss</h3>
+          <h3 class="reveal" data-en>Disclaimer</h3>
+          <p class="reveal" data-de>
             Die Inhalte dieser Website wurden mit größtmöglicher Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.
           </p>
-          <p data-en>
+          <p class="reveal" data-en>
             The content of this website has been compiled with the utmost care. However, we cannot guarantee the accuracy, completeness, or timeliness of the content.
           </p>
 
-          <h3 data-de>Urheberrecht</h3>
-          <h3 data-en>Copyright</h3>
-          <p data-de>
+          <h3 class="reveal" data-de>Urheberrecht</h3>
+          <h3 class="reveal" data-en>Copyright</h3>
+          <p class="reveal" data-de>
             Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.
           </p>
-          <p data-en>
+          <p class="reveal" data-en>
             The content and works on these pages are subject to German copyright law. Reproduction, processing, distribution, and any form of commercialisation of such material beyond the scope of the copyright law shall require the written consent of its author or creator.
           </p>
         </div>
