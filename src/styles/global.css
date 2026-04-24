@@ -301,3 +301,20 @@ footer a {
 footer a:hover {
   color: var(--gold);
 }
+
+/* ── Animated link underline ────────────────────────────── */
+.animated-link { position: relative; text-decoration: none; }
+.animated-link::after {
+  content: ''; position: absolute; bottom: -2px; left: 0;
+  width: 100%; height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.animated-link:hover::after,
+.animated-link:focus-visible::after {
+  transform: scaleX(1); transform-origin: left;
+}
+
+/* ── Cursor ─────────────────────────────────────────────── */
+body { cursor: default; }
+a, button, [role="button"] { cursor: pointer; }

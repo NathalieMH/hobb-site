@@ -32,4 +32,14 @@ const { class: cls = '' } = Astro.props;
   opacity: 0.8;
   line-height: 1;
 }
+.deco-rule .deco-line {
+  transform: scaleX(0);
+  transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.deco-rule .deco-diamond {
+  opacity: 0;
+  transition: opacity 0.6s ease 0.3s;
+}
+.deco-rule.is-visible .deco-line { transform: scaleX(1); }
+.deco-rule.is-visible .deco-diamond { opacity: 1; }
 </style>
