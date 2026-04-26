@@ -126,12 +126,7 @@ const base = import.meta.env.BASE_URL;
       ScrollTrigger.create({
         trigger: parent,
         start: 'top 85%',
-        onEnter: () => tw.play(),
-        onEnterBack: () => tw.play(),
-      });
-      ScrollTrigger.create({
-        trigger: parent,
-        start: 'top bottom+=200',
+        onEnter: () => tw.restart(),
         onLeaveBack: () => tw.pause(0),
       });
     }
