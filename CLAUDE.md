@@ -151,7 +151,7 @@ This site targets the aesthetic of luxury real estate and portfolio sites. When 
 
 2. **Design system is strict.** One serif (Cormorant Garamond) for headings, one sans (DM Sans) for body/UI. Scale and weight contrast are the hierarchy — not color. Use only defined tokens; the gold accent (`--gold`) appears sparingly on CTAs, dividers, and key highlights. Overuse dilutes it.
 
-3. **Every interaction responds, and luxury moves slowly.** Hover states, cursor feedback, and transitions on all interactive elements — smooth and proportional. Entrances 0.8–1.5s, nothing snaps or pops. More animation is fine; fast animation is not.
+3. **Every interaction responds, and luxury moves slowly.** Hover states, cursor feedback, and transitions on all interactive elements — smooth and proportional. Entrances 0.8–1.5s, nothing snaps or pops. More animation is fine; fast animation is not. Scroll-triggered animations must replay every time the element scrolls into view — never fire once and stop.
 
 4. **Images are the product.** Intentional cropping, no layout shift, always fade in. Images are never filler.
 
