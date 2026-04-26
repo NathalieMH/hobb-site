@@ -105,6 +105,8 @@ const base = import.meta.env.BASE_URL;
 
   <script>
     import gsap from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    gsap.registerPlugin(ScrollTrigger);
 
     function initTileStagger() {
       const parent = document.querySelector('.cards');
@@ -114,10 +116,18 @@ const base = import.meta.env.BASE_URL;
 
       gsap.killTweensOf(children);
       gsap.set(children, { opacity: 0, y: 40 });
-      gsap.to(children, {
-        opacity: 1, y: 0, duration: 0.8,
-        ease: 'power3.out', stagger: 0.15,
-        delay: 0.3,
+
+      const tw = gsap.to(children, {
+        opacity: 1, y: 0, duration: 1.2,
+        ease: 'power3.out', stagger: 0.225,
+        paused: true,
+      });
+
+      ScrollTrigger.create({
+        trigger: parent,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => tw.play(),
       });
     }
 
