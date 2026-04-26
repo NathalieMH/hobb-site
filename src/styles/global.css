@@ -281,9 +281,27 @@ html.lenis, html.lenis body { height: auto; }
   overflow: hidden;
 }
 
-/* Subpage hero — no parallax */
-.subpage-hero .hero-image-wrap {
-  height: 100%; top: 0;
+/* Subpage hero — shared structure (haus, wohngemeinschaften, kontakt) */
+.subpage-hero {
+  margin-top: 0;
+  font-size: 0;
+  line-height: 0;
+  min-height: clamp(160px, 32vw, 480px);
+  overflow: hidden;
+  background: #1C1A17;
+}
+.subpage-hero .hero-image-wrap img {
+  display: block;
+  width: 100%;
+  max-height: 600px;
+  object-fit: cover;
+  object-position: center 40%;
+}
+@media (max-width: 600px) {
+  .subpage-hero .hero-image-wrap img {
+    max-height: none;
+    height: 56vw;
+  }
 }
 
 /* ── CTA link hover ─────────────────────────────────────── */

@@ -3,9 +3,9 @@ import Layout from "../layouts/Layout.astro";
 import DecoRule from "../components/DecoRule.astro";
 const base = import.meta.env.BASE_URL;
 ---
-<Layout title="Theodor — Impressum & Kontakt">
+<Layout title="Theodor — Impressum & Kontakt" noPadding={true}>
 
-  <section class="kontakt-hero">
+  <section class="subpage-hero">
     <div class="hero-image-wrap">
       <img
         src={`${base}das-haus/Aussenansicht.jpeg`}
@@ -13,6 +13,7 @@ const base = import.meta.env.BASE_URL;
         loading="eager"
         fetchpriority="high"
         data-always-fade
+        style="object-position: center 20%;"
       />
     </div>
   </section>
@@ -96,25 +97,6 @@ const base = import.meta.env.BASE_URL;
 </Layout>
 
 <style>
-.kontakt-hero {
-  padding-inline: clamp(2rem, 8vw, 5rem);
-  margin-top: 0;
-  font-size: 0;
-  line-height: 0;
-  min-height: clamp(160px, 32vw, 480px);
-  overflow: hidden;
-  background: var(--bg);
-}
-@media (max-width: 600px) {
-  .kontakt-hero { padding-inline: 0; }
-}
-.kontakt-hero img {
-  display: block;
-  width: 100%;
-  max-height: 600px;
-  object-fit: cover;
-  object-position: center 20%;
-}
 .page-header-inner {
   display: flex;
   flex-direction: column;

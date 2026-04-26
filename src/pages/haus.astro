@@ -9,16 +9,17 @@ const aptCount  = allApts.length;
 const roomCount = allRooms.length;
 ---
 
-<Layout title="Theodor — Das Haus">
+<Layout title="Theodor — Das Haus" noPadding={true}>
 
   <!-- Hero -->
-  <section class="haus-hero" data-blend-move>
+  <section class="subpage-hero" data-blend-move>
     <div class="hero-image-wrap">
       <img
         src={`${base}first-image.png`}
         alt="Theodor, Berlin Steglitz-Dahlem"
         loading="eager"
         fetchpriority="high"
+        style="object-position: center 35%;"
       />
     </div>
   </section>
@@ -101,30 +102,9 @@ const roomCount = allRooms.length;
 <style>
 
 /* ── Shared horizontal padding ── */
-.haus-hero,
 .haus-middle,
 .haus-bottom {
   padding-inline: clamp(2rem, 8vw, 5rem);
-}
-
-/* ── Hero ── */
-.haus-hero {
-  margin: 0;
-  font-size: 0;
-  line-height: 0;
-  overflow: hidden;
-  background: #fff;
-}
-.haus-hero img {
-  display: block;
-  width: 100%;
-  height: clamp(320px, 52vw, 720px);
-  object-fit: cover;
-  object-position: center 35%;
-}
-@media (max-width: 600px) {
-  .haus-hero { padding-inline: 0; }
-  .haus-hero img { height: 56vw; }
 }
 
 /* ── Middle section ── */

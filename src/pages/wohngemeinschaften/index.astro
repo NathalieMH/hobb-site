@@ -31,7 +31,7 @@ const grundrissMap = Object.fromEntries(
 
 <Layout title="Theodor — Die Wohngemeinschaften" noPadding={true}>
 
-  <section class="wg-hero">
+  <section class="subpage-hero">
     <div class="hero-image-wrap">
       <img
         src={`${base}das-haus/Eingangsbereich.jpeg`}
@@ -39,6 +39,7 @@ const grundrissMap = Object.fromEntries(
         loading="eager"
         fetchpriority="high"
         data-always-fade
+        style="object-position: center 60%;"
       />
     </div>
   </section>
@@ -161,26 +162,6 @@ const grundrissMap = Object.fromEntries(
 </Layout>
 
 <style>
-/* Hero */
-.wg-hero {
-  margin-top: 0;
-  font-size: 0;
-  line-height: 0;
-  min-height: clamp(160px, 32vw, 480px);
-  overflow: hidden;
-  background: #1C1A17;
-}
-@media (max-width: 600px) {
-  .wg-hero img { max-height: none; height: 56vw; }
-}
-.wg-hero img {
-  display: block;
-  width: 100%;
-  max-height: 600px;
-  object-fit: cover;
-  object-position: center 60%;
-}
-
 /* Intro */
 .intro-section { padding-top: 0; padding-bottom: clamp(1rem, 2vw, 1.75rem); }
 .intro-cols {
