@@ -108,32 +108,39 @@ const base = import.meta.env.BASE_URL;
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
     gsap.registerPlugin(ScrollTrigger);
 
+    let ctx: gsap.Context | null = null;
+
     function initTileStagger() {
+      ctx?.revert();
+      ctx = null;
+
       const parent = document.querySelector('.cards');
       if (!parent) return;
       const children = [...parent.querySelectorAll<HTMLElement>('.reveal-child')];
       if (!children.length) return;
 
-      gsap.killTweensOf(children);
-      gsap.set(children, { opacity: 0, y: 40 });
+      ctx = gsap.context(() => {
+        gsap.set(children, { opacity: 0, y: 40 });
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: parent,
-          start: 'top 85%',
-          toggleActions: 'restart none none reset',
-        },
-      });
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: parent,
+            start: 'top 85%',
+            toggleActions: 'restart none none reset',
+          },
+        });
 
-      tl.to(children, {
-        opacity: 1, y: 0,
-        duration: 1.2,
-        ease: 'power3.out',
-        stagger: 0.225,
+        tl.to(children, {
+          opacity: 1, y: 0,
+          duration: 1.2,
+          ease: 'power3.out',
+          stagger: 0.225,
+        });
       });
     }
 
     document.addEventListener('astro:page-load', initTileStagger);
+    document.addEventListener('astro:after-swap', () => { ctx?.revert(); ctx = null; });
   </script>
 
   <script>
