@@ -117,17 +117,19 @@ const base = import.meta.env.BASE_URL;
       gsap.killTweensOf(children);
       gsap.set(children, { opacity: 0, y: 40 });
 
-      const tw = gsap.to(children, {
-        opacity: 1, y: 0, duration: 1.2,
-        ease: 'power3.out', stagger: 0.225,
-        paused: true,
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: parent,
+          start: 'top 85%',
+          toggleActions: 'restart none none reset',
+        },
       });
 
-      ScrollTrigger.create({
-        trigger: parent,
-        start: 'top 85%',
-        onEnter: () => tw.restart(),
-        onLeaveBack: () => tw.pause(0),
+      tl.to(children, {
+        opacity: 1, y: 0,
+        duration: 1.2,
+        ease: 'power3.out',
+        stagger: 0.225,
       });
     }
 
