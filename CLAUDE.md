@@ -143,6 +143,26 @@ To add a room:
 
 ---
 
+## Design principles
+
+This site targets the aesthetic of luxury real estate and portfolio sites. When making any visual or interaction decision, apply these tenets:
+
+1. **Whitespace is content.** Generous negative space signals quality. Never compress the layout to fit more in.
+
+2. **Design system is strict.** One serif (Cormorant Garamond) for headings, one sans (DM Sans) for body/UI. Scale and weight contrast are the hierarchy — not color. Use only defined tokens; the gold accent (`--gold`) appears sparingly on CTAs, dividers, and key highlights. Overuse dilutes it.
+
+3. **Every interaction responds, and luxury moves slowly.** Hover states, cursor feedback, and transitions on all interactive elements — smooth and proportional. Entrances 0.8–1.5s, nothing snaps or pops. More animation is fine; fast animation is not.
+
+4. **Images are the product.** Intentional cropping, no layout shift, always fade in. Images are never filler.
+
+5. **Navigation is invisible.** Minimal links, clean page transitions, consistent placement. The header never competes with content.
+
+6. **Mobile is equally considered.** Not a degraded version. Every layout decision validated at mobile sizes.
+
+7. **Performance is part of the impression.** Slow loads break the aesthetic before the first pixel. Self-hosted fonts, appropriately sized images (WebP), above-the-fold content prioritized.
+
+---
+
 ## Git workflow
 
 - **Main branch deploys to live** — every push to `main` triggers GitHub Actions
