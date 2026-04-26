@@ -3,7 +3,7 @@ import Header from "../components/Header.astro";
 import ImageZoom from "../components/ImageZoom.astro";
 import { ViewTransitions } from "astro:transitions";
 import "../styles/global.css";
-const { title = "Theodor", description = "Studenten-Wohngemeinschaften in einer Berliner Art-Déco-Villa aus den 1920er Jahren.", noPadding = false } = Astro.props;
+const { title = "Haderslebener 26", description = "Studenten-Wohngemeinschaften in einer Berliner Art-Déco-Villa aus den 1920er Jahren.", noPadding = false } = Astro.props;
 ---
 <html lang="de" data-base={import.meta.env.BASE_URL} class="no-js">
   <head>
@@ -48,12 +48,12 @@ const { title = "Theodor", description = "Studenten-Wohngemeinschaften in einer 
     <ImageZoom />
     <footer class="site-footer">
       <div class="container reveal">
-        <span class="footer-wordmark">Theodor</span>
+        <span class="footer-wordmark">Haderslebener 26</span>
         <nav class="footer-nav">
           <a href={`${import.meta.env.BASE_URL}impressum-kontakt/`} data-de>Impressum & Kontakt</a>
           <a href={`${import.meta.env.BASE_URL}impressum-kontakt/`} data-en>Legal Notice & Contact</a>
         </nav>
-        <small class="footer-copy">© Theodor Berlin</small>
+        <small class="footer-copy">© Haderslebener 26 Berlin</small>
       </div>
     </footer>
     <script is:inline>

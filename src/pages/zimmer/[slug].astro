@@ -17,7 +17,7 @@ const d = room?.data;
 const { Content } = room ? await render(room) : { Content: null };
 ---
 
-<Layout title={`Theodor — ${d?.title_de ?? "Zimmer"}`}>
+<Layout title={`Haderslebener 26 — ${d?.title_de ?? "Zimmer"}`}>
   <section class="page-header">
     <div class="container page-header-inner">
       <a class="back-link" href={d?.apartment ? `${base}wohngemeinschaften/${d.apartment}/` : `${base}wohngemeinschaften/`}>
