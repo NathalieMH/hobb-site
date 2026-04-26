@@ -159,7 +159,7 @@ This site targets the aesthetic of luxury real estate and portfolio sites. When 
 
 6. **Mobile is equally considered.** Not a degraded version. Every layout decision validated at mobile sizes.
 
-7. **Performance is part of the impression.** Slow loads break the aesthetic before the first pixel. Self-hosted fonts, appropriately sized images (WebP), above-the-fold content prioritized.
+7. **Performance is part of the impression.** Slow loads break the aesthetic before the first pixel. Self-hosted fonts, appropriately sized images (WebP), above-the-fold content prioritized. Assets should be cached aggressively; animations must always replay correctly on cached page loads.
 
 ---
 
