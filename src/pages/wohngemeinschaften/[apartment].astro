@@ -846,6 +846,25 @@ const hasAptImages = carouselImages.length > 0;
     });
   }
 
+  // ── Preload room images in the background when browser is idle ──
+  function preloadRoomImages() {
+    const urls: string[] = [];
+    document.querySelectorAll<HTMLTemplateElement>('template[id^="tpl-"]').forEach(tpl => {
+      const article = tpl.content.querySelector<HTMLElement>('[data-images]');
+      if (article) {
+        const imgs: string[] = JSON.parse(article.getAttribute('data-images') || '[]');
+        urls.push(...imgs);
+      }
+    });
+    urls.forEach(src => { new Image().src = src; });
+  }
+
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(preloadRoomImages);
+  } else {
+    setTimeout(preloadRoomImages, 2000);
+  }
+
   // ── Room modal ─────────────────────────────────────────────────
   document.addEventListener("click", (e) => {
     const target = e.target as Element;
