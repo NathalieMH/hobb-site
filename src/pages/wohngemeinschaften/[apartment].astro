@@ -786,86 +786,26 @@ const hasAptImages = carouselImages.length > 0;
 </style>
 
 <script>
-  // ── Apartment carousel ──────────────────────────────────────────
-  const carousel = document.getElementById('apt-carousel');
-  if (carousel) {
-    const imgs: string[] = JSON.parse(carousel.getAttribute('data-images') || '[]');
-    const stage    = document.getElementById('car-stage')!;
-    const counterEl = document.getElementById('car-counter');
-    let currentIdx = 0;
-
-    function goTo(idx: number) {
-      if (!imgs.length) return;
-      currentIdx = (idx + imgs.length) % imgs.length;
-      let img = stage.querySelector('.car-img') as HTMLImageElement | null;
-      if (!img) {
-        img = document.createElement('img');
-        img.className = 'car-img';
-        img.setAttribute('alt', '');
-        stage.innerHTML = '';
-        stage.appendChild(img);
-      }
-      img.src = imgs[currentIdx];
-      img.setAttribute('data-index', String(currentIdx));
-      if (counterEl) counterEl.textContent = `${currentIdx + 1} / ${imgs.length}`;
-    }
-
-    document.getElementById('car-prev')?.addEventListener('click', () => goTo(currentIdx - 1));
-    document.getElementById('car-next')?.addEventListener('click', () => goTo(currentIdx + 1));
-    document.getElementById('car-floorplan-btn')?.addEventListener('click', () => goTo(imgs.length - 1));
-    document.getElementById('car-zoom-btn')?.addEventListener('click', () => {
-      const img = document.getElementById('car-img') as HTMLImageElement | null;
-      if (img?.src) openImgZoom(img.src, imgs, currentIdx);
-    });
-
-    // Swipe left/right on touch devices
-    let swipeStartX = 0;
-    stage.addEventListener('touchstart', (e) => {
-      swipeStartX = e.touches[0].clientX;
-    }, { passive: true });
-    stage.addEventListener('touchend', (e) => {
-      const dx = e.changedTouches[0].clientX - swipeStartX;
-      if (Math.abs(dx) < 40) return;
-      goTo(currentIdx + (dx < 0 ? 1 : -1));
-    }, { passive: true });
-
-    // Space tag → carousel
-    const spaceIndices: Record<string, number> = JSON.parse(
-      carousel.getAttribute('data-space-indices') || '{}'
-    );
-    document.querySelectorAll<HTMLButtonElement>('.space-tag').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const nameDE = btn.getAttribute('data-space-de');
-        const li = btn.closest('li');
-        document.querySelectorAll('.space-tag').forEach(t => t.classList.remove('active'));
-        li?.querySelectorAll('.space-tag').forEach(t => t.classList.add('active'));
-        if (nameDE !== null && spaceIndices[nameDE] !== undefined) {
-          goTo(spaceIndices[nameDE]);
-        }
-      });
-    });
+  // ── Helpers shared across both scopes ──────────────────────────
+  function openImgZoom(src: string, images: string[] = [], idx: number = 0) {
+    document.dispatchEvent(new CustomEvent('iz:open', { detail: { src, images, idx } }));
   }
 
-  // ── Preload room images in the background when browser is idle ──
-  function preloadRoomImages() {
-    const urls: string[] = [];
-    document.querySelectorAll<HTMLTemplateElement>('template[id^="tpl-"]').forEach(tpl => {
-      const article = tpl.content.querySelector<HTMLElement>('[data-images]');
-      if (article) {
-        const imgs: string[] = JSON.parse(article.getAttribute('data-images') || '[]');
-        urls.push(...imgs);
+  function initFadeIn(root: ParentNode) {
+    root.querySelectorAll<HTMLImageElement>('img').forEach(img => {
+      if (img.complete && img.naturalHeight > 0) {
+        img.classList.add('loaded');
+      } else {
+        img.addEventListener('load',  () => img.classList.add('loaded'));
+        img.addEventListener('error', () => img.classList.add('loaded'));
       }
     });
-    urls.forEach(src => { new Image().src = src; });
   }
 
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(preloadRoomImages);
-  } else {
-    window.addEventListener('load', preloadRoomImages);
-  }
+  // ── Document-level event delegation (registered once; survives ViewTransitions) ──
+  // These handlers look up DOM elements at call-time via getElementById so they
+  // always operate on whichever page is currently rendered.
 
-  // ── Room modal ─────────────────────────────────────────────────
   document.addEventListener("click", (e) => {
     const target = e.target as Element;
     const btn = target.closest(".open-room") as HTMLElement | null;
@@ -879,8 +819,17 @@ const hasAptImages = carouselImages.length > 0;
       if (tpl) {
         body.innerHTML = "";
         const clone = tpl.content.cloneNode(true) as DocumentFragment;
-        clone.querySelectorAll<HTMLImageElement>('img').forEach(img => { img.loading = 'eager'; });
+        // Set loading=eager before appending so browsers start fetching immediately.
+        // Also reset src after the attribute change — required on Safari/Firefox to
+        // ensure the loading hint is actually respected when cloning from a template.
+        clone.querySelectorAll<HTMLImageElement>('img').forEach(img => {
+          const src = img.getAttribute('src') ?? '';
+          img.loading = 'eager';
+          img.src = '';
+          img.src = src;
+        });
         body.appendChild(clone);
+        initFadeIn(body);
         overlay.classList.remove("hidden");
         overlay.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
@@ -939,13 +888,6 @@ const hasAptImages = carouselImages.length > 0;
     }
   });
 
-  function openImgZoom(src: string, images: string[] = [], idx: number = 0) {
-    document.dispatchEvent(new CustomEvent('iz:open', {
-      detail: { src, images, idx }
-    }));
-  }
-
-  // Trigger zoom from room modal zoom button (event delegation)
   document.addEventListener('click', (e) => {
     const zBtn = (e.target as Element).closest('.modal-zoom-btn');
     if (zBtn) {
@@ -960,30 +902,116 @@ const hasAptImages = carouselImages.length > 0;
     }
   });
 
-  // Swipe left/right in room modal (mobile)
-  let modalSwipeX = 0;
-  const overlayEl = document.getElementById('overlay')!;
-  overlayEl.addEventListener('touchstart', (e) => {
-    modalSwipeX = e.touches[0].clientX;
-  }, { passive: true });
-  overlayEl.addEventListener('touchend', (e) => {
-    const dx = e.changedTouches[0].clientX - modalSwipeX;
-    modalSwipeX = 0;
-    if (Math.abs(dx) < 40) return;
-    const bodyEl = document.getElementById('modal-body')!;
-    const article = bodyEl.querySelector('.modal-content') as HTMLElement | null;
-    const cover = bodyEl.querySelector('.modal-cover') as HTMLImageElement | null;
-    if (!article || !cover) return;
-    const allImgs: string[] = JSON.parse(article.getAttribute('data-images') || '[]');
-    if (allImgs.length < 2) return;
-    let idx = parseInt(cover.getAttribute('data-index') || '0', 10);
-    if (isNaN(idx) || idx < 0) idx = 0;
-    const newIdx = (idx + (dx < 0 ? 1 : -1) + allImgs.length) % allImgs.length;
-    cover.setAttribute('src', allImgs[newIdx]);
-    cover.setAttribute('data-index', String(newIdx));
-    article.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
-    article.querySelector<HTMLElement>(`.thumb[data-index="${newIdx}"]`)?.classList.add('active');
-    const counter = article.querySelector('.modal-nav-counter') as HTMLElement | null;
-    if (counter) counter.textContent = `${newIdx + 1} / ${allImgs.length}`;
-  }, { passive: true });
+  // ── Per-navigation init — re-runs on every ViewTransitions navigation ──────────
+  // astro:page-load fires on both the initial load and every client-side navigation,
+  // so this is the correct place to bind listeners to DOM elements that are replaced
+  // when Astro swaps the page. Module-level code above this block runs only once.
+
+  document.addEventListener('astro:page-load', () => {
+    // ── Apartment carousel ────────────────────────────────────────
+    const carousel = document.getElementById('apt-carousel');
+    if (carousel) {
+      const imgs: string[] = JSON.parse(carousel.getAttribute('data-images') || '[]');
+      const stage = document.getElementById('car-stage')!;
+      const counterEl = document.getElementById('car-counter');
+      let currentIdx = 0;
+
+      function goTo(idx: number) {
+        if (!imgs.length) return;
+        currentIdx = (idx + imgs.length) % imgs.length;
+        let img = stage.querySelector('.car-img') as HTMLImageElement | null;
+        if (!img) {
+          img = document.createElement('img');
+          img.className = 'car-img';
+          img.setAttribute('alt', '');
+          stage.innerHTML = '';
+          stage.appendChild(img);
+        }
+        img.src = imgs[currentIdx];
+        img.setAttribute('data-index', String(currentIdx));
+        if (counterEl) counterEl.textContent = `${currentIdx + 1} / ${imgs.length}`;
+      }
+
+      document.getElementById('car-prev')?.addEventListener('click', () => goTo(currentIdx - 1));
+      document.getElementById('car-next')?.addEventListener('click', () => goTo(currentIdx + 1));
+      document.getElementById('car-floorplan-btn')?.addEventListener('click', () => goTo(imgs.length - 1));
+      document.getElementById('car-zoom-btn')?.addEventListener('click', () => {
+        const img = document.getElementById('car-img') as HTMLImageElement | null;
+        if (img?.src) openImgZoom(img.src, imgs, currentIdx);
+      });
+
+      let swipeStartX = 0;
+      stage.addEventListener('touchstart', (e) => {
+        swipeStartX = e.touches[0].clientX;
+      }, { passive: true });
+      stage.addEventListener('touchend', (e) => {
+        const dx = e.changedTouches[0].clientX - swipeStartX;
+        if (Math.abs(dx) < 40) return;
+        goTo(currentIdx + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      const spaceIndices: Record<string, number> = JSON.parse(
+        carousel.getAttribute('data-space-indices') || '{}'
+      );
+      document.querySelectorAll<HTMLButtonElement>('.space-tag').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const nameDE = btn.getAttribute('data-space-de');
+          const li = btn.closest('li');
+          document.querySelectorAll('.space-tag').forEach(t => t.classList.remove('active'));
+          li?.querySelectorAll('.space-tag').forEach(t => t.classList.add('active'));
+          if (nameDE !== null && spaceIndices[nameDE] !== undefined) {
+            goTo(spaceIndices[nameDE]);
+          }
+        });
+      });
+    }
+
+    // ── Modal touch-swipe (bound to fresh overlay element each navigation) ────
+    const overlayEl = document.getElementById('overlay');
+    if (overlayEl) {
+      let modalSwipeX = 0;
+      overlayEl.addEventListener('touchstart', (e) => {
+        modalSwipeX = e.touches[0].clientX;
+      }, { passive: true });
+      overlayEl.addEventListener('touchend', (e) => {
+        const dx = e.changedTouches[0].clientX - modalSwipeX;
+        modalSwipeX = 0;
+        if (Math.abs(dx) < 40) return;
+        const bodyEl = document.getElementById('modal-body')!;
+        const article = bodyEl.querySelector('.modal-content') as HTMLElement | null;
+        const cover = bodyEl.querySelector('.modal-cover') as HTMLImageElement | null;
+        if (!article || !cover) return;
+        const allImgs: string[] = JSON.parse(article.getAttribute('data-images') || '[]');
+        if (allImgs.length < 2) return;
+        let idx = parseInt(cover.getAttribute('data-index') || '0', 10);
+        if (isNaN(idx) || idx < 0) idx = 0;
+        const newIdx = (idx + (dx < 0 ? 1 : -1) + allImgs.length) % allImgs.length;
+        cover.setAttribute('src', allImgs[newIdx]);
+        cover.setAttribute('data-index', String(newIdx));
+        article.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+        article.querySelector<HTMLElement>(`.thumb[data-index="${newIdx}"]`)?.classList.add('active');
+        const counter = article.querySelector('.modal-nav-counter') as HTMLElement | null;
+        if (counter) counter.textContent = `${newIdx + 1} / ${allImgs.length}`;
+      }, { passive: true });
+    }
+
+    // ── Preload room images in the background when browser is idle ────────────
+    function preloadRoomImages() {
+      const urls: string[] = [];
+      document.querySelectorAll<HTMLTemplateElement>('template[id^="tpl-"]').forEach(tpl => {
+        const article = tpl.content.querySelector<HTMLElement>('[data-images]');
+        if (article) {
+          const imgs: string[] = JSON.parse(article.getAttribute('data-images') || '[]');
+          urls.push(...imgs);
+        }
+      });
+      urls.forEach(src => { new Image().src = src; });
+    }
+
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(preloadRoomImages);
+    } else {
+      window.addEventListener('load', preloadRoomImages, { once: true });
+    }
+  });
 </script>
