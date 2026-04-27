@@ -257,8 +257,35 @@ const hasAptImages = carouselImages.length > 0;
                 </span>
                 <div class="room-stats">
                   {data.size_m2 && <span class="room-size">{data.size_m2} m²</span>}
-                  {data.cold_rent_eur && <span class="room-rent">{data.cold_rent_eur} €<span class="rent-unit">/Mo.</span></span>}
                 </div>
+                {(data.kaltmiete_eur || data.nebenkosten_eur || data.gesamtmiete_eur) && (
+                  <div class="room-prices">
+                    {data.kaltmiete_eur && (
+                      <span class="price-item">
+                        <span class="price-lbl" data-de>Kalt</span><span class="price-lbl" data-en>Rent</span>
+                        <span class="price-num">{data.kaltmiete_eur} €</span>
+                      </span>
+                    )}
+                    {data.nebenkosten_eur && (
+                      <>
+                        <span class="price-sep" aria-hidden="true">+</span>
+                        <span class="price-item">
+                          <span class="price-lbl">NK</span>
+                          <span class="price-num">{data.nebenkosten_eur} €</span>
+                        </span>
+                      </>
+                    )}
+                    {data.gesamtmiete_eur && (
+                      <>
+                        <span class="price-sep" aria-hidden="true">=</span>
+                        <span class="price-item price-item-total">
+                          <span class="price-lbl" data-de>Gesamt</span><span class="price-lbl" data-en>Total</span>
+                          <span class="price-num">{data.gesamtmiete_eur} €</span>
+                        </span>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </button>
           );
@@ -314,7 +341,9 @@ const hasAptImages = carouselImages.length > 0;
             </div>
             <ul class="room-facts">
               {d.size_m2 && <li><span class="fact-label" data-de>Größe</span><span class="fact-label" data-en>Size</span><span class="fact-val">{d.size_m2} m²</span></li>}
-              {d.cold_rent_eur && <li><span class="fact-label" data-de>Monatsmiete</span><span class="fact-label" data-en>Monthly rent</span><span class="fact-val">{d.cold_rent_eur} €/Mo.</span></li>}
+              {d.kaltmiete_eur && <li><span class="fact-label" data-de>Kaltmiete</span><span class="fact-label" data-en>Rent (excl. utils)</span><span class="fact-val">{d.kaltmiete_eur} €/Mo.</span></li>}
+              {d.nebenkosten_eur && <li><span class="fact-label" data-de>Nebenkosten</span><span class="fact-label" data-en>Utilities</span><span class="fact-val">{d.nebenkosten_eur} €/Mo.</span></li>}
+              {d.gesamtmiete_eur && <li><span class="fact-label" data-de>Gesamtmiete</span><span class="fact-label" data-en>Total rent</span><span class="fact-val">{d.gesamtmiete_eur} €/Mo.</span></li>}
               {d.available_from && <li><span class="fact-label" data-de>Verfügbar ab</span><span class="fact-label" data-en>Available from</span><span class="fact-val">{d.available_from}</span></li>}
             </ul>
             {d.teaser_de && <p class="modal-teaser" data-de>{d.teaser_de}</p>}
@@ -548,8 +577,37 @@ const hasAptImages = carouselImages.length > 0;
 .room-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 300; }
 .room-stats { display: flex; gap: 1rem; align-items: baseline; }
 .room-size { font-size: 0.8rem; color: var(--muted); }
-.room-rent { font-size: 0.85rem; color: var(--ink); font-family: var(--font-serif); }
-.rent-unit { font-family: var(--font-sans); font-size: 0.7rem; color: var(--muted); }
+.room-prices {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.3rem;
+  margin-top: 0.1rem;
+}
+.price-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+.price-lbl {
+  font-family: var(--font-sans);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1;
+}
+.price-num {
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+  color: var(--ink);
+  line-height: 1;
+}
+.price-sep {
+  font-size: 0.65rem;
+  color: var(--muted);
+  padding-bottom: 0.1rem;
+}
+.price-item-total .price-num { font-size: 0.9rem; }
 
 /* Modal */
 .overlay {
