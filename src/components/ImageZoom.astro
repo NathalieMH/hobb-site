@@ -303,14 +303,26 @@
     if (e.key === 'ArrowRight')  goTo(idx + 1);
   });
 
-  // Scroll to zoom
+  // Scroll to zoom.
+  // stopPropagation prevents the event reaching Lenis's window-level listener —
+  // e.preventDefault() alone only cancels native browser scroll, not Lenis's
+  // own virtual-scroll handler which fires independently at the window level.
   let wheelLocked = false;
   stage.addEventListener('wheel', (e) => {
     e.preventDefault();
+    e.stopPropagation();
     if (wheelLocked) return;
     wheelLocked = true;
     setZoom(zoom + (e.deltaY < 0 ? 0.12 : -0.12));
     setTimeout(() => { wheelLocked = false; }, 80);
+  }, { passive: false });
+
+  // Cover the rest of the overlay (header/footer bars) so Lenis never sees
+  // wheel events anywhere inside the zoom modal while it is open.
+  overlay.addEventListener('wheel', (e) => {
+    if (overlay.classList.contains('vtiz-hidden')) return;
+    e.preventDefault();
+    e.stopPropagation();
   }, { passive: false });
 
   // Mouse drag
