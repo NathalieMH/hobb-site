@@ -305,7 +305,7 @@ const hasAptImages = carouselImages.length > 0;
           <div class="modal-left">
             <div class="modal-img-wrap">
               {cover
-                ? <img class="modal-cover" src={cover} alt={d.title_de} data-index="0" loading="eager" decoding="async" />
+                ? <img class="modal-cover" src={cover} alt={d.title_de} data-index="0" loading="lazy" decoding="async" />
                 : <div class="room-placeholder modal-cover" data-index="-1" />
               }
               <button class="modal-zoom-btn" aria-label="Bild vergrößern">
@@ -324,7 +324,7 @@ const hasAptImages = carouselImages.length > 0;
               <div class="thumbs">
                 {imgs.map((url, i) => (
                   <button class={`thumb${i === 0 ? ' active' : ''}`} data-full={url} data-index={i} aria-label={`Bild ${i+1}`}>
-                    <img src={url} alt="" loading="eager" decoding="async" />
+                    <img src={url} alt="" loading="lazy" decoding="async" />
                   </button>
                 ))}
               </div>
@@ -859,7 +859,9 @@ const hasAptImages = carouselImages.length > 0;
       const tpl = document.getElementById(`tpl-${slug}`) as HTMLTemplateElement | null;
       if (tpl) {
         body.innerHTML = "";
-        body.appendChild(tpl.content.cloneNode(true));
+        const clone = tpl.content.cloneNode(true) as DocumentFragment;
+        clone.querySelectorAll<HTMLImageElement>('img').forEach(img => { img.loading = 'eager'; });
+        body.appendChild(clone);
         overlay.classList.remove("hidden");
         overlay.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
