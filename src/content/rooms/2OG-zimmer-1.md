@@ -8,6 +8,6 @@ nebenkosten_eur: 130
 gesamtmiete_eur: 1100
 available_from: "18.05.2026"
 available: true
-teaser_de: "Großzügiges Zimmer im 2. OG — auch für zwei Personen geeignet, mit begehbarem Kleiderschrank."
-teaser_en: "Generous room on the 2nd floor — suitable for two occupants, with a walk-in closet."
+teaser_de: "Großzügiges Zimmer im 2. OG — auch für zwei Personen geeignet."
+teaser_en: "Generous room on the 2nd floor — suitable for two occupants."
 ---
