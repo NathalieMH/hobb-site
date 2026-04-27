@@ -862,7 +862,7 @@ const hasAptImages = carouselImages.length > 0;
   if ('requestIdleCallback' in window) {
     requestIdleCallback(preloadRoomImages);
   } else {
-    setTimeout(preloadRoomImages, 2000);
+    window.addEventListener('load', preloadRoomImages);
   }
 
   // ── Room modal ─────────────────────────────────────────────────
