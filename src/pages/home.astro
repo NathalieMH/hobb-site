@@ -156,7 +156,26 @@ const base = import.meta.env.BASE_URL;
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
     gsap.registerPlugin(ScrollTrigger);
 
+    function fitHeroTitle() {
+      const title = document.querySelector<HTMLElement>('.hero-title');
+      if (!title) return;
+      title.style.fontSize = '';
+      const overlay = title.parentElement!;
+      const overlayStyle = getComputedStyle(overlay);
+      const available = overlay.getBoundingClientRect().width
+        - parseFloat(overlayStyle.paddingLeft)
+        - parseFloat(overlayStyle.paddingRight);
+      const natural = title.getBoundingClientRect().width;
+      if (natural > available) {
+        const cssSize = parseFloat(getComputedStyle(title).fontSize);
+        title.style.fontSize = `${cssSize * (available / natural)}px`;
+      }
+    }
+
     function initHero() {
+      fitHeroTitle();
+      window.addEventListener('resize', fitHeroTitle);
+
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       const heroWrap = document.querySelector('.hero-image-wrap');
