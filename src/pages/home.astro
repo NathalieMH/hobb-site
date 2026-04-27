@@ -122,19 +122,27 @@ const base = import.meta.env.BASE_URL;
       ctx = gsap.context(() => {
         gsap.set(children, { opacity: 0, y: 40 });
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: parent,
-            start: 'top 85%',
-            toggleActions: 'restart none none reset',
-          },
-        });
-
+        const tl = gsap.timeline({ paused: true });
         tl.to(children, {
           opacity: 1, y: 0,
           duration: 1.2,
           ease: 'power3.out',
           stagger: 0.225,
+        });
+
+        // Restart animation each time cards scroll into view
+        ScrollTrigger.create({
+          trigger: parent,
+          start: 'top 85%',
+          onEnter: () => tl.restart(),
+        });
+
+        // Reset only when 95%+ of the cards section has scrolled off the top
+        // "bottom 5%" fires when the bottom edge of .cards is 5% from the viewport top
+        ScrollTrigger.create({
+          trigger: parent,
+          start: 'bottom 5%',
+          onLeaveBack: () => tl.pause(0),
         });
       });
     }
