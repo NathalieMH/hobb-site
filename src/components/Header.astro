@@ -4,24 +4,24 @@ const base = import.meta.env.BASE_URL;
 
 <header class="site-header">
 
-  <!-- Left group: DE|EN far-left + left nav right-aligned against wordmark -->
-  <div class="header-left">
-    <button class="lang-toggle" id="lang-toggle" aria-label="Sprache wechseln">
-      <span class="lang-opt" id="lang-de">DE</span>
-      <span class="lang-sep">|</span>
-      <span class="lang-opt" id="lang-en">EN</span>
-    </button>
-    <nav class="split-nav split-nav-left" aria-label="Hauptnavigation links">
-      <a class="animated-link" href={`${base}haus/`} data-astro-prefetch>
-        <span data-de>Das Haus</span>
-        <span data-en>The Villa</span>
-      </a>
-      <a class="animated-link" href={`${base}wohngemeinschaften/`} data-astro-prefetch>
-        <span data-de>Die WGs</span>
-        <span data-en>Apartments</span>
-      </a>
-    </nav>
-  </div>
+<!-- Left group: DE|EN far-left + left nav right-aligned against wordmark -->
+<div class="header-left">
+  <button class="lang-toggle" id="lang-toggle" aria-label="Sprache wechseln">
+    <span class="lang-opt" id="lang-de">DE</span>
+    <span class="lang-sep">|</span>
+    <span class="lang-opt" id="lang-en">EN</span>
+  </button>
+  <nav class="split-nav split-nav-left" aria-label="Hauptnavigation links">
+    <a class="animated-link" href={`${base}wohngemeinschaften/`} data-astro-prefetch>
+      <span data-de>Die WGs</span>
+      <span data-en>Apartments</span>
+    </a>
+    <a class="animated-link" href={`${base}haus/`} data-astro-prefetch>
+      <span data-de>Das Haus</span>
+      <span data-en>The Villa</span>
+    </a>
+  </nav>
+</div>
 
   <!-- Center: Wordmark -->
   <a class="wordmark" href={`${base}home/`} aria-label="Haderslebener 26 — Home">
