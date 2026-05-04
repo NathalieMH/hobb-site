@@ -32,6 +32,7 @@ const PREFIX_MAP: Record<string, { de: string; en: string }> = {
   'laundry':        { de: 'Waschküche',      en: 'Laundry Room' },
   'roof-terrace':   { de: 'Dachterrasse',    en: 'Roof Terrace' },
   'garden-terrace': { de: 'Gartenterrasse',  en: 'Garden Terrace' },
+  'entrance':       { de: 'Eingang',         en: 'Entrance' },
 };
 
 function getPrefix(filename: string): string {
@@ -74,46 +75,42 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
 const aptFolder = apt?.data.image_folder ? `wohngemeinschaften/${apt.data.image_folder}` : '';
 const allAptFiles = aptFolder ? await loadImages(aptFolder) : [];
 
-// Separate grundriss and cover from carousel candidates
-const grundrissUrl = allAptFiles.find(url => /\/grundriss\.[^/]+$/i.test(url)) ?? '';
-const aptCoverUrl = allAptFiles.find(url => /\/cover\.[^/]+$/i.test(url)) ?? null;
+// Exclude grundriss and cover from space images
+const grundrissUrl = allAptFiles.find(url => /\/grundriss\.[^/]+$/i.test(url)) ?? null;
 const rawImages = allAptFiles.filter(url =>
   !/\/grundriss\.[^/]+$/i.test(url) && !/\/cover\.[^/]+$/i.test(url)
 );
 
-// Sort by shared_spaces_de order, then naturally within each group
+// Space order from apartment frontmatter
 const spaceOrder = (apt?.data.shared_spaces_de ?? [])
   .map(nameDE => Object.entries(PREFIX_MAP).find(([, v]) => v.de === nameDE)?.[0])
   .filter((p): p is string => !!p);
 
-const orderedImages = [
-  ...spaceOrder.flatMap(prefix =>
-    rawImages.filter(url => getPrefix(url.split('/').pop() ?? '') === prefix)
-  ),
-  ...rawImages.filter(url => !spaceOrder.includes(getPrefix(url.split('/').pop() ?? ''))),
-];
-
-// cover.* goes first if present; otherwise dining-room-1 is first via spaceOrder
-// grundriss always goes last
-const carouselImages = [
-  ...(aptCoverUrl ? [aptCoverUrl, ...orderedImages] : orderedImages),
-  ...(grundrissUrl ? [grundrissUrl] : []),
-];
-
-// Build DE space name → carousel start index
-const spaceStartIndices: Record<string, number> = {};
-for (const nameDE of (apt?.data.shared_spaces_de ?? [])) {
-  const prefix = Object.entries(PREFIX_MAP).find(([, v]) => v.de === nameDE)?.[0];
-  if (prefix) {
-    const firstIdx = carouselImages.findIndex(url => {
-      const fname = url.split('/').pop() ?? '';
-      return getPrefix(fname) === prefix;
-    });
-    if (firstIdx !== -1) spaceStartIndices[nameDE] = firstIdx;
-  }
+// Group raw images by prefix → one tile per space
+const grouped: Record<string, string[]> = {};
+for (const url of rawImages) {
+  const fname = url.split('/').pop() ?? '';
+  const prefix = getPrefix(fname);
+  if (!grouped[prefix]) grouped[prefix] = [];
+  grouped[prefix].push(url);
 }
 
-const hasAptImages = carouselImages.length > 0;
+const prefixesInOrder = [
+  ...spaceOrder.filter(p => grouped[p]),
+  ...Object.keys(grouped).filter(p => !spaceOrder.includes(p)),
+];
+
+const spaceGroups = prefixesInOrder
+  .filter(prefix => (grouped[prefix]?.length ?? 0) > 0)
+  .map(prefix => {
+    const images = grouped[prefix];
+    const labels = PREFIX_MAP[prefix] ?? { de: prefix, en: prefix };
+    const cover = images.find(url => {
+      const base = (url.split('/').pop() ?? '').replace(/\.[^.]+$/, '');
+      return base.endsWith('-cover');
+    }) ?? images[0];
+    return { prefix, titleDe: labels.de, titleEn: labels.en, cover, images };
+  });
 ---
 
 <Layout title={`Haderslebener 26 — ${apt?.data.title_de ?? "Wohngemeinschaft"}`}>
@@ -133,99 +130,9 @@ const hasAptImages = carouselImages.length > 0;
     </div>
   </section>
 
-  <!-- Apartment details: info left, carousel right -->
-  <section class="section apt-detail" style="padding-top:1.5rem; padding-bottom: 1rem">
-    <div class="container apt-detail-inner">
-
-      <!-- Left: description + shared spaces -->
-      <div class="apt-info">
-        {apt?.data.description_de && <p data-de>{apt.data.description_de}</p>}
-        {apt?.data.description_en && <p data-en>{apt.data.description_en}</p>}
-
-        {(apt?.data.shared_spaces_de?.length ?? 0) > 0 && (
-          <div class="shared-spaces">
-            <h3 data-de>Gemeinschaftsräume</h3>
-            <h3 data-en>Shared Spaces</h3>
-            <ul class="space-tags">
-              {apt?.data.shared_spaces_de.map((nameDE, i) => {
-                const nameEN = apt.data.shared_spaces_en[i] ?? nameDE;
-                return (
-                  <li>
-                    <button class="space-tag" data-space-de={nameDE} data-de>{nameDE}</button>
-                    <button class="space-tag" data-space-de={nameDE} data-en>{nameEN}</button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      <!-- Right: carousel
-           Images go in: public/apartments/[slug]/
-           Name files like: 01-kueche.jpg, 02-bad1.jpg etc. for sort order.
-           To map a shared space to an image, add to the apartment's frontmatter:
-             shared_space_images:
-               "Bad 1": 02-bad1.jpg
-      -->
-      <div class="apt-carousel" id="apt-carousel" data-images={JSON.stringify(carouselImages)} data-space-indices={JSON.stringify(spaceStartIndices)}>
-        <div class="car-stage" id="car-stage">
-          {hasAptImages
-            ? <img class="car-img" id="car-img" src={carouselImages[0]} alt="" data-index="0" loading="eager" decoding="sync" />
-            : <div class="car-placeholder">
-                <svg viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <rect x="10" y="10" width="140" height="100" stroke="#B8952A" stroke-opacity="0.35" stroke-width="1.5"/>
-                  <rect x="10" y="10" width="80" height="60" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
-                  <rect x="90" y="10" width="60" height="40" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
-                  <rect x="90" y="50" width="60" height="60" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
-                  <rect x="10" y="70" width="50" height="40" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
-                  <rect x="60" y="70" width="30" height="40" stroke="#B8952A" stroke-opacity="0.25" stroke-width="1"/>
-                </svg>
-                <span class="car-placeholder-label" data-de>Bilder folgen</span>
-                <span class="car-placeholder-label" data-en>Images coming soon</span>
-              </div>
-          }
-          {hasAptImages && (
-            <button class="car-zoom-btn" id="car-zoom-btn" aria-label="Bild vergrößern">
-              <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
-                <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.3"/>
-                <line x1="10" y1="10" x2="14" y2="14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-                <line x1="6.5" y1="4" x2="6.5" y2="9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-                <line x1="4" y1="6.5" x2="9" y2="6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-              </svg>
-            </button>
-          )}
-        </div>
-        {hasAptImages && (
-          <div class="car-controls">
-            <button class="car-nav car-prev" id="car-prev" aria-label="Vorheriges Bild">‹</button>
-            <span class="car-counter" id="car-counter">1 / {carouselImages.length}</span>
-            <button class="car-nav car-next" id="car-next" aria-label="Nächstes Bild">›</button>
-            {grundrissUrl && (
-              <button class="car-floorplan-btn" id="car-floorplan-btn" aria-label="Grundriss anzeigen">
-                <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="1.5" y="1.5" width="15" height="15" stroke="currentColor" stroke-width="1.2"/>
-                  <rect x="1.5" y="1.5" width="9" height="8" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
-                  <rect x="10.5" y="1.5" width="6" height="5" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
-                  <rect x="1.5" y="9.5" width="6" height="7" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
-                </svg>
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Rooms grid -->
+  <!-- Rooms + common spaces grid -->
   <section class="section rooms-section" style="padding-top: 0">
     <div class="container">
-      <DecoRule />
-      <div class="rooms-header">
-        <h2 data-de>Zimmer</h2>
-        <h2 data-en>Rooms</h2>
-      </div>
       <div class="rooms-grid">
         {rooms.map((room) => {
           const slug = entrySlug(room.id);
@@ -290,6 +197,43 @@ const hasAptImages = carouselImages.length > 0;
             </button>
           );
         })}
+        {spaceGroups.map(({ prefix, titleDe, titleEn, cover, images }) => (
+          <button
+            class="room-card space-card"
+            data-space-prefix={prefix}
+            aria-label={titleDe}
+          >
+            <div class="room-img-wrap">
+              <img src={cover} alt={titleDe} loading="lazy" decoding="async" />
+            </div>
+            <div class="room-meta">
+              <span class="room-title" data-de>{titleDe}</span>
+              <span class="room-title" data-en>{titleEn}</span>
+              {images.length > 1 && (
+                <div class="room-stats">
+                  <span class="room-size" data-de>{images.length} Fotos</span>
+                  <span class="room-size" data-en>{images.length} photos</span>
+                </div>
+              )}
+            </div>
+          </button>
+        ))}
+        {grundrissUrl && (
+          <button
+            class="room-card floorplan-card"
+            data-iz-open
+            data-iz-src={grundrissUrl}
+            aria-label="Grundriss"
+          >
+            <div class="room-img-wrap">
+              <img src={grundrissUrl} alt="Grundriss" loading="lazy" decoding="async" />
+            </div>
+            <div class="room-meta">
+              <span class="room-title" data-de>Grundriss</span>
+              <span class="room-title" data-en>Floor Plan</span>
+            </div>
+          </button>
+        )}
       </div>
     </div>
   </section>
@@ -355,6 +299,37 @@ const hasAptImages = carouselImages.length > 0;
     );
   })}
 
+  <!-- Space detail templates -->
+  {spaceGroups.map(({ prefix, titleDe, titleEn, images }) => {
+    const hasGallery = images.length > 1;
+    return (
+      <template id={`tpl-space-${prefix}`}>
+        <article class="modal-content modal-content-space" data-images={JSON.stringify(images)}>
+          <div class="modal-space-col">
+            <div class="modal-space-header">
+              <h3><span data-de>{titleDe}</span><span data-en>{titleEn}</span></h3>
+            </div>
+            <div class="modal-img-wrap modal-img-wrap--zoomable">
+              <img class="modal-cover" src={images[0]} alt={titleDe} data-index="0" loading="lazy" decoding="async" />
+              {hasGallery && <button class="nav prev modal-nav-prev" aria-label="Vorheriges Bild">‹</button>}
+              {hasGallery && <button class="nav next modal-nav-next" aria-label="Nächstes Bild">›</button>}
+              {hasGallery && <span class="modal-nav-counter modal-counter-overlay">{`1 / ${images.length}`}</span>}
+            </div>
+            {hasGallery && (
+              <div class="thumbs">
+                {images.map((url, i) => (
+                  <button class={`thumb${i === 0 ? ' active' : ''}`} data-full={url} data-index={i} aria-label={`Bild ${i+1}`}>
+                    <img src={url} alt="" loading="lazy" decoding="async" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </article>
+      </template>
+    );
+  })}
+
   <!-- Modal overlay -->
   <div id="overlay" class="overlay hidden" aria-hidden="true">
     <div class="modal-card" role="dialog" aria-modal="true">
@@ -384,157 +359,12 @@ const hasAptImages = carouselImages.length > 0;
 }
 .back-link:hover { color: var(--ink); }
 
-/* Apartment detail: info left, carousel right */
-.apt-detail-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: start;
-}
-.apt-info { display: flex; flex-direction: column; gap: 1.5rem; }
-.apt-info p { color: var(--muted); }
-
-/* Shared spaces */
-.shared-spaces { display: flex; flex-direction: column; gap: 0.75rem; }
-.shared-spaces h3 {
-  font-size: 0.7rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--muted);
-  font-family: var(--font-sans);
-  font-weight: 500;
-}
-.space-tags {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-.space-tags li { display: contents; }
-.space-tag {
-  font-size: 0.8rem;
-  padding: 0.3rem 0.8rem;
-  border: 1px solid var(--border);
-  background: none;
-  color: var(--ink);
-  cursor: pointer;
-  letter-spacing: 0.04em;
-  transition: background var(--ease), border-color var(--ease), color var(--ease);
-}
-.space-tag:hover,
-.space-tag.active {
-  background: var(--ink);
-  color: var(--ink-light);
-  border-color: var(--ink);
-}
-
-/* Carousel */
-.apt-carousel { display: flex; flex-direction: column; gap: 0.75rem; }
-.car-stage {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-.car-zoom-btn {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: rgba(28,26,23,0.45);
-  border: none;
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  color: rgba(245,242,236,0.85);
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity var(--ease), background var(--ease);
-}
-.car-stage:hover .car-zoom-btn { opacity: 1; }
-.car-zoom-btn:hover { background: rgba(28,26,23,0.75); color: #fff; }
-.car-zoom-btn svg { width: 14px; height: 14px; }
-.car-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transition: opacity 0.25s ease;
-}
-.car-placeholder {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 2rem;
-  background: var(--bg);
-}
-.car-placeholder svg { width: 60%; max-width: 180px; opacity: 0.6; }
-.car-placeholder-label {
-  font-family: var(--font-sans);
-  font-size: 0.65rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.car-controls {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  justify-content: center;
-}
-.car-floorplan-btn {
-  position: absolute;
-  right: 0;
-  background: none;
-  border: 1px solid var(--border);
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  color: var(--muted);
-  cursor: pointer;
-  transition: color var(--ease), border-color var(--ease);
-  flex-shrink: 0;
-}
-.car-floorplan-btn svg { width: 16px; height: 16px; }
-.car-floorplan-btn:hover { color: var(--ink); border-color: var(--ink); }
-.car-nav {
-  background: none;
-  border: 1px solid var(--border);
-  width: 34px;
-  height: 34px;
-  font-size: 1.2rem;
-  color: var(--muted);
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  transition: color var(--ease), border-color var(--ease);
-}
-.car-nav:hover { color: var(--ink); border-color: var(--ink); }
-.car-counter {
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  min-width: 3rem;
-  text-align: center;
-}
-
 /* Rooms */
-.rooms-header { margin: 0.75rem 0 var(--sp-sm); text-align: center; }
 .rooms-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 2rem;
+  align-items: start;
 }
 .room-card {
   min-width: 0;
@@ -654,8 +484,19 @@ const hasAptImages = carouselImages.length > 0;
   gap: 2rem;
 }
 .modal-left { display: flex; flex-direction: column; gap: 0; }
-.modal-img-wrap { position: relative; overflow: hidden; }
-.modal-cover { width: 100%; border: 1px solid var(--border); display: block; }
+.modal-img-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--bg);
+}
+.modal-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: 1px solid var(--border);
+  display: block;
+}
 
 /* Overlaid nav arrows on image */
 .modal-nav-prev, .modal-nav-next {
@@ -763,8 +604,29 @@ const hasAptImages = carouselImages.length > 0;
   align-self: center;
 }
 
+/* Inline zoom on space modal images */
+.modal-img-wrap--zoomable .modal-cover {
+  transform-origin: 0 0;
+  will-change: transform;
+  transition: transform 0.15s ease;
+}
+.modal-img-wrap--zoomable.dragging .modal-cover { transition: none; }
+
+/* Space modal — full-width single column */
+.modal-content-space {
+  grid-template-columns: 1fr;
+}
+.modal-space-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.modal-space-header h3 {
+  font-size: 1.6rem;
+  font-weight: 300;
+}
+
 @media (max-width: 800px) {
-  .apt-detail-inner { grid-template-columns: 1fr; }
   .modal-content { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
@@ -786,7 +648,38 @@ const hasAptImages = carouselImages.length > 0;
 </style>
 
 <script>
-  // ── Helpers shared across both scopes ──────────────────────────
+  // ── Inline zoom state (space modals only) ─────────────────────
+  let zScale = 1, zOffX = 0, zOffY = 0;
+  let zDragging = false, zDragX = 0, zDragY = 0, zOffX0 = 0, zOffY0 = 0;
+
+  function zReset() { zScale = 1; zOffX = 0; zOffY = 0; zDragging = false; }
+
+  function zApply(wrap: HTMLElement) {
+    const img = wrap.querySelector<HTMLImageElement>('.modal-cover');
+    if (!img) return;
+    img.style.transform = (zScale === 1 && zOffX === 0 && zOffY === 0)
+      ? ''
+      : `translate(${zOffX}px,${zOffY}px) scale(${zScale})`;
+  }
+
+  function zClamp(wrap: HTMLElement) {
+    const w = wrap.offsetWidth, h = wrap.offsetHeight;
+    if (zScale >= 1) {
+      zOffX = Math.max(w * (1 - zScale), Math.min(0, zOffX));
+      zOffY = Math.max(h * (1 - zScale), Math.min(0, zOffY));
+    } else {
+      // centre the shrunken image
+      zOffX = w * (1 - zScale) / 2;
+      zOffY = h * (1 - zScale) / 2;
+    }
+  }
+
+  function zWrap(): HTMLElement | null {
+    return document.getElementById('modal-body')
+      ?.querySelector<HTMLElement>('.modal-img-wrap--zoomable') ?? null;
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────
   function openImgZoom(src: string, images: string[] = [], idx: number = 0) {
     document.dispatchEvent(new CustomEvent('iz:open', { detail: { src, images, idx } }));
   }
@@ -802,38 +695,66 @@ const hasAptImages = carouselImages.length > 0;
     });
   }
 
-  // ── Document-level event delegation (registered once; survives ViewTransitions) ──
-  // These handlers look up DOM elements at call-time via getElementById so they
-  // always operate on whichever page is currently rendered.
+  function openModal(tpl: HTMLTemplateElement) {
+    const overlay = document.getElementById("overlay")!;
+    const body = document.getElementById("modal-body")!;
+    zReset();
+    body.innerHTML = "";
+    const clone = tpl.content.cloneNode(true) as DocumentFragment;
+    clone.querySelectorAll<HTMLImageElement>('img').forEach(img => {
+      const src = img.getAttribute('src') ?? '';
+      img.loading = 'eager';
+      img.src = '';
+      img.src = src;
+    });
+    body.appendChild(clone);
+    initFadeIn(body);
+    overlay.classList.remove("hidden");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
 
+  // ── Drag-to-pan (module-level so it survives navigation) ───────
+  document.addEventListener('mousemove', (e) => {
+    if (!zDragging) return;
+    const wrap = zWrap();
+    if (!wrap) return;
+    zOffX = zOffX0 + (e.clientX - zDragX);
+    zOffY = zOffY0 + (e.clientY - zDragY);
+    zClamp(wrap);
+    zApply(wrap);
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!zDragging) return;
+    zDragging = false;
+    const wrap = zWrap();
+    if (wrap) { wrap.classList.remove('dragging'); zApply(wrap); }
+  });
+
+  // ── Document-level event delegation ──
   document.addEventListener("click", (e) => {
     const target = e.target as Element;
-    const btn = target.closest(".open-room") as HTMLElement | null;
     const overlay = document.getElementById("overlay")!;
     const body = document.getElementById("modal-body")!;
 
-    if (btn) {
+    // Room card
+    const roomBtn = target.closest(".open-room") as HTMLElement | null;
+    if (roomBtn) {
       e.preventDefault();
-      const slug = btn.getAttribute("data-room");
+      const slug = roomBtn.getAttribute("data-room");
       const tpl = document.getElementById(`tpl-${slug}`) as HTMLTemplateElement | null;
-      if (tpl) {
-        body.innerHTML = "";
-        const clone = tpl.content.cloneNode(true) as DocumentFragment;
-        // Set loading=eager before appending so browsers start fetching immediately.
-        // Also reset src after the attribute change — required on Safari/Firefox to
-        // ensure the loading hint is actually respected when cloning from a template.
-        clone.querySelectorAll<HTMLImageElement>('img').forEach(img => {
-          const src = img.getAttribute('src') ?? '';
-          img.loading = 'eager';
-          img.src = '';
-          img.src = src;
-        });
-        body.appendChild(clone);
-        initFadeIn(body);
-        overlay.classList.remove("hidden");
-        overlay.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
-      }
+      if (tpl) openModal(tpl);
+      return;
+    }
+
+    // Space card
+    const spaceBtn = target.closest(".space-card") as HTMLElement | null;
+    if (spaceBtn) {
+      e.preventDefault();
+      const prefix = spaceBtn.getAttribute("data-space-prefix");
+      const tpl = document.getElementById(`tpl-space-${prefix}`) as HTMLTemplateElement | null;
+      if (tpl) openModal(tpl);
       return;
     }
 
@@ -856,6 +777,9 @@ const hasAptImages = carouselImages.length > 0;
       const allImgs: string[] = JSON.parse(article.getAttribute("data-images") || "[]");
       const counter = article.querySelector(".modal-nav-counter") as HTMLElement | null;
       if (counter) counter.textContent = `${parseInt(newIdx, 10) + 1} / ${allImgs.length}`;
+      // reset inline zoom on image change
+      const wrap = article.querySelector<HTMLElement>('.modal-img-wrap--zoomable');
+      if (wrap) { zReset(); zApply(wrap); }
       return;
     }
 
@@ -874,6 +798,9 @@ const hasAptImages = carouselImages.length > 0;
       article.querySelector<HTMLElement>(`.thumb[data-index="${newIdx}"]`)?.classList.add("active");
       const counter = article.querySelector(".modal-nav-counter") as HTMLElement | null;
       if (counter) counter.textContent = `${newIdx + 1} / ${allImgs.length}`;
+      // reset inline zoom on image change
+      const wrap = article.querySelector<HTMLElement>('.modal-img-wrap--zoomable');
+      if (wrap) { zReset(); zApply(wrap); }
     }
   });
 
@@ -902,101 +829,125 @@ const hasAptImages = carouselImages.length > 0;
     }
   });
 
-  // ── Per-navigation init — re-runs on every ViewTransitions navigation ──────────
-  // astro:page-load fires on both the initial load and every client-side navigation,
-  // so this is the correct place to bind listeners to DOM elements that are replaced
-  // when Astro swaps the page. Module-level code above this block runs only once.
-
+  // ── Per-navigation init ──────────────────────────────────────────
   document.addEventListener('astro:page-load', () => {
-    // ── Apartment carousel ────────────────────────────────────────
-    const carousel = document.getElementById('apt-carousel');
-    if (carousel) {
-      const imgs: string[] = JSON.parse(carousel.getAttribute('data-images') || '[]');
-      const stage = document.getElementById('car-stage')!;
-      const counterEl = document.getElementById('car-counter');
-      let currentIdx = 0;
-
-      function goTo(idx: number) {
-        if (!imgs.length) return;
-        currentIdx = (idx + imgs.length) % imgs.length;
-        let img = stage.querySelector('.car-img') as HTMLImageElement | null;
-        if (!img) {
-          img = document.createElement('img');
-          img.className = 'car-img';
-          img.setAttribute('alt', '');
-          stage.innerHTML = '';
-          stage.appendChild(img);
-        }
-        img.src = imgs[currentIdx];
-        img.setAttribute('data-index', String(currentIdx));
-        if (counterEl) counterEl.textContent = `${currentIdx + 1} / ${imgs.length}`;
-      }
-
-      document.getElementById('car-prev')?.addEventListener('click', () => goTo(currentIdx - 1));
-      document.getElementById('car-next')?.addEventListener('click', () => goTo(currentIdx + 1));
-      document.getElementById('car-floorplan-btn')?.addEventListener('click', () => goTo(imgs.length - 1));
-      document.getElementById('car-zoom-btn')?.addEventListener('click', () => {
-        const img = document.getElementById('car-img') as HTMLImageElement | null;
-        if (img?.src) openImgZoom(img.src, imgs, currentIdx);
-      });
-
-      let swipeStartX = 0;
-      stage.addEventListener('touchstart', (e) => {
-        swipeStartX = e.touches[0].clientX;
-      }, { passive: true });
-      stage.addEventListener('touchend', (e) => {
-        const dx = e.changedTouches[0].clientX - swipeStartX;
-        if (Math.abs(dx) < 40) return;
-        goTo(currentIdx + (dx < 0 ? 1 : -1));
-      }, { passive: true });
-
-      const spaceIndices: Record<string, number> = JSON.parse(
-        carousel.getAttribute('data-space-indices') || '{}'
-      );
-      document.querySelectorAll<HTMLButtonElement>('.space-tag').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const nameDE = btn.getAttribute('data-space-de');
-          const li = btn.closest('li');
-          document.querySelectorAll('.space-tag').forEach(t => t.classList.remove('active'));
-          li?.querySelectorAll('.space-tag').forEach(t => t.classList.add('active'));
-          if (nameDE !== null && spaceIndices[nameDE] !== undefined) {
-            goTo(spaceIndices[nameDE]);
-          }
-        });
-      });
-    }
-
-    // ── Modal touch-swipe (bound to fresh overlay element each navigation) ────
     const overlayEl = document.getElementById('overlay');
     if (overlayEl) {
-      let modalSwipeX = 0;
+      // ── Wheel zoom (space modals only) ───────────────────────
+      let wheelLocked = false;
+      overlayEl.addEventListener('wheel', (e) => {
+        const hasZoomable = !!document.getElementById('modal-body')?.querySelector('.modal-img-wrap--zoomable');
+        if (hasZoomable) { e.preventDefault(); e.stopPropagation(); }
+        const wrap = (e.target as Element).closest('.modal-img-wrap--zoomable') as HTMLElement | null;
+        if (!wrap || wheelLocked) return;
+        wheelLocked = true;
+        setTimeout(() => { wheelLocked = false; }, 80);
+        const rect = wrap.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const newScale = Math.max(0.75, Math.min(2.5, zScale + (e.deltaY < 0 ? 0.173 : -0.173)));
+        if (newScale === zScale) return;
+        zOffX = mx - (mx - zOffX) * (newScale / zScale);
+        zOffY = my - (my - zOffY) * (newScale / zScale);
+        zScale = newScale;
+        zClamp(wrap);
+        zApply(wrap);
+      }, { passive: false });
+
+      // ── Mousedown to start drag ──────────────────────────────
+      overlayEl.addEventListener('mousedown', (e) => {
+        const wrap = (e.target as Element).closest('.modal-img-wrap--zoomable') as HTMLElement | null;
+        if (!wrap || zScale <= 1) return;
+        zDragging = true;
+        zDragX = e.clientX; zDragY = e.clientY;
+        zOffX0 = zOffX; zOffY0 = zOffY;
+        wrap.classList.add('dragging');
+        e.preventDefault();
+      });
+
+      // ── Touch: single-finger swipe (not zoomed) or pan (zoomed); two-finger pinch ──
+      let touchState: 'idle' | 'swipe' | 'pan' | 'pinch' = 'idle';
+      let swipeStartX = 0, panLastX = 0, panLastY = 0;
+      let pinchStartDist = 0, pinchStartScale = 1;
+
       overlayEl.addEventListener('touchstart', (e) => {
-        modalSwipeX = e.touches[0].clientX;
+        if (e.touches.length === 2) {
+          touchState = 'pinch';
+          pinchStartDist = Math.hypot(
+            e.touches[1].clientX - e.touches[0].clientX,
+            e.touches[1].clientY - e.touches[0].clientY
+          );
+          pinchStartScale = zScale;
+        } else if (e.touches.length === 1) {
+          swipeStartX = panLastX = e.touches[0].clientX;
+          panLastY = e.touches[0].clientY;
+          touchState = zScale > 1 ? 'pan' : 'swipe';
+        }
       }, { passive: true });
+
+      overlayEl.addEventListener('touchmove', (e) => {
+        if (touchState === 'pinch' && e.touches.length === 2) {
+          const wrap = document.getElementById('modal-body')
+            ?.querySelector<HTMLElement>('.modal-img-wrap--zoomable');
+          if (!wrap || !pinchStartDist) return;
+          const dist = Math.hypot(
+            e.touches[1].clientX - e.touches[0].clientX,
+            e.touches[1].clientY - e.touches[0].clientY
+          );
+          const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+          const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+          const rect = wrap.getBoundingClientRect();
+          const newScale = Math.max(0.75, Math.min(2.5, pinchStartScale * (dist / pinchStartDist)));
+          const mx = midX - rect.left, my = midY - rect.top;
+          zOffX = mx - (mx - zOffX) * (newScale / zScale);
+          zOffY = my - (my - zOffY) * (newScale / zScale);
+          zScale = newScale;
+          zClamp(wrap);
+          zApply(wrap);
+          e.preventDefault();
+        } else if (touchState === 'pan' && e.touches.length === 1) {
+          const wrap = document.getElementById('modal-body')
+            ?.querySelector<HTMLElement>('.modal-img-wrap--zoomable');
+          if (!wrap) return;
+          zOffX += e.touches[0].clientX - panLastX;
+          zOffY += e.touches[0].clientY - panLastY;
+          panLastX = e.touches[0].clientX;
+          panLastY = e.touches[0].clientY;
+          zClamp(wrap);
+          zApply(wrap);
+          e.preventDefault();
+        }
+      }, { passive: false });
+
       overlayEl.addEventListener('touchend', (e) => {
-        const dx = e.changedTouches[0].clientX - modalSwipeX;
-        modalSwipeX = 0;
-        if (Math.abs(dx) < 40) return;
-        const bodyEl = document.getElementById('modal-body')!;
-        const article = bodyEl.querySelector('.modal-content') as HTMLElement | null;
-        const cover = bodyEl.querySelector('.modal-cover') as HTMLImageElement | null;
-        if (!article || !cover) return;
-        const allImgs: string[] = JSON.parse(article.getAttribute('data-images') || '[]');
-        if (allImgs.length < 2) return;
-        let idx = parseInt(cover.getAttribute('data-index') || '0', 10);
-        if (isNaN(idx) || idx < 0) idx = 0;
-        const newIdx = (idx + (dx < 0 ? 1 : -1) + allImgs.length) % allImgs.length;
-        cover.setAttribute('src', allImgs[newIdx]);
-        cover.setAttribute('data-index', String(newIdx));
-        article.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
-        article.querySelector<HTMLElement>(`.thumb[data-index="${newIdx}"]`)?.classList.add('active');
-        const counter = article.querySelector('.modal-nav-counter') as HTMLElement | null;
-        if (counter) counter.textContent = `${newIdx + 1} / ${allImgs.length}`;
+        if (touchState === 'swipe') {
+          const dx = e.changedTouches[0].clientX - swipeStartX;
+          if (Math.abs(dx) >= 40) {
+            const bodyEl = document.getElementById('modal-body')!;
+            const article = bodyEl.querySelector('.modal-content') as HTMLElement | null;
+            const cover = bodyEl.querySelector('.modal-cover') as HTMLImageElement | null;
+            if (!article || !cover) return;
+            const allImgs: string[] = JSON.parse(article.getAttribute('data-images') || '[]');
+            if (allImgs.length < 2) return;
+            let idx = parseInt(cover.getAttribute('data-index') || '0', 10);
+            if (isNaN(idx) || idx < 0) idx = 0;
+            const newIdx = (idx + (dx < 0 ? 1 : -1) + allImgs.length) % allImgs.length;
+            cover.setAttribute('src', allImgs[newIdx]);
+            cover.setAttribute('data-index', String(newIdx));
+            article.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+            article.querySelector<HTMLElement>(`.thumb[data-index="${newIdx}"]`)?.classList.add('active');
+            const counter = article.querySelector('.modal-nav-counter') as HTMLElement | null;
+            if (counter) counter.textContent = `${newIdx + 1} / ${allImgs.length}`;
+            const wrap = article.querySelector<HTMLElement>('.modal-img-wrap--zoomable');
+            if (wrap) { zReset(); zApply(wrap); }
+          }
+        }
+        if (e.touches.length === 0) touchState = 'idle';
       }, { passive: true });
     }
 
-    // ── Preload room images in the background when browser is idle ────────────
-    function preloadRoomImages() {
+    // ── Preload room + space images in the background ────────────
+    function preloadImages() {
       const urls: string[] = [];
       document.querySelectorAll<HTMLTemplateElement>('template[id^="tpl-"]').forEach(tpl => {
         const article = tpl.content.querySelector<HTMLElement>('[data-images]');
@@ -1009,9 +960,9 @@ const hasAptImages = carouselImages.length > 0;
     }
 
     if ('requestIdleCallback' in window) {
-      requestIdleCallback(preloadRoomImages);
+      requestIdleCallback(preloadImages);
     } else {
-      window.addEventListener('load', preloadRoomImages, { once: true });
+      window.addEventListener('load', preloadImages, { once: true });
     }
   });
 </script>

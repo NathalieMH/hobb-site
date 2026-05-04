@@ -313,7 +313,7 @@
     e.stopPropagation();
     if (wheelLocked) return;
     wheelLocked = true;
-    setZoom(zoom + (e.deltaY < 0 ? 0.12 : -0.12));
+    setZoom(zoom + (e.deltaY < 0 ? 0.144 : -0.144));
     setTimeout(() => { wheelLocked = false; }, 80);
   }, { passive: false });
 
