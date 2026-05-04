@@ -124,13 +124,25 @@ Opened by clicking a `.open-room` button. Clones a `<template id="tpl-{slug}">` 
 ## Content management
 
 To add a new apartment:
-1. Create `src/content/apartments/[slug].mdx` with required frontmatter
+1. Create `src/content/apartments/[slug].md` with required frontmatter
 2. Add `image_folder: "[folder]"` pointing to `public/wohngemeinschaften/[folder]/`
 3. Add images: `cover.*`, `grundriss.*`, named space images (`kitchen-1.jpg`, `dining-room-1.jpg`, etc.)
 
 To add a room:
-1. Create `src/content/rooms/[slug].mdx` with `apartment: "[apt-slug]"` in frontmatter
+1. Create `src/content/rooms/[slug].md` with `apartment: "[apt-slug]"` in frontmatter
 2. Add room photos to `public/zimmer/[slug]/` — `cover.*` is shown first
+
+### Image formats
+
+`loadImages` only serves `jpg`, `png`, `webp`, `gif` — HEIC files are silently ignored.
+
+To convert iPhone HEIC photos to webp (use this pipeline to preserve EXIF orientation):
+```bash
+magick -auto-orient source.HEIC -resize 1600x /tmp/tmp.png
+cwebp -q 82 /tmp/tmp.png -o output.webp
+rm /tmp/tmp.png
+```
+Target ~150–400 KB for covers. Portrait photos from iPhones require `-auto-orient` to bake in the rotation — skipping it produces a sideways image.
 
 ---
 
