@@ -8,6 +8,6 @@ nebenkosten_eur: 85
 gesamtmiete_eur: 700
 available_from: "18.05.2026"
 available: true
-teaser_de: "Kompaktes Einzelzimmer im 2. OG."
-teaser_en: "Compact single room on the 2nd floor."
+teaser_de: "Zimmer mit Dachfenster und erhöhtem Bett 100 x 200"
+teaser_en: "Single room with skylight and elevated bed 100 x 200"
 ---
