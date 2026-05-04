@@ -8,6 +8,6 @@ nebenkosten_eur: 135
 gesamtmiete_eur: 1100
 available_from: "18.05.2026"
 available: true
-teaser_de: "Großes Zimmer im 2. OG — auch für zwei Personen geeignet, mit begehbarem Kleiderschrank.."
-teaser_en: "Large room on the 2nd floor — suitable for two occupants, with a walk-in closet."
+teaser_de: "Großes Zimmer für 1-2 Personen mit begehbarem Kleiderschrank, Bett 140 x 200"
+teaser_en: "Large room suitable for 1-2 occupants with walk-in closet, bed 140 x 200."
 ---
