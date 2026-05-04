@@ -8,6 +8,6 @@ nebenkosten_eur: 85
 gesamtmiete_eur: 705
 available_from: "18.05.2026"
 available: true
-teaser_de: "Gemütliches Einzelzimmer im 1. OG."
+teaser_de: "Schönes Altbauzimmer - Bett 90 x 200 ."
 teaser_en: "Cosy single room on the 1st floor."
 ---
