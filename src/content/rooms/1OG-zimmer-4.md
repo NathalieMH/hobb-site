@@ -8,6 +8,6 @@ nebenkosten_eur: 100
 gesamtmiete_eur: 1015
 available_from: "18.05.2026"
 available: true
-teaser_de: "Zimmer mit eigenem Balkon im 1. OG."
-teaser_en: "Room with private balcony on the 1st floor."
+teaser_de: "Zimmer mit eigenem Balkon, Bett 90 x 200."
+teaser_en: "Room with private balcony, bed 90 x 200."
 ---
