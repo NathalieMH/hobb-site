@@ -11,8 +11,8 @@ Jede Datei steht für **ein Apartment** oder **ein Zimmer**.
 
 - Apartments liegen in: `src/content/apartments/`
 - Zimmer liegen in: `src/content/rooms/`
-- Fotos der Apartments liegen in: `public/apartments/`
-- Fotos der Zimmer liegen in: `public/rooms/`
+- Fotos der Apartments (Gemeinschaftsräume) liegen in: `public/wohngemeinschaften/[wohnungsordner]/`
+- Fotos der Zimmer liegen in: `public/zimmer/[zimmer-name]/`
 
 ---
 
@@ -71,14 +71,23 @@ Der Dateiname bestimmt, in welcher Kachel das Foto erscheint. Immer mit einem de
 Die Reihenfolge der Gemeinschaftsraum-Kacheln wird in der Content-Datei der Wohnung festgelegt:  
 `src/content/apartments/1OG.md` (bzw. `2OG.md`)
 
-Das Feld `shared_spaces_de` listet die Räume in der gewünschten Reihenfolge:
+Das Feld `shared_spaces` listet die Räume in der gewünschten Reihenfolge. Jeder Eintrag hat drei Felder:
+- `prefix` — entspricht dem Dateinamenpräfix der Fotos (z. B. `kitchen` für `kitchen-1.webp`)
+- `de` — Kacheltitel auf Deutsch
+- `en` — Kacheltitel auf Englisch
 
 ```yaml
-shared_spaces_de: ["Wohn-Esszimmer", "Küche", "Balkon", "Bad 1", "Bad 2", "Waschküche", "Digitales Schloss"]
-shared_spaces_en: ["Living-Dining Room", "Kitchen", "Balcony", "Bathroom 1", "Bathroom 2", "Laundry Room", "Digital Lock"]
+shared_spaces:
+  - {prefix: dining-room, de: Wohn-Esszimmer, en: Living-Dining Room}
+  - {prefix: kitchen, de: Küche, en: Kitchen}
+  - {prefix: bathroom1, de: Bad 1, en: Bathroom 1}
+  - {prefix: bathroom2, de: Bad 2, en: Bathroom 2}
+  - {prefix: balcony, de: Balkon, en: Balcony}
+  - {prefix: laundry, de: Waschküche, en: Laundry Room}
+  - {prefix: digital-lock, de: Digitales Schloss, en: Digital Lock}
 ```
 
-Räume, die nicht in dieser Liste stehen, erscheinen trotzdem — nur nach den gelisteten, in beliebiger Reihenfolge.
+Nur Räume, die hier aufgelistet sind **und** für die Fotos vorhanden sind, erscheinen als Kacheln.
 
 ---
 
@@ -136,16 +145,26 @@ teaser_en: "Kurze Beschreibung EN"     ← Kurztext auf Englisch
 4. Kopiere diesen Inhalt in die Datei und passe ihn an:
    ```yaml
    ---
-   title: "5 Zimmer / Wohnung 3"
-   shared_spaces: ["Bad 1", "Bad 2", "Küche", "Esszimmer", "Balkon", "Laundry"]
-   order: 10
+   title_de: "Wohnung 3. Obergeschoss"
+   title_en: "Apartment 3rd Upper Floor"
+   description_de: "Kurze Beschreibung auf Deutsch."
+   description_en: "Short description in English."
+   shared_spaces:
+     - {prefix: kitchen, de: Küche, en: Kitchen}
+     - {prefix: bathroom1, de: Bad, en: Bathroom}
+     - {prefix: dining-room, de: Wohn-Esszimmer, en: Living-Dining Room}
+     - {prefix: balcony, de: Balkon, en: Balcony}
+   shared_m2: 75
+   order: 30
+   image_folder: wohnung-3OG
    ---
-   Kurze Beschreibung der Wohnung …
    ```
-   - `title` = Überschrift der Seite  
-   - `shared_spaces` = geteilte Räume  
-   - `order` = Reihenfolge (kleinere Zahl = weiter oben)
-   - Der Text unter den Strichen ist die Beschreibung.
+   - `title_de` / `title_en` = Seitenüberschrift auf Deutsch / Englisch
+   - `description_de` / `description_en` = kurze Beschreibung (optional)
+   - `shared_spaces` = Gemeinschaftsräume in gewünschter Reihenfolge (prefix = Bildpräfix, de/en = Kacheltitel)
+   - `shared_m2` = Gesamtfläche der Gemeinschaftsräume in m² (optional)
+   - `order` = Sortierposition (kleinere Zahl = weiter oben)
+   - `image_folder` = Name des Bildordners unter `public/wohngemeinschaften/`
 5. Klicke unten auf **“Commit changes”**.
 
 👉 Fertig! Das neue Apartment erscheint automatisch auf der Seite  
@@ -165,20 +184,24 @@ teaser_en: "Kurze Beschreibung EN"     ← Kurztext auf Englisch
 4. Kopiere diesen Inhalt und passe ihn an:
    ```yaml
    ---
-   title: "3.1 Albert"
-   apartment: "apartment-3"      # muss dem Dateinamen des Apartments entsprechen!
+   title_de: “Zimmer 1 · 3. OG”
+   title_en: “Room 1 · 3rd Floor”
+   apartment: “3og”              # muss dem Dateinamen des Apartments entsprechen (Kleinbuchstaben, ohne .md)!
    size_m2: 18
-   cold_rent_eur: 520
-   available_from: "2025-12"
-   teaser: "Größtes Zimmer im 1. OG mit Ausblick."
-   images: ["/rooms/albert1.jpg", "/rooms/albert2.jpg"]
+   kaltmiete_eur: 520
+   nebenkosten_eur: 85
+   gesamtmiete_eur: 605
+   available_from: “01.09.2026”
+   available: true
+   teaser_de: “Größtes Zimmer im 3. OG mit Ausblick.”
+   teaser_en: “Largest room on the 3rd floor with garden views.”
    ---
-   Ausführliche Beschreibung des Zimmers …
    ```
-   - `apartment` = Verknüpft das Zimmer mit einem Apartment (z. B. apartment-3)
-   - `images` = Liste der Fotos (siehe unten)
+   - `apartment` = verknüpft das Zimmer mit einer Wohnung (Dateiname ohne .md, z. B. `3og`)
+   - `available: true` = verfügbar, `false` = vergeben
 5. **Fotos hochladen:**  
-   Gehe zu `public/rooms/` → **“Add file → Upload files”** → wähle die Bilder (z. B. `albert1.jpg`, `albert2.jpg`).
+   Gehe zu `public/zimmer/` → neuen Ordner mit dem Zimmernamen anlegen → Fotos hochladen.  
+   Namensregeln für Zimmerfotos: → siehe Abschnitt A oben.
 
 👉 Nach dem Speichern (Commit) erscheint das Zimmer automatisch unter dem richtigen Apartment.
 
@@ -266,11 +289,10 @@ hobb-site/
 │  └─ rooms/                 # (Optional) Parents can drag photos here for rooms
 │
 ├─ src/
+│  ├─ content.config.ts      # Defines schema for apartments + rooms
 │  ├─ content/
-│  │  ├─ config.ts           # Defines schema for apartments + rooms
 │  │  ├─ apartments/         # Each .md file = one apartment (Wohngemeinschaft)
 │  │  └─ rooms/              # Each .md file = one room
-│  │     └─ TEMPLATE.md      # Example file showing what frontmatter to use
 │  │
 │  ├─ components/
 │  │  └─ Header.astro        # The black top banner (logo + navigation)
@@ -353,34 +375,44 @@ The main home page showing:
 
 Astro has a **content collections** feature, which validates your Markdown content using schemas.
 
-Defined in `src/content/config.ts`:
+Defined in `src/content.config.ts`:
 ```ts
-import { defineCollection, z } from "astro:content";
-
 const apartments = defineCollection({
-  type: "content",
   schema: z.object({
-    title: z.string(),
-    shared_spaces: z.array(z.string()).default([]),
-    order: z.number().default(0)
-  })
+    title_de: z.string(),
+    title_en: z.string(),
+    description_de: z.string().optional(),
+    description_en: z.string().optional(),
+    shared_spaces: z.array(z.object({
+      prefix: z.string(),   // image filename prefix (e.g. "kitchen")
+      de: z.string(),       // tile label in German
+      en: z.string(),       // tile label in English
+    })).default([]),
+    shared_m2: z.number().optional(),
+    order: z.number().default(0),
+    image_folder: z.string().optional(),
+  }),
 });
 
 const rooms = defineCollection({
-  type: "content",
   schema: z.object({
-    title: z.string(),
+    title_de: z.string(),
+    title_en: z.string(),
+    teaser_de: z.string().optional(),
+    teaser_en: z.string().optional(),
     apartment: z.string(),
     size_m2: z.number().optional(),
-    cold_rent_eur: z.number().optional(),
+    kaltmiete_eur: z.number().optional(),
+    nebenkosten_eur: z.number().optional(),
+    gesamtmiete_eur: z.number().optional(),
     available_from: z.string().optional(),
-    teaser: z.string().optional(),
-    images: z.array(z.string()).default([])
-  })
+    available: z.boolean().default(true),
+  }),
 });
-
-export const collections = { apartments, rooms };
 ```
+
+Room images are loaded automatically from `public/zimmer/[room-slug]/` — no `images` field in frontmatter.  
+Apartment shared-space images are loaded from `public/wohngemeinschaften/[image_folder]/`.
 
 Each `.md` file inside `/src/content/apartments` or `/src/content/rooms` must follow these rules.
 
@@ -430,12 +462,17 @@ GitHub Actions will rebuild automatically.
 
    ```yaml
    ---
-   title: "Wohnung 3"
+   title_de: "Wohnung 3. Obergeschoss"
+   title_en: "Apartment 3rd Upper Floor"
+   description_de: "Kurze Beschreibung auf Deutsch."
+   description_en: "Short description in English."
    shared_spaces:
-     - Küche
-     - Wohnzimmer
-     - Bad
-   order: 3
+     - {prefix: kitchen, de: Küche, en: Kitchen}
+     - {prefix: bathroom1, de: Bad, en: Bathroom}
+     - {prefix: dining-room, de: Wohn-Esszimmer, en: Living-Dining Room}
+   shared_m2: 75
+   order: 30
+   image_folder: wohnung-3OG
    ---
    ```
 
@@ -460,23 +497,25 @@ That’s it! It will appear automatically on
 
    ```yaml
    ---
-   title: "Zimmer 1 – Wohnung 3"
-   apartment: "3"
+   title_de: "Zimmer 1 · 3. OG"
+   title_en: "Room 1 · 3rd Floor"
+   apartment: "3og"
    size_m2: 14
-   cold_rent_eur: 450
-   available_from: "2025-02"
-   teaser: "Helles Zimmer mit Gartenblick"
-   images:
-     - "/rooms/zimmer1a.jpg"
-     - "/rooms/zimmer1b.jpg"
+   kaltmiete_eur: 520
+   nebenkosten_eur: 85
+   gesamtmiete_eur: 605
+   available_from: "01.09.2026"
+   available: true
+   teaser_de: "Helles Zimmer mit Gartenblick."
+   teaser_en: "Bright room with garden views."
    ---
    ```
 
-4. Upload photos to:
+4. Upload photos to a new folder:
    ```
-   public/rooms/
+   public/zimmer/3og-zimmer-1/
    ```
-   (just drag and drop via GitHub web UI)
+   (just drag and drop via GitHub web UI — name the cover photo `cover.webp`)
 
 5. Commit changes.
 
@@ -490,7 +529,8 @@ The new room will now automatically appear on that apartment’s page.
 |------|---------|------------|
 | Add new apartment | `src/content/apartments/` | Create `.md` file using template |
 | Add new room | `src/content/rooms/` | Create `.md` file with frontmatter |
-| Upload room photos | `public/rooms/` | Drag & drop images |
+| Upload room photos | `public/zimmer/[zimmer-name]/` | Drag & drop images (cover photo = `cover.webp`) |
+| Upload shared space photos | `public/wohngemeinschaften/[folder]/` | Filename prefix determines which tile |
 | Publish | Nothing extra — GitHub auto-updates site |
 
 ---
