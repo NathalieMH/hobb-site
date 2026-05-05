@@ -16,9 +16,7 @@ Jede Datei steht für **ein Apartment** oder **ein Zimmer**.
 
 ---
 
-## 📸 Häufige Aufgaben — Schnellübersicht
-
----
+## Schnellübersicht
 
 ### 🖼️ A. Fotos eines Zimmers ändern oder hinzufügen
 
@@ -38,8 +36,6 @@ Zimmerfotos liegen in `public/zimmer/[zimmer-name]/`, z. B. `public/zimmer/1og-z
 | 1. OG Zimmer 1 | `cover.webp` | `1.webp`, `2.webp`, `3.webp` |
 | 1. OG Zimmer 2 (Nr. 3.2) | `3.2_cover.webp` | `3.2_1.webp`, `3.2_2.webp` |
 | 2. OG Zimmer 2 (Nr. 4.2) | `4.2_cover.webp` | `4.2_1.webp`, `4.2_2.webp` |
-
----
 
 ### 🏠 B. Cover-Bild einer Wohnung ändern
 
@@ -64,8 +60,6 @@ z. B. `public/wohngemeinschaften/wohnung-1OG/cover.webp`
 | Bad 2 | `bathroom2-cover.webp`, `bathroom2-1.webp` ... |
 | Eingang | `entrance-1.webp` ... |
 | Terrasse/Balkon | `terrace-1.webp` ... |
-
----
 
 ### ✏️ C. Zimmer-Inhalt ändern (Miete, Größe, Text)
 
