@@ -97,10 +97,11 @@ const rawImages = allAptFiles.filter(url =>
   !/\/grundriss\.[^/]+$/i.test(url) && !/\/cover\.[^/]+$/i.test(url)
 );
 
-// Space order from apartment frontmatter
-const spaceOrder = (apt?.data.shared_spaces_de ?? [])
-  .map(nameDE => Object.entries(PREFIX_MAP).find(([, v]) => v.de === nameDE)?.[0])
-  .filter((p): p is string => !!p);
+// Space order and labels from apartment frontmatter
+const spaceOrder = (apt?.data.shared_spaces ?? []).map(s => s.prefix);
+const spaceLabelMap = Object.fromEntries(
+  (apt?.data.shared_spaces ?? []).map(s => [s.prefix, { de: s.de, en: s.en }])
+);
 
 // Group raw images by prefix → one tile per space
 const grouped: Record<string, string[]> = {};
@@ -111,16 +112,13 @@ for (const url of rawImages) {
   grouped[prefix].push(url);
 }
 
-const prefixesInOrder = [
-  ...spaceOrder.filter(p => grouped[p]),
-  ...Object.keys(grouped).filter(p => !spaceOrder.includes(p)),
-];
+const prefixesInOrder = spaceOrder.filter((p: string) => grouped[p]);
 
 const spaceGroups = prefixesInOrder
   .filter(prefix => (grouped[prefix]?.length ?? 0) > 0)
   .map(prefix => {
     const images = grouped[prefix];
-    const labels = PREFIX_MAP[prefix] ?? { de: prefix, en: prefix };
+    const labels = spaceLabelMap[prefix];
     const cover = images.find(url => {
       const base = (url.split('/').pop() ?? '').replace(/\.[^.]+$/, '');
       return base.endsWith('-cover');

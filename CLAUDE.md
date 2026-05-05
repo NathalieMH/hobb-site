@@ -123,10 +123,54 @@ Opened by clicking a `.open-room` button. Clones a `<template id="tpl-{slug}">` 
 
 ## Content management
 
+### Apartment frontmatter schema (`src/content/apartments/[slug].md`)
+
+```yaml
+---
+title_de: "Wohnung 1. Obergeschoss"
+title_en: "Apartment 1st Upper Floor"
+description_de: "..."           # optional
+description_en: "..."           # optional
+shared_spaces:
+  - {prefix: dining-room, de: Wohn-Esszimmer, en: Living-Dining Room}
+  - {prefix: kitchen, de: Küche, en: Kitchen}
+  - {prefix: bathroom1, de: Bad 1, en: Bathroom 1}
+  # prefix = image filename prefix; de/en = tile label in that language
+  # only entries with matching images in image_folder render as tiles
+shared_m2: 86                   # optional — total communal area in m²
+order: 10                       # sort order on listing page (lower = earlier)
+image_folder: wohnung-1OG       # subfolder of public/wohngemeinschaften/
+---
+```
+
+`shared_spaces` drives both tile order and tile labels. Only prefixes listed here AND that have photos in `image_folder` appear. Images named `[prefix]-cover.webp` are used as tile thumbnails; otherwise the first photo in that prefix group is used.
+
+### Room frontmatter schema (`src/content/rooms/[slug].md`)
+
+```yaml
+---
+title_de: "Zimmer 2 · 1. OG"
+title_en: "Room 2 · 1st Floor"
+teaser_de: "..."                # optional
+teaser_en: "..."                # optional
+apartment: "1og"                # must match slug of parent apartment file (lowercase, no .md)
+size_m2: 10.7                   # optional
+kaltmiete_eur: 620              # optional
+nebenkosten_eur: 85             # optional
+gesamtmiete_eur: 705            # optional
+available_from: "18.05.2026"    # optional, free-form string
+available: true                 # true = available, false = taken (default: true)
+---
+```
+
+Room photos are loaded automatically from `public/zimmer/[room-slug]/`. No `images` field in frontmatter. `cover.*` is shown first; remaining photos sort numerically.
+
+### Adding content
+
 To add a new apartment:
 1. Create `src/content/apartments/[slug].md` with required frontmatter
 2. Add `image_folder: "[folder]"` pointing to `public/wohngemeinschaften/[folder]/`
-3. Add images: `cover.*`, `grundriss.*`, named space images (`kitchen-1.jpg`, `dining-room-1.jpg`, etc.)
+3. Add images: `cover.*`, `grundriss.*`, shared space photos named by prefix (`kitchen-1.webp`, `dining-room-1.webp`, etc.)
 
 To add a room:
 1. Create `src/content/rooms/[slug].md` with `apartment: "[apt-slug]"` in frontmatter
