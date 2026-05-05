@@ -16,6 +16,106 @@ Jede Datei steht für **ein Apartment** oder **ein Zimmer**.
 
 ---
 
+## 📸 Häufige Aufgaben — Schnellübersicht
+
+Diese drei Dinge macht ihr am häufigsten. Hier steht genau, wie es geht.
+
+---
+
+### 🖼️ A. Fotos eines Zimmers ändern oder hinzufügen
+
+Alle Zimmerfotos liegen in: `public/zimmer/[zimmer-name]/`  
+Zum Beispiel: `public/zimmer/1og-zimmer-2/`
+
+**Wo ihr das findet:**
+1. Auf GitHub in das Repo gehen → Ordner `public` → `zimmer` → den richtigen Zimmerordner öffnen.
+2. Um ein Foto hochzuladen: **"Add file" → "Upload files"** → Datei auswählen → **"Commit changes"**.
+3. Um ein Foto zu ersetzen: Das neue Foto **mit genau demselben Namen** wie das alte hochladen — GitHub überschreibt es automatisch.
+
+**Dateinamen-Regeln:**
+- Alle Fotos müssen im `.webp`-Format sein (kein `.jpg`, `.png`, `.heic`).
+- Das **Titelbild** (das erste/größte Foto) muss heißen: **`cover.webp`**  
+  — oder bei Zimmern mit Zimmernummer-Präfix: z. B. **`3.2_cover.webp`** (wobei `3.2` die Zimmernummer laut Grundriss ist).
+- Weitere Fotos einfach nummerieren: `1.webp`, `2.webp`, `3.webp` ...  
+  — oder mit Präfix: `3.2_1.webp`, `3.2_2.webp` ...
+- Die Reihenfolge auf der Webseite ergibt sich automatisch aus der Nummerierung. `cover` kommt immer zuerst.
+
+**Beispiele für korrekte Dateinamen:**
+
+| Zimmer | Cover | Weitere Fotos |
+|--------|-------|---------------|
+| 1. OG Zimmer 1 | `cover.webp` | `1.webp`, `2.webp`, `3.webp` |
+| 1. OG Zimmer 2 (Nr. 3.2) | `3.2_cover.webp` | `3.2_1.webp`, `3.2_2.webp` |
+| 2. OG Zimmer 2 (Nr. 4.2) | `4.2_cover.webp` | `4.2_1.webp`, `4.2_2.webp` |
+
+> ⚠️ **iPhone-Fotos:** iPhones speichern im HEIC-Format — das funktioniert auf der Webseite nicht. Bitte entweder in den iPhone-Einstellungen auf JPEG umstellen (Einstellungen → Kamera → Formate → "Maximale Kompatibilität") oder Nathalie fragen, die Fotos zu konvertieren.
+
+---
+
+### 🏠 B. Cover-Bild eines Apartments ändern
+
+Das Cover-Bild ist das große Foto, das auf der Übersichtsseite `/wohngemeinschaften/` für jede WG angezeigt wird.
+
+**Wo es liegt:**  
+`public/wohngemeinschaften/[wohnungsordner]/cover.webp`  
+Zum Beispiel: `public/wohngemeinschaften/wohnung-1OG/cover.webp`
+
+**So ersetzt ihr es:**
+1. Auf GitHub: `public` → `wohngemeinschaften` → den richtigen Wohnungsordner öffnen.
+2. Das neue Foto **muss `cover.webp` heißen** und im `.webp`-Format sein.
+3. **"Add file" → "Upload files"** → neue `cover.webp` hochladen → **"Commit changes"**.
+
+Das alte Bild wird automatisch überschrieben.
+
+**Weitere Bilder im Wohnungsordner** (Gemeinschaftsräume, die auf der Wohnungsseite als Kacheln erscheinen) folgen diesem Muster:
+
+| Was | Dateiname |
+|-----|-----------|
+| Cover/Vorschaubild | `cover.webp` |
+| Grundriss | `grundriss.webp` |
+| Küche, 1. Foto | `kitchen-1.webp` |
+| Küche, 2. Foto | `kitchen-2.webp` |
+| Esszimmer | `dining-room-1.webp`, `dining-room-2.webp` ... |
+| Bad 1 | `bathroom1-cover.webp`, `bathroom1-1.webp` ... |
+| Bad 2 | `bathroom2-cover.webp`, `bathroom2-1.webp` ... |
+| Eingang | `entrance-1.webp` ... |
+| Terrasse/Balkon | `terrace-1.webp` ... |
+
+Das erste Foto eines Raums (z. B. `kitchen-1.webp`) erscheint als Kachel auf der Wohnungsseite und kann als Galerie aufgeklappt werden.
+
+---
+
+### ✏️ C. Inhalt eines Zimmers ändern (Miete, Größe, Text)
+
+Die inhaltlichen Daten jedes Zimmers stehen in einer kleinen Textdatei:  
+`src/content/rooms/[zimmer-name].md`  
+Zum Beispiel: `src/content/rooms/1OG-zimmer-2.md`
+
+**So bearbeitet ihr sie:**
+1. Auf GitHub: `src` → `content` → `rooms` → die richtige Datei öffnen.
+2. Oben rechts auf das **Stift-Symbol (Edit this file)** klicken.
+3. Die gewünschten Felder ändern:
+
+```yaml
+---
+title_de: "Zimmer 2 · 1. OG"          ← Name auf Deutsch
+title_en: "Room 2 · 1st Floor"         ← Name auf Englisch
+apartment: "1OG"                        ← Nicht ändern! Verknüpft mit der WG
+size_m2: 10.7                           ← Zimmergröße in m²
+kaltmiete_eur: 620                      ← Kaltmiete in €
+nebenkosten_eur: 85                     ← Nebenkosten in €
+gesamtmiete_eur: 705                    ← Gesamtmiete in €
+available_from: "18.05.2026"            ← Verfügbar ab (Datum als Text)
+available: true                         ← true = verfügbar, false = vergeben
+teaser_de: "Kurze Beschreibung DE"     ← Kurztext auf Deutsch
+teaser_en: "Kurze Beschreibung EN"     ← Kurztext auf Englisch
+---
+```
+
+4. Unten auf **"Commit changes"** klicken. Die Webseite aktualisiert sich automatisch.
+
+---
+
 ## 🏢 1. Neues Apartment hinzufügen
 
 1. Öffne auf GitHub den Ordner:  
