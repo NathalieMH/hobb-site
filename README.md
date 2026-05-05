@@ -40,54 +40,42 @@ Zimmerfotos liegen in `public/zimmer/[zimmer-name]/`, z. B. `public/zimmer/1og-z
 
 ### 🛋️ B. Fotos für Gemeinschaftsräume hinzufügen
 
-Fotos von Gemeinschaftsräumen (Küche, Bad, Balkon usw.) liegen im Wohnungsordner:  
+Fotos von Gemeinschaftsräumen liegen im Wohnungsordner:  
 `public/wohngemeinschaften/[wohnungsordner]/`, z. B. `public/wohngemeinschaften/wohnung-1OG/`
 
 1. Auf GitHub: `public` → `wohngemeinschaften` → richtigen Wohnungsordner öffnen.
-2. **"Add file" → "Upload files"** → Dateien auswählen → **"Commit changes"**.
+2. **"Add file" → "Upload files"** → Datei auswählen → **"Commit changes"**.
 
-**Namensregeln:**  
-Der Dateiname bestimmt, in welcher Kachel das Foto erscheint. Immer mit einem der folgenden Präfixe beginnen:
+**Dateinamen:** Jedes Foto muss mit einem Präfix beginnen, der den Raumtyp bestimmt:
 
-| Präfix | Kachel | Beispiele |
-|--------|--------|-----------|
+| Präfix | Raum | Beispiele |
+|--------|------|-----------|
 | `kitchen` | Küche | `kitchen-1.webp`, `kitchen-2.webp` |
-| `dining-room` | Wohn-Esszimmer | `dining-room-1.webp` |
-| `bathroom1` | Bad 1 | `bathroom1-1.webp`, `bathroom1-2.webp` |
-| `bathroom2` | Bad 2 | `bathroom2-1.webp` |
+| `dining-room` | Wohn-/Esszimmer | `dining-room-1.webp` |
+| `bathroom1` | Erstes Bad | `bathroom1-1.webp`, `bathroom1-2.webp` |
+| `bathroom2` | Zweites Bad | `bathroom2-1.webp` |
 | `balcony` | Balkon | `balcony-1.webp` |
 | `terrace` | Terrasse | `terrace-1.webp` |
 | `laundry` | Waschküche | `laundry-1.webp` |
 | `digital-lock` | Digitales Schloss | `digital-lock-1.webp` |
 | `entrance` | Eingang | `entrance-1.webp` |
 
-- Fotos desselben Raums einfach durchnummerieren: `kitchen-1.webp`, `kitchen-2.webp`, …
-- Bei den Bädern steht die **Zahl direkt nach „bathroom"** für das Bad (1 oder 2), die **Zahl nach dem Bindestrich** für das Foto — z. B. `bathroom1-1.webp` = erstes Foto von Bad 1, `bathroom2-3.webp` = drittes Foto von Bad 2.
-- Ein Foto mit dem Zusatz `-cover` (z. B. `bathroom1-cover.webp`) wird als Vorschaubild der Kachel angezeigt — sonst erscheint das erste Foto.
-- `cover.webp` (ohne Präfix) ist das Titelbild der Wohnung auf der Übersichtsseite — kein Raumfoto.
-- `grundriss.webp` ist der Grundriss — wird separat angezeigt, nicht als Raumkachel.
+Mehrere Fotos desselben Raums einfach mit `-1`, `-2`, … durchnummerieren.  
+Ein Foto mit `-cover` im Namen (z. B. `bathroom1-cover.webp`) wird als Vorschaubild der Kachel angezeigt — sonst erscheint das erste Foto automatisch.
 
-**Reihenfolge der Kacheln steuern:**  
-Die Reihenfolge der Gemeinschaftsraum-Kacheln wird in der Content-Datei der Wohnung festgelegt:  
-`src/content/apartments/1OG.md` (bzw. `2OG.md`)
-
-Das Feld `shared_spaces` listet die Räume in der gewünschten Reihenfolge. Jeder Eintrag hat drei Felder:
-- `prefix` — entspricht dem Dateinamenpräfix der Fotos (z. B. `kitchen` für `kitchen-1.webp`)
-- `de` — Kacheltitel auf Deutsch
-- `en` — Kacheltitel auf Englisch
+**Wichtig — damit eine Kachel erscheint:** Der Präfix muss zusätzlich in der Wohnungsdatei (`src/content/apartments/1OG.md` bzw. `2OG.md`) unter `shared_spaces` eingetragen sein. Dort wird auch die Reihenfolge und der angezeigte Titel festgelegt:
 
 ```yaml
 shared_spaces:
-  - {prefix: dining-room, de: Wohn-Esszimmer, en: Living-Dining Room}
   - {prefix: kitchen, de: Küche, en: Kitchen}
   - {prefix: bathroom1, de: Bad 1, en: Bathroom 1}
-  - {prefix: bathroom2, de: Bad 2, en: Bathroom 2}
-  - {prefix: balcony, de: Balkon, en: Balcony}
-  - {prefix: laundry, de: Waschküche, en: Laundry Room}
-  - {prefix: digital-lock, de: Digitales Schloss, en: Digital Lock}
 ```
 
-Nur Räume, die hier aufgelistet sind **und** für die Fotos vorhanden sind, erscheinen als Kacheln.
+Fehlt ein Präfix in dieser Liste, erscheint die Kachel nicht — auch wenn Fotos vorhanden sind.
+
+**Reservierte Dateinamen** (erscheinen nicht als Raumkachel):
+- `cover.webp` — Titelbild der Wohnung auf der Übersichtsseite
+- `grundriss.webp` — Grundriss (wird separat angezeigt)
 
 ---
 
