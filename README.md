@@ -63,15 +63,29 @@ Fotos von Gemeinschaftsräumen liegen im Wohnungsordner:
 Mehrere Fotos desselben Raums einfach mit `-1`, `-2`, … durchnummerieren.  
 Ein Foto mit `-cover` im Namen (z. B. `bathroom1-cover.webp`) wird als Vorschaubild der Kachel angezeigt — sonst erscheint das erste Foto automatisch.
 
-**Wichtig — damit eine Kachel erscheint:** Der Präfix muss zusätzlich in der Wohnungsdatei (`src/content/apartments/1OG.md` bzw. `2OG.md`) unter `shared_spaces` eingetragen sein. Dort wird auch die Reihenfolge und der angezeigte Titel festgelegt:
+**Wichtig — damit eine Kachel erscheint:** Der Präfix muss zusätzlich in der Wohnungsdatei eingetragen sein. Öffne `src/content/apartments/1OG.md` (bzw. `2OG.md`) — die Datei sieht so aus:
 
 ```yaml
+---
+title_de: "Wohnung 1. Obergeschoss"
+title_en: "Apartment 1st Upper Floor"
+description_de: "Schöne Altbauwohnung mit 5 Zimmern …"
+description_en: "Beautiful historic apartment with 5 rooms …"
 shared_spaces:
+  - {prefix: dining-room, de: Wohn-Esszimmer, en: Living-Dining Room}
   - {prefix: kitchen, de: Küche, en: Kitchen}
   - {prefix: bathroom1, de: Bad 1, en: Bathroom 1}
+  - {prefix: bathroom2, de: Bad 2, en: Bathroom 2}
+  - {prefix: balcony, de: Balkon, en: Balcony}
+  - {prefix: laundry, de: Waschküche, en: Laundry Room}
+  - {prefix: digital-lock, de: Digitales Schloss, en: Digital Lock}
+shared_m2: 86
+order: 10
+image_folder: wohnung-1OG
+---
 ```
 
-Fehlt ein Präfix in dieser Liste, erscheint die Kachel nicht — auch wenn Fotos vorhanden sind.
+Jede Zeile unter `shared_spaces` entspricht einer Kachel: `prefix` muss mit dem Dateinamenpräfix übereinstimmen, `de`/`en` ist der angezeigte Titel. Die Reihenfolge der Zeilen bestimmt die Reihenfolge der Kacheln. Fehlt ein Präfix hier, erscheint keine Kachel — auch wenn Fotos vorhanden sind.
 
 **Reservierte Dateinamen** (erscheinen nicht als Raumkachel):
 - `cover.webp` — Titelbild der Wohnung auf der Übersichtsseite
