@@ -33,9 +33,8 @@ Zimmerfotos liegen in `public/zimmer/[zimmer-name]/`, z. B. `public/zimmer/1og-z
 
 | Zimmer | Cover | Weitere Fotos |
 |--------|-------|---------------|
-| 1. OG Zimmer 1 | `cover.webp` | `1.webp`, `2.webp`, `3.webp` |
 | 1. OG Zimmer 2 (Nr. 3.2) | `3.2_cover.webp` | `3.2_1.webp`, `3.2_2.webp` |
-| 2. OG Zimmer 2 (Nr. 4.2) | `4.2_cover.webp` | `4.2_1.webp`, `4.2_2.webp` |
+| 2. OG Zimmer 4 (Nr. 4.4) | `4.4_cover.webp` | `4.4_1.webp`, `4.4_2.webp` |
 
 ---
 
