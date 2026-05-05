@@ -18,8 +18,6 @@ Jede Datei steht für **ein Apartment** oder **ein Zimmer**.
 
 ## Schnellübersicht
 
----
-
 ### 🖼️ A. Fotos eines Zimmers ändern oder hinzufügen
 
 Zimmerfotos liegen in `public/zimmer/[zimmer-name]/`, z. B. `public/zimmer/1og-zimmer-2/`
