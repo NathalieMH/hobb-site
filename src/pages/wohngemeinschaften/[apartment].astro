@@ -11,9 +11,19 @@ async function loadImages(folder: string) {
   const dir = path.resolve(process.cwd(), "public", folder);
   try {
     const files = await fs.readdir(dir);
+    const sortKey = (f: string) => {
+      const stem = f.replace(/\.[^.]+$/, '');
+      const us = stem.indexOf('_');
+      return us >= 0 ? stem.slice(us + 1) : stem;
+    };
     return files
       .filter((f) => /\.(jpe?g|png|webp|gif)$/i.test(f))
-      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }))
+      .sort((a, b) => {
+        const ka = sortKey(a).toLowerCase(), kb = sortKey(b).toLowerCase();
+        if (ka === 'cover') return -1;
+        if (kb === 'cover') return 1;
+        return ka.localeCompare(kb, undefined, { numeric: true, sensitivity: 'base' });
+      })
       .map((f) => `${base}${folder}/${f}`);
   } catch {
     return [];
@@ -63,8 +73,13 @@ const renderedRooms = await Promise.all(
   rooms.map(async (r) => {
     const { Content } = await render(r);
     const allImgs = await loadImages(`zimmer/${entrySlug(r.id)}`);
-    const coverUrl = allImgs.find(url => /\/cover\.[^/]+$/i.test(url)) ?? null;
-    const galleryImgs = allImgs.filter(url => !/\/cover\.[^/]+$/i.test(url));
+    const isRoomCover = (url: string) => {
+      const stem = (url.split('/').pop() ?? '').replace(/\.[^.]+$/, '');
+      const key = stem.includes('_') ? stem.split('_').slice(1).join('_') : stem;
+      return key.toLowerCase() === 'cover';
+    };
+    const coverUrl = allImgs.find(isRoomCover) ?? null;
+    const galleryImgs = allImgs.filter(url => !isRoomCover(url));
     const imgs = coverUrl ? [coverUrl, ...galleryImgs] : galleryImgs;
     return { entry: r, Content, imgs };
   })
