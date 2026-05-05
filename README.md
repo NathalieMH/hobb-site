@@ -39,7 +39,50 @@ Zimmerfotos liegen in `public/zimmer/[zimmer-name]/`, z. B. `public/zimmer/1og-z
 
 ---
 
-### 🏠 B. Cover-Bild einer Wohnung ändern
+### 🛋️ B. Fotos für Gemeinschaftsräume hinzufügen
+
+Fotos von Gemeinschaftsräumen (Küche, Bad, Balkon usw.) liegen im Wohnungsordner:  
+`public/wohngemeinschaften/[wohnungsordner]/`, z. B. `public/wohngemeinschaften/wohnung-1OG/`
+
+1. Auf GitHub: `public` → `wohngemeinschaften` → richtigen Wohnungsordner öffnen.
+2. **"Add file" → "Upload files"** → Dateien auswählen → **"Commit changes"**.
+
+**Namensregeln:**  
+Der Dateiname bestimmt, in welcher Kachel das Foto erscheint. Immer mit einem der folgenden Präfixe beginnen:
+
+| Präfix | Kachel | Beispiele |
+|--------|--------|-----------|
+| `kitchen` | Küche | `kitchen-1.webp`, `kitchen-2.webp` |
+| `dining-room` | Wohn-Esszimmer | `dining-room-1.webp` |
+| `bathroom1` | Bad 1 | `bathroom1-1.webp`, `bathroom1-2.webp` |
+| `bathroom2` | Bad 2 | `bathroom2-1.webp` |
+| `balcony` | Balkon | `balcony-1.webp` |
+| `terrace` | Terrasse | `terrace-1.webp` |
+| `laundry` | Waschküche | `laundry-1.webp` |
+| `digital-lock` | Digitales Schloss | `digital-lock-1.webp` |
+| `entrance` | Eingang | `entrance-1.webp` |
+
+- Fotos desselben Raums einfach durchnummerieren: `kitchen-1.webp`, `kitchen-2.webp`, …
+- Ein Foto mit dem Zusatz `-cover` (z. B. `kitchen-cover.webp`) wird als Vorschaubild der Kachel angezeigt — sonst erscheint das erste Foto.
+- `cover.webp` (ohne Präfix) ist das Titelbild der Wohnung auf der Übersichtsseite — kein Raumfoto.
+- `grundriss.webp` ist der Grundriss — wird separat angezeigt, nicht als Raumkachel.
+
+**Reihenfolge der Kacheln steuern:**  
+Die Reihenfolge der Gemeinschaftsraum-Kacheln wird in der Content-Datei der Wohnung festgelegt:  
+`src/content/apartments/1OG.md` (bzw. `2OG.md`)
+
+Das Feld `shared_spaces_de` listet die Räume in der gewünschten Reihenfolge:
+
+```yaml
+shared_spaces_de: ["Wohn-Esszimmer", "Küche", "Balkon", "Bad 1", "Bad 2", "Waschküche", "Digitales Schloss"]
+shared_spaces_en: ["Living-Dining Room", "Kitchen", "Balcony", "Bathroom 1", "Bathroom 2", "Laundry Room", "Digital Lock"]
+```
+
+Räume, die nicht in dieser Liste stehen, erscheinen trotzdem — nur nach den gelisteten, in beliebiger Reihenfolge.
+
+---
+
+### 🏠 C. Cover-Bild einer Wohnung ändern
 
 Das Cover-Bild ist das Foto, das auf der WGs-Seite für jede Wohnung angezeigt wird.
 
@@ -50,22 +93,11 @@ z. B. `public/wohngemeinschaften/wohnung-1OG/cover.webp`
 2. Neues Foto muss **`cover.webp`** heißen und im `.webp`-Format sein.
 3. **"Add file" → "Upload files"** → hochladen → **"Commit changes"**.
 
-**Alle anderen Bilder im Wohnungsordner** erscheinen als Kacheln auf der Wohnungsseite:
-
-| Was | Dateiname |
-|-----|-----------|
-| Cover/Vorschaubild | `cover.webp` |
-| Grundriss | `grundriss.webp` |
-| Küche | `kitchen-1.webp`, `kitchen-2.webp` ... |
-| Esszimmer | `dining-room-1.webp`, `dining-room-2.webp` ... |
-| Bad 1 | `bathroom1-cover.webp`, `bathroom1-1.webp` ... |
-| Bad 2 | `bathroom2-cover.webp`, `bathroom2-1.webp` ... |
-| Eingang | `entrance-1.webp` ... |
-| Terrasse/Balkon | `terrace-1.webp` ... |
+Alle Namenskonventionen für Gemeinschaftsraum-Fotos: → siehe Abschnitt B oben.
 
 ---
 
-### ✏️ C. Zimmer-Inhalt ändern (Miete, Größe, Text)
+### ✏️ D. Zimmer-Inhalt ändern (Miete, Größe, Text)
 
 Die Daten jedes Zimmers stehen in `src/content/rooms/[zimmer-name].md`, z. B. `src/content/rooms/1OG-zimmer-2.md`
 
