@@ -63,7 +63,8 @@ Der Dateiname bestimmt, in welcher Kachel das Foto erscheint. Immer mit einem de
 | `entrance` | Eingang | `entrance-1.webp` |
 
 - Fotos desselben Raums einfach durchnummerieren: `kitchen-1.webp`, `kitchen-2.webp`, …
-- Ein Foto mit dem Zusatz `-cover` (z. B. `kitchen-cover.webp`) wird als Vorschaubild der Kachel angezeigt — sonst erscheint das erste Foto.
+- Bei den Bädern steht die **Zahl direkt nach „bathroom"** für das Bad (1 oder 2), die **Zahl nach dem Bindestrich** für das Foto — z. B. `bathroom1-1.webp` = erstes Foto von Bad 1, `bathroom2-3.webp` = drittes Foto von Bad 2.
+- Ein Foto mit dem Zusatz `-cover` (z. B. `bathroom1-cover.webp`) wird als Vorschaubild der Kachel angezeigt — sonst erscheint das erste Foto.
 - `cover.webp` (ohne Präfix) ist das Titelbild der Wohnung auf der Übersichtsseite — kein Raumfoto.
 - `grundriss.webp` ist der Grundriss — wird separat angezeigt, nicht als Raumkachel.
 
