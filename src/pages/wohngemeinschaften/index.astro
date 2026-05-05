@@ -58,21 +58,25 @@ const grundrissMap = Object.fromEntries(
   <section class="section intro-section">
     <div class="container intro-cols">
       <p class="reveal" data-de>
-        Die Vermietung der ersten beiden Wohnungen mit insgesamt neun Zimmern im ersten und zweiten Obergeschoss ist im April 2026 gestartet. Mittelfristig wächst das Angebot auf insgesamt fünf WGs für Studierende sowie zwei privat bewohnte Wohnungen in Stadtvilla und Anbau. Für ein gut organisiertes Zusammenleben steht eine WG-App zur Koordination gemeinsamer Aufgaben wie Reinigung oder Einkauf zur Verfügung. Der Vermieter ist jederzeit persönlich ansprechbar bei organisatorischen Fragen.
+        Die ersten beiden Wohnungen mit insgesamt 9 Zimmern werden ab Mai 2026 vermietet.<br>
+        Bis 2027 soll das Angebot auf bis zu fünf WGs für Studierende mit insgesamt 22–25 Zimmern und zwei privat bewohnten Wohnungen in Stadtvilla und Anbau wachsen.
       </p>
       <p class="reveal" data-en>
-        Rental of the first two apartments with a total of nine rooms on the first and second floors started in April 2026. In the medium term, the property will offer five student shared apartments as well as two privately occupied apartments in the villa and annex. A WG app is available to coordinate shared tasks such as cleaning and shopping. The landlord is available at all times for organizational questions.
+        The first two apartments with a total of 9 rooms will be available for rent from May 2026.<br>
+        By 2027, the offering is set to grow to up to five student shared apartments with 22–25 rooms in total, plus two privately occupied apartments in the villa and annex.
       </p>
       <div class="includes">
         <span class="eyebrow reveal" data-de>In der Miete inbegriffen</span>
         <span class="eyebrow reveal" data-en>Included in the rent</span>
         <ul class="reveal-stagger">
-          <li class="reveal-child"><span data-de>Möblierung: Bett, Schrank, Schreibtisch, Stuhl, Vorhänge, Lampen sowie viel Raum für euren eigenen Stil</span><span data-en>Furnishings: bed, wardrobe, desk, chair, curtains, lamps — plus plenty of room for your own style</span></li>
+          <li class="reveal-child"><span data-de>Möblierung: Bett, Schrank, Schreibtisch, Stuhl, Vorhänge — soviel Raum für euren eigenen Stil</span><span data-en>Furnishings: bed, wardrobe, desk, chair, curtains — plenty of room for your own style</span></li>
           <li class="reveal-child"><span data-de>Wasser, Heizung, Strom</span><span data-en>Water, heating, electricity</span></li>
-          <li class="reveal-child"><span data-de>Wäscheraum im Haus mit Waschmaschine, Trockner, Bügelbrett und -eisen</span><span data-en>In-house laundry room with washing machine, dryer, ironing board and iron</span></li>
-          <li class="reveal-child"><span data-de>Digitales Schloss / Chipschlüssel für jedes Zimmer</span><span data-en>Digital lock / chip key for each room</span></li>
-          <li class="reveal-child"><span data-de>Internetzugang</span><span data-en>Internet access</span></li>
-          <li class="reveal-child"><span data-de>Regelmäßige Grundreinigung der Gemeinschaftsräume (wöchentliches Putzen ist WG-Aufgabe, Putz-App verfügbar)</span><span data-en>Regular cleaning of shared areas (weekly cleaning is a shared responsibility, cleaning app available)</span></li>
+          <li class="reveal-child"><span data-de>High-Speed Internet im Haus</span><span data-en>High-speed internet in the building</span></li>
+          <li class="reveal-child"><span data-de>Digitales Schloss für jedes Zimmer</span><span data-en>Digital lock for each room</span></li>
+          <li class="reveal-child"><span data-de>Küche Grundausstattung mit Geschirr, Töpfe etc.</span><span data-en>Basic kitchen equipment including dishes, pots, etc.</span></li>
+          <li class="reveal-child"><span data-de>Waschmaschine, Trockner, Bügeleisen und -brett</span><span data-en>Washing machine, dryer, iron and ironing board</span></li>
+          <li class="reveal-child"><span data-de>Putzschrank mit Staubsauger, Wischer und Putzmitteln</span><span data-en>Cleaning cupboard with vacuum cleaner, mop, and cleaning supplies</span></li>
+          <li class="reveal-child"><span data-de>Regelmäßige Grundreinigung der Gemeinschaftsräume (wöchentliches Putzen bleibt WG-Aufgabe)</span><span data-en>Regular deep cleaning of shared areas (weekly cleaning remains the flatmates' responsibility)</span></li>
         </ul>
       </div>
     </div>
@@ -187,7 +191,7 @@ const grundrissMap = Object.fromEntries(
 .includes ul {
   list-style: none;
   display: grid;
-  grid-template-columns: 2fr 1fr 2fr;
+  grid-template-columns: 1fr 1fr;
   gap: 0.35rem 2rem;
 }
 .includes li {
@@ -310,10 +314,7 @@ const grundrissMap = Object.fromEntries(
 .fp-zoom-btn:hover { background: rgba(28, 26, 23, 0.75); color: #fff; }
 
 @media (max-width: 860px) {
-  .includes li:nth-child(n) { grid-column: span 6; }
+  .includes ul { grid-template-columns: 1fr; }
   .apt-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 540px) {
-  .includes li:nth-child(n) { grid-column: span 12; }
 }
 </style>

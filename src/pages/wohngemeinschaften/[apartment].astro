@@ -180,6 +180,12 @@ const spaceGroups = prefixesInOrder
                 <div class="room-stats">
                   {data.size_m2 && <span class="room-size">{data.size_m2} m²</span>}
                 </div>
+                {apt?.data.shared_m2 && (
+                  <div class="room-shared">
+                    <span data-de>ca. {apt.data.shared_m2} qm Gemeinschaftsfläche</span>
+                    <span data-en>approx. {apt.data.shared_m2} m² communal area</span>
+                  </div>
+                )}
                 {(data.kaltmiete_eur || data.nebenkosten_eur || data.gesamtmiete_eur) && (
                   <div class="room-prices">
                     {data.kaltmiete_eur && (
@@ -422,6 +428,7 @@ const spaceGroups = prefixesInOrder
 .room-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 300; }
 .room-stats { display: flex; gap: 1rem; align-items: baseline; }
 .room-size { font-size: 0.8rem; color: var(--muted); }
+.room-shared { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.02em; }
 .room-prices {
   display: flex;
   align-items: flex-end;
@@ -443,7 +450,7 @@ const spaceGroups = prefixesInOrder
 }
 .price-num {
   font-family: var(--font-serif);
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   color: var(--ink);
   line-height: 1;
 }
@@ -452,7 +459,7 @@ const spaceGroups = prefixesInOrder
   color: var(--muted);
   padding-bottom: 0.1rem;
 }
-.price-item-total .price-num { font-size: 0.9rem; }
+.price-item-total .price-num { font-size: 1.02rem; }
 
 /* Modal */
 .overlay {
