@@ -8,6 +8,6 @@ nebenkosten_eur: 85
 gesamtmiete_eur: 700
 available_from: "18.05.2026"
 available: true
-teaser_de: "Zimmer mit Einbauschrank und erhöhtem Bett 100 x 200"
-teaser_en: "room with built-in-closet an elevated bed 100 x 200"
+teaser_de: "Zimmer mit Einbauschrank\nErhöhtes Bett 100 x 200."
+teaser_en: "Room with built-in closet\nElevated bed 100 x 200."
 ---

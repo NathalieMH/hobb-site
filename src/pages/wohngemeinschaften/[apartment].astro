@@ -44,6 +44,7 @@ const PREFIX_MAP: Record<string, { de: string; en: string }> = {
   'garden-terrace': { de: 'Gartenterrasse',  en: 'Garden Terrace' },
   'entrance':       { de: 'Eingang',         en: 'Entrance' },
   'digital-lock':   { de: 'Digitales Schloss', en: 'Digital Lock' },
+  'grundriss':      { de: 'Grundriss',       en: 'Floor Plan' },
 };
 
 function getPrefix(filename: string): string {
@@ -91,11 +92,8 @@ const roomImages = Object.fromEntries(renderedRooms.map(({ entry, imgs }) => [en
 const aptFolder = apt?.data.image_folder ? `wohngemeinschaften/${apt.data.image_folder}` : '';
 const allAptFiles = aptFolder ? await loadImages(aptFolder) : [];
 
-// Exclude grundriss and cover from space images
-const grundrissUrl = allAptFiles.find(url => /\/grundriss\.[^/]+$/i.test(url)) ?? null;
-const rawImages = allAptFiles.filter(url =>
-  !/\/grundriss\.[^/]+$/i.test(url) && !/\/cover\.[^/]+$/i.test(url)
-);
+// Exclude only cover from space images; grundriss is handled as a named prefix
+const rawImages = allAptFiles.filter(url => !/\/cover\.[^/]+$/i.test(url));
 
 // Space order and labels from apartment frontmatter
 const spaceOrder = (apt?.data.shared_spaces ?? []).map(s => s.prefix);
@@ -179,12 +177,6 @@ const spaceGroups = prefixesInOrder
                 <div class="room-stats">
                   {data.size_m2 && <span class="room-size">{data.size_m2} m²</span>}
                 </div>
-                {apt?.data.shared_m2 && (
-                  <div class="room-shared">
-                    <span data-de>ca. {apt.data.shared_m2} qm Gemeinschaftsfläche</span>
-                    <span data-en>approx. {apt.data.shared_m2} m² communal area</span>
-                  </div>
-                )}
                 {(data.kaltmiete_eur || data.nebenkosten_eur || data.gesamtmiete_eur) && (
                   <div class="room-prices">
                     {data.kaltmiete_eur && (
@@ -217,43 +209,47 @@ const spaceGroups = prefixesInOrder
             </button>
           );
         })}
-        {spaceGroups.map(({ prefix, titleDe, titleEn, cover, images }) => (
-          <button
-            class="room-card space-card"
-            data-space-prefix={prefix}
-            aria-label={titleDe}
-          >
-            <div class="room-img-wrap">
-              <img src={cover} alt={titleDe} loading="lazy" decoding="async" />
-            </div>
-            <div class="room-meta">
-              <span class="room-title" data-de>{titleDe}</span>
-              <span class="room-title" data-en>{titleEn}</span>
-              {images.length > 1 && (
-                <div class="room-stats">
-                  <span class="room-size" data-de>{images.length} Fotos</span>
-                  <span class="room-size" data-en>{images.length} photos</span>
+        {spaceGroups.map(({ prefix, titleDe, titleEn, cover, images }) => {
+          if (prefix === 'grundriss') {
+            return (
+              <button
+                class="room-card floorplan-card"
+                data-iz-open
+                data-iz-src={cover}
+                aria-label="Grundriss"
+              >
+                <div class="room-img-wrap">
+                  <img src={cover} alt="Grundriss" loading="lazy" decoding="async" />
                 </div>
-              )}
-            </div>
-          </button>
-        ))}
-        {grundrissUrl && (
-          <button
-            class="room-card floorplan-card"
-            data-iz-open
-            data-iz-src={grundrissUrl}
-            aria-label="Grundriss"
-          >
-            <div class="room-img-wrap">
-              <img src={grundrissUrl} alt="Grundriss" loading="lazy" decoding="async" />
-            </div>
-            <div class="room-meta">
-              <span class="room-title" data-de>Grundriss</span>
-              <span class="room-title" data-en>Floor Plan</span>
-            </div>
-          </button>
-        )}
+                <div class="room-meta">
+                  <span class="room-title" data-de>Grundriss</span>
+                  <span class="room-title" data-en>Floor Plan</span>
+                </div>
+              </button>
+            );
+          }
+          return (
+            <button
+              class="room-card space-card"
+              data-space-prefix={prefix}
+              aria-label={titleDe}
+            >
+              <div class="room-img-wrap">
+                <img src={cover} alt={titleDe} loading="lazy" decoding="async" />
+              </div>
+              <div class="room-meta">
+                <span class="room-title" data-de>{titleDe}</span>
+                <span class="room-title" data-en>{titleEn}</span>
+                {images.length > 1 && (
+                  <div class="room-stats">
+                    <span class="room-size" data-de>{images.length} Fotos</span>
+                    <span class="room-size" data-en>{images.length} photos</span>
+                  </div>
+                )}
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   </section>
@@ -309,6 +305,7 @@ const spaceGroups = prefixesInOrder
               {d.nebenkosten_eur && <li><span class="fact-label" data-de>Nebenkosten</span><span class="fact-label" data-en>Utilities</span><span class="fact-val">{d.nebenkosten_eur} €/Mo.</span></li>}
               {d.gesamtmiete_eur && <li><span class="fact-label" data-de>Gesamtmiete</span><span class="fact-label" data-en>Total rent</span><span class="fact-val">{d.gesamtmiete_eur} €/Mo.</span></li>}
               {d.available_from && <li><span class="fact-label" data-de>Verfügbar ab</span><span class="fact-label" data-en>Available from</span><span class="fact-val">{d.available_from}</span></li>}
+              {apt?.data.shared_m2 && <li><span class="fact-label" data-de>Gemeinschaftsfläche</span><span class="fact-label" data-en>Communal area</span><span class="fact-val">ca. {apt.data.shared_m2} m²</span></li>}
             </ul>
             {d.teaser_de && <p class="modal-teaser" data-de>{d.teaser_de}</p>}
             {d.teaser_en && <p class="modal-teaser" data-en>{d.teaser_en}</p>}
@@ -425,14 +422,14 @@ const spaceGroups = prefixesInOrder
 }
 .room-meta { padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0.25rem; }
 .room-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 300; }
-.room-stats { display: flex; gap: 1rem; align-items: baseline; }
-.room-size { font-size: 0.8rem; color: var(--muted); }
-.room-shared { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.02em; }
+.room-stats { display: flex; gap: 1rem; align-items: baseline; font-family: var(--font-sans); }
+.room-size { font-family: var(--font-sans); font-size: 0.8rem; color: var(--muted); }
 .room-prices {
   display: flex;
   align-items: flex-end;
   gap: 0.3rem;
   margin-top: 0.1rem;
+  font-family: var(--font-sans);
 }
 .price-item {
   display: flex;
@@ -448,7 +445,7 @@ const spaceGroups = prefixesInOrder
   line-height: 1;
 }
 .price-num {
-   font-family: var(--font-sans);
+  font-family: var(--font-sans);
   font-size: 0.58rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -456,6 +453,7 @@ const spaceGroups = prefixesInOrder
   line-height: 1;
 }
 .price-sep {
+  font-family: var(--font-sans);
   font-size: 0.65rem;
   color: var(--muted);
   padding-bottom: 0.1rem;
@@ -613,7 +611,7 @@ const spaceGroups = prefixesInOrder
 .room-facts li { display: flex; gap: 1rem; font-size: 0.9rem; }
 .fact-label { color: var(--muted); min-width: 8rem; font-size: 0.8rem; letter-spacing: 0.05em; }
 .fact-val { font-family: var(--font-serif); font-size: 1rem; }
-.modal-teaser { color: var(--muted); font-style: italic; margin-bottom: 0.75rem; }
+.modal-teaser { color: var(--muted); font-style: italic; font-size: 0.85rem; white-space: pre-line; margin-bottom: 0.75rem; }
 
 /* Gold "vergeben" badge — modal only */
 .modal-content .badge-taken {
