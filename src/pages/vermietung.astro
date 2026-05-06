@@ -82,7 +82,7 @@ const taken = allRooms
           <div class="room-list">
             <div class="room-row row-header">
               <div class="room-row-main">
-                <span class="col-room">Zimmer</span>
+                <span class="col-room"></span>
                 <span class="col-num">Größe</span>
                 <span class="col-num">Kalt</span>
                 <span class="col-num">NK</span>
@@ -103,7 +103,7 @@ const taken = allRooms
                       <span data-de>{r.data.title_de}</span>
                       <span data-en>{r.data.title_en}</span>
                     </a>
-                    <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2}` : '—'}</span>
+                    <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2} qm` : '—'}</span>
                     <span class="col-num room-num">{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
                     <span class="col-num room-num">{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
                     <span class="col-num room-num room-total">{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
@@ -155,7 +155,7 @@ const taken = allRooms
                       <span data-de>{r.data.title_de}</span>
                       <span data-en>{r.data.title_en}</span>
                     </a>
-                    <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2}` : '—'}</span>
+                    <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2} qm` : '—'}</span>
                     <span class="col-num room-num">{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
                     <span class="col-num room-num">{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
                     <span class="col-num room-num room-total">{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
