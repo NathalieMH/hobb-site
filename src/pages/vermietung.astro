@@ -33,27 +33,16 @@ const available = allRooms
 const taken = allRooms
   .filter(r => !r.data.available)
   .sort((a, b) => (aptMap[a.data.apartment.toLowerCase()]?.order ?? 0) - (aptMap[b.data.apartment.toLowerCase()]?.order ?? 0));
-
-function formatDate(s?: string) {
-  if (!s) return '—';
-  const [y, m] = s.split('-');
-  if (!m) return { de: s, en: s };
-  const months_de = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
-  const months_en = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const idx = parseInt(m, 10) - 1;
-  if (isNaN(idx) || idx < 0 || idx > 11) return { de: s, en: s };
-  return { de: `${months_de[idx]} ${y}`, en: `${months_en[idx]} ${y}` };
-}
 ---
 
-<Layout title="Haderslebener 26 — Verfügbarkeit">
+<Layout title="Haderslebener 26 — Vermietung">
 
   <section class="page-header">
     <div class="container page-header-inner">
       <span class="eyebrow" data-de>Zimmer & Preise</span>
       <span class="eyebrow" data-en>Rooms & Prices</span>
-      <h1 data-de>Verfügbarkeit</h1>
-      <h1 data-en>Availability</h1>
+      <h1 data-de>Vermietung</h1>
+      <h1 data-en>Rental</h1>
       <DecoRule />
     </div>
   </section>
@@ -61,7 +50,6 @@ function formatDate(s?: string) {
   <section class="section" style="padding-top:1.5rem">
     <div class="container avail-wrap">
 
-      <!-- Note on pricing -->
       <p class="pricing-note" data-de>
         Nebenkosten (Strom, Wasser, Heizung, Internet) sind im Mietpreis inbegriffen — die Miete ist also all-inclusive.
       </p>
@@ -69,29 +57,40 @@ function formatDate(s?: string) {
         Utilities (electricity, water, heating, internet) are included in the rent — all-inclusive.
       </p>
 
-      <!-- Available rooms -->
       {available.length > 0 && (
         <div class="avail-group">
           <h2 class="group-heading" data-de>Verfügbare Zimmer</h2>
           <h2 class="group-heading" data-en>Available Rooms</h2>
           <div class="room-list">
+            <div class="room-row row-header">
+              <div class="room-row-main">
+                <span class="col-room"><span data-de>Zimmer</span><span data-en>Room</span></span>
+                <span class="col-num"><span data-de>m²</span><span data-en>m²</span></span>
+                <span class="col-num"><span data-de>WG-Fläche</span><span data-en>Shared m²</span></span>
+                <span class="col-num"><span data-de>Kaltmiete</span><span data-en>Rent</span></span>
+                <span class="col-num"><span data-de>NK</span><span data-en>Extras</span></span>
+                <span class="col-num"><span data-de>Gesamt / Mo.</span><span data-en>Total / mo.</span></span>
+                <span class="col-fp"></span>
+                <span class="col-from"><span data-de>Verfügbar ab</span><span data-en>Available from</span></span>
+              </div>
+            </div>
             {available.map(r => {
               const aptKey = r.data.apartment.toLowerCase();
               const apt = aptMap[aptKey];
               const grundriss = grundrissMap[aptKey] ?? '';
               const hasFloorplan = !!grundriss;
-              const dateObj = formatDate(r.data.available_from);
               return (
                 <div class="room-row">
                   <div class="room-row-main">
-                    <span class="room-name">
+                    <a class="room-name" href={`${base}wohngemeinschaften/${aptKey}/`}>
                       <span data-de>{r.data.title_de}</span>
                       <span data-en>{r.data.title_en}</span>
-                    </span>
-                    <a class="apt-name" href={`${base}wohngemeinschaften/${aptKey}/`}>
-                      <span data-de>{apt?.title_de ?? r.data.apartment}</span>
-                      <span data-en>{apt?.title_en ?? r.data.apartment}</span>
                     </a>
+                    <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2}` : '—'}</span>
+                    <span class="col-num room-num">{apt?.shared_m2 != null ? `${apt.shared_m2}` : '—'}</span>
+                    <span class="col-num room-num">{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
+                    <span class="col-num room-num">{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
+                    <span class="col-num room-num room-total">{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
                     <button
                       class={`floorplan-btn${hasFloorplan ? '' : ' fp-placeholder'}`}
                       data-iz-open
@@ -111,16 +110,7 @@ function formatDate(s?: string) {
                       <span class="fp-label" data-de>Grundriss</span>
                       <span class="fp-label" data-en>Floorplan</span>
                     </button>
-                    {r.data.size_m2 && <span class="room-size">{r.data.size_m2} m²</span>}
-                    <span class="room-rent">
-                      {r.data.gesamtmiete_eur ? `${r.data.gesamtmiete_eur} €` : '—'}
-                    </span>
-                    <span class="room-from">
-                      {typeof dateObj === 'object'
-                        ? <><span data-de>{dateObj.de}</span><span data-en>{dateObj.en}</span></>
-                        : dateObj
-                      }
-                    </span>
+                    <span class="col-from room-from">{r.data.available_from ?? '—'}</span>
                   </div>
                   {r.data.teaser_de && <p class="room-teaser" data-de>{r.data.teaser_de}</p>}
                   {r.data.teaser_en && <p class="room-teaser" data-en>{r.data.teaser_en}</p>}
@@ -131,7 +121,6 @@ function formatDate(s?: string) {
         </div>
       )}
 
-      <!-- Taken rooms -->
       {taken.length > 0 && (
         <div class="avail-group taken-group">
           <DecoRule />
@@ -146,14 +135,15 @@ function formatDate(s?: string) {
               return (
                 <div class="room-row room-row-taken">
                   <div class="room-row-main">
-                    <span class="room-name taken-name">
+                    <a class="room-name taken-name" href={`${base}wohngemeinschaften/${aptKey}/`}>
                       <span data-de>{r.data.title_de}</span>
                       <span data-en>{r.data.title_en}</span>
-                    </span>
-                    <a class="apt-name" href={`${base}wohngemeinschaften/${aptKey}/`}>
-                      <span data-de>{apt?.title_de ?? r.data.apartment}</span>
-                      <span data-en>{apt?.title_en ?? r.data.apartment}</span>
                     </a>
+                    <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2}` : '—'}</span>
+                    <span class="col-num room-num">{apt?.shared_m2 != null ? `${apt.shared_m2}` : '—'}</span>
+                    <span class="col-num room-num">{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
+                    <span class="col-num room-num">{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
+                    <span class="col-num room-num room-total">{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
                     <button
                       class={`floorplan-btn${hasFloorplan ? '' : ' fp-placeholder'}`}
                       data-iz-open
@@ -173,9 +163,7 @@ function formatDate(s?: string) {
                       <span class="fp-label" data-de>Grundriss</span>
                       <span class="fp-label" data-en>Floorplan</span>
                     </button>
-                    {r.data.size_m2 && <span class="room-size">{r.data.size_m2} m²</span>}
-                    <span class="room-rent">{r.data.gesamtmiete_eur ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
-                    <span class="room-from">—</span>
+                    <span class="col-from room-from">—</span>
                   </div>
                 </div>
               );
@@ -187,12 +175,11 @@ function formatDate(s?: string) {
     </div>
   </section>
 
-
 </Layout>
 
 <style>
 .avail-wrap {
-  max-width: 900px;
+  max-width: 1100px;
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
@@ -220,11 +207,10 @@ function formatDate(s?: string) {
 }
 .taken-heading { color: var(--border); }
 
-/* Room list */
 .room-list { display: flex; flex-direction: column; }
 .room-row {
   border-top: 1px solid var(--border);
-  padding-block: 1rem;
+  padding-block: 0.9rem;
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
@@ -233,28 +219,60 @@ function formatDate(s?: string) {
 
 .room-row-main {
   display: grid;
-  grid-template-columns: 1.8fr 1.6fr auto 4rem 5rem 5rem;
+  grid-template-columns: 1.6fr 3rem 4.5rem 5rem 4rem 5.5rem auto 5.5rem;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
+/* Header row */
+.row-header {
+  border-top: none;
+  padding-block: 0 0.5rem;
+}
+.row-header .room-row-main {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+.row-header span {
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.col-num { text-align: right; }
+.col-fp  { text-align: center; }
+.col-from { text-align: right; }
+
+/* Room name — link to wohnung */
 .room-name {
   font-family: var(--font-serif);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 300;
   letter-spacing: 0.03em;
   color: var(--ink);
-}
-.taken-name { color: var(--muted); }
-
-.apt-name {
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  color: var(--muted);
   text-decoration: none;
   transition: color var(--ease);
 }
-.apt-name:hover { color: var(--ink); }
+.room-name:hover { color: var(--gold); }
+.taken-name { color: var(--muted); }
+.taken-name:hover { color: var(--muted); }
+
+/* Number columns */
+.room-num {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--ink);
+  text-align: right;
+}
+.room-total { font-weight: 400; }
+
+.room-from {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: right;
+  letter-spacing: 0.03em;
+}
 
 /* Floorplan button */
 .floorplan-btn {
@@ -281,46 +299,32 @@ function formatDate(s?: string) {
 .fp-icon { width: 14px; height: 14px; flex-shrink: 0; display: flex; }
 .fp-icon svg { width: 100%; height: 100%; }
 
-.room-size, .room-rent {
-  font-family: var(--font-serif);
-  font-size: 0.95rem;
-  color: var(--ink);
-  text-align: right;
-}
-.room-from {
-  font-size: 0.78rem;
-  color: var(--muted);
-  text-align: right;
-  letter-spacing: 0.03em;
-}
-
-.room-row-taken .room-size,
-.room-row-taken .room-rent,
+.room-row-taken .room-num,
 .room-row-taken .room-from { color: var(--muted); opacity: 0.5; }
 
 .room-teaser {
   font-size: 0.82rem;
   color: var(--muted);
   font-style: italic;
-  padding-left: 0;
   max-width: 56ch;
 }
 
 .taken-list .room-row { opacity: 0.6; }
 
-@media (max-width: 720px) {
+@media (max-width: 860px) {
+  .room-row-main {
+    grid-template-columns: 1fr 3rem 4rem 4.5rem 3.5rem 5rem auto;
+  }
+  .col-from, .room-from { display: none; }
+}
+@media (max-width: 620px) {
   .room-row-main {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.35rem 0.65rem;
+    gap: 0.3rem 0.65rem;
   }
-  .room-name  { flex: 0 0 100%; }
-  .apt-name   { flex: 1 1 auto; }
-  .room-from  { display: none; }
-}
-@media (max-width: 500px) {
+  .room-name { flex: 0 0 100%; }
   .fp-label { display: none; }
 }
 </style>
-
