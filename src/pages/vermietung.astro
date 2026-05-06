@@ -331,13 +331,17 @@ const taken = allRooms
   .col-from, .room-from { display: none; }
 }
 @media (max-width: 620px) {
+  /* Keep grid so header always aligns with data columns.
+     Room name spans full width (row 1); numbers fill row 2. */
   .room-row-main {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.3rem 0.65rem;
+    grid-template-columns: 1fr 1fr 1fr 1.2fr 5rem;
+    column-gap: 0.5rem;
+    row-gap: 0.35rem;
   }
-  .room-name { flex: 0 0 100%; }
+  .room-name, .col-room {
+    grid-column: 1 / -1;
+  }
+  .room-num { font-size: 0.82rem; }
   .fp-label { display: none; }
 }
 </style>
