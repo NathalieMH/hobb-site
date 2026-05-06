@@ -64,14 +64,13 @@ const taken = allRooms
           <div class="room-list">
             <div class="room-row row-header">
               <div class="room-row-main">
-                <span class="col-room"><span data-de>Zimmer</span><span data-en>Room</span></span>
-                <span class="col-num"><span data-de>m²</span><span data-en>m²</span></span>
-                <span class="col-num"><span data-de>WG-Fläche</span><span data-en>Shared m²</span></span>
-                <span class="col-num"><span data-de>Kaltmiete</span><span data-en>Rent</span></span>
-                <span class="col-num"><span data-de>NK</span><span data-en>Extras</span></span>
-                <span class="col-num"><span data-de>Gesamt / Mo.</span><span data-en>Total / mo.</span></span>
-                <span class="col-fp"></span>
-                <span class="col-from"><span data-de>Verfügbar ab</span><span data-en>Available from</span></span>
+                <span class="col-room">Zimmer</span>
+                <span class="col-num">Größe</span>
+                <span class="col-num">Kalt</span>
+                <span class="col-num">NK</span>
+                <span class="col-num">Gesamt/Mo.</span>
+                <span class="col-fp">Grundriss</span>
+                <span class="col-from">Verfügbar ab</span>
               </div>
             </div>
             {available.map(r => {
@@ -87,7 +86,6 @@ const taken = allRooms
                       <span data-en>{r.data.title_en}</span>
                     </a>
                     <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2}` : '—'}</span>
-                    <span class="col-num room-num">{apt?.shared_m2 != null ? `${apt.shared_m2}` : '—'}</span>
                     <span class="col-num room-num">{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
                     <span class="col-num room-num">{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
                     <span class="col-num room-num room-total">{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
@@ -140,7 +138,6 @@ const taken = allRooms
                       <span data-en>{r.data.title_en}</span>
                     </a>
                     <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2}` : '—'}</span>
-                    <span class="col-num room-num">{apt?.shared_m2 != null ? `${apt.shared_m2}` : '—'}</span>
                     <span class="col-num room-num">{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
                     <span class="col-num room-num">{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
                     <span class="col-num room-num room-total">{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
@@ -219,9 +216,9 @@ const taken = allRooms
 
 .room-row-main {
   display: grid;
-  grid-template-columns: 1.6fr 3rem 4.5rem 5rem 4rem 5.5rem auto 5.5rem;
+  grid-template-columns: 2fr 3.5rem 5.5rem 4rem 6rem auto 6.5rem;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 /* Header row */
@@ -229,16 +226,13 @@ const taken = allRooms
   border-top: none;
   padding-block: 0 0.5rem;
 }
-.row-header .room-row-main {
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 0.5rem;
-}
 .row-header span {
   font-family: var(--font-sans);
   font-size: 0.6rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
+  white-space: nowrap;
 }
 .col-num { text-align: right; }
 .col-fp  { text-align: center; }
@@ -311,9 +305,9 @@ const taken = allRooms
 
 .taken-list .room-row { opacity: 0.6; }
 
-@media (max-width: 860px) {
+@media (max-width: 780px) {
   .room-row-main {
-    grid-template-columns: 1fr 3rem 4rem 4.5rem 3.5rem 5rem auto;
+    grid-template-columns: 2fr 3.5rem 5rem 3.5rem 5.5rem auto;
   }
   .col-from, .room-from { display: none; }
 }
