@@ -1,4 +1,4 @@
-# 🏡 Anleitung für das Bearbeiten der HoBB-Website (für Mama & Papa)
+# 🏡 Anleitung für das Bearbeiten der Haderslebener-Website (für Mama & Papa)
 
 Diese Anleitung erklärt einfach, wie ihr neue Apartments oder Zimmer hinzufügen, bestehende Einträge löschen oder anpassen könnt – ganz ohne Programmierkenntnisse.  
 Alles funktioniert direkt über die GitHub-Webseite. Sobald ihr eine Änderung speichert (Commit), aktualisiert sich die Webseite automatisch.
