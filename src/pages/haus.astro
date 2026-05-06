@@ -84,7 +84,7 @@ const roomCount = allRooms.length;
         </div>
       </div>
 
-      <!-- RIGHT: staircase image -->
+    /*  <!-- RIGHT: staircase image -->
       <div class="middle-img" data-blend data-bd="110ms">
         <img
           class="reveal"
@@ -93,7 +93,42 @@ const roomCount = allRooms.length;
           loading="lazy"
           decoding="async"
         />
-      </div>
+      </div> */
+
+<!-- RIGHT: image gallery -->
+<div class="middle-gallery" data-blend data-bd="110ms">
+  <img
+    class="reveal gallery-large"
+    src={`${base}das-haus/staircase.webp`}
+    alt="Treppenhaus der Stadtvilla"
+    loading="lazy"
+    decoding="async"
+  />
+
+  <img
+    class="reveal"
+    src={`${base}das-haus/houseaesthetic.webp`}
+    alt="Innenansicht der Stadtvilla"
+    loading="lazy"
+    decoding="async"
+  />
+
+  <img
+    class="reveal"
+    src={`${base}das-haus/vonoben.webp`}
+    alt="Ansicht der Stadtvilla von oben"
+    loading="lazy"
+    decoding="async"
+  />
+
+  <img
+    class="reveal"
+    src={`${base}das-haus/Aussenansicht.webp`}
+    alt="Außenansicht der Stadtvilla"
+    loading="lazy"
+    decoding="async"
+  />
+</div>
 
     </div>
   </section>
@@ -208,7 +243,7 @@ const roomCount = allRooms.length;
 }
 
 /* Staircase image — fills right column height */
-.middle-img {
+/* .middle-img {
   overflow: hidden;
 }
 .middle-img img {
@@ -217,6 +252,27 @@ const roomCount = allRooms.length;
   height: 100%;
   object-fit: cover;
   object-position: center;
+} */
+
+/* Image gallery — tiled images next to text */
+.middle-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  align-content: start;
+}
+
+.middle-gallery img {
+  display: block;
+  width: 100%;
+  height: clamp(180px, 20vw, 300px);
+  object-fit: cover;
+  object-position: center;
+}
+
+.middle-gallery .gallery-large {
+  grid-column: span 2;
+  height: clamp(240px, 28vw, 420px);
 }
 
 /* ── Bottom section ── */
