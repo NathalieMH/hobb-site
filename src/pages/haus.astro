@@ -101,41 +101,40 @@ const roomCount = allRooms.length;
     </div>
   </section>
 
-  <!-- Facts only -->
-  <section class="haus-facts-section">
-    <div class="haus-facts" data-blend data-bd="260ms">
-      <h3 class="facts-heading reveal" data-de>Ein Haus mit Geschichte</h3>
-      <h3 class="facts-heading reveal" data-en>A House with History</h3>
+  <!-- History block 3: text left | images right -->
+  <section class="haus-history haus-history--third">
+    <div class="history-grid">
 
-      <dl class="reveal">
-        <dt><span data-de>Baujahr</span><span data-en>Built</span></dt>
-        <dd>1920er Jahre</dd>
+      <div class="history-text" data-blend>
+        <h2 class="middle-title reveal">
+          DAS HAUS HEUTE
+        </h2>
 
-        <dt><span data-de>Architekt</span><span data-en>Architect</span></dt>
-        <dd>
-          <a class="wiki-link" href="https://de.wikipedia.org/wiki/Leo_Nachtlicht" target="_blank" rel="noopener">
-            Leo Nachtlicht
-          </a>
-        </dd>
+        <p class="middle-body reveal">
+          Heute verbindet die Stadtvilla historische Architektur mit modernem studentischem Wohnen. Die erhaltenen Details des Hauses, der großzügige Garten und die ruhige Lage in Berlin Steglitz-Dahlem prägen den besonderen Charakter der Haderslebener Straße 26.
+        </p>
 
-        <dt><span data-de>Wohnungen</span><span data-en>Apartments</span></dt>
-        <dd>{aptCount}</dd>
+        <p class="middle-body reveal">
+          Die Wohnungen und Zimmer werden Schritt für Schritt modernisiert und so gestaltet, dass sie zeitgemäßes Wohnen ermöglichen, ohne den ursprünglichen Charme des Hauses zu verlieren.
+        </p>
+      </div>
 
-        <dt><span data-de>Zimmer gesamt</span><span data-en>Total rooms</span></dt>
-        <dd>{roomCount}</dd>
+      <div class="history-gallery" data-blend data-bd="110ms">
+        <img class="reveal" src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
+        <img class="reveal" src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" />
+        <img class="reveal" src={`${base}das-haus/vonoben.webp`} alt="Ansicht der Stadtvilla von oben" loading="lazy" decoding="async" />
+        <img class="reveal" src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
+      </div>
 
-        <dt><span data-de>Lage</span><span data-en>Location</span></dt>
-        <dd>Berlin Steglitz · Dahlem</dd>
-      </dl>
     </div>
   </section>
-
 </Layout>
 
 <style>
+
 /* ── Shared horizontal padding ── */
-.haus-history,
-.haus-facts-section {
+
+.haus-history {
   padding-inline: clamp(2rem, 8vw, 5rem);
 }
 
@@ -147,6 +146,11 @@ const roomCount = allRooms.length;
 .haus-history--second {
   padding-top: clamp(2.5rem, 5vw, 4.5rem);
   padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.haus-history--third {
+  padding-top: clamp(2.5rem, 5vw, 4.5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
 }
 
 .history-grid {
@@ -198,57 +202,6 @@ const roomCount = allRooms.length;
   height: clamp(180px, 20vw, 300px);
   object-fit: cover;
   object-position: center;
-}
-
-/* ── Facts section ── */
-.haus-facts-section {
-  padding-top: clamp(1.5rem, 3vw, 2.5rem);
-  padding-bottom: clamp(3rem, 6vw, 5rem);
-}
-
-.haus-facts {
-  max-width: 720px;
-}
-
-.facts-heading {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(1rem, 1.8vw, 1.3rem);
-  font-weight: 300;
-  letter-spacing: 0.04em;
-  color: var(--ink);
-  margin: 0 0 0.75rem;
-}
-
-.haus-facts dl {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 0.5rem 1.5rem;
-  align-items: baseline;
-}
-
-.haus-facts dt {
-  font-size: 0.7rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--muted);
-  padding-top: 0.1rem;
-}
-
-.haus-facts dd {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 1.05rem;
-  margin: 0;
-}
-
-.wiki-link {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-color: var(--gold);
-  text-underline-offset: 3px;
-}
-
-.wiki-link:hover {
-  color: var(--gold);
 }
 
 /* ── Responsive ── */
