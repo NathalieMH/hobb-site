@@ -216,7 +216,7 @@ const taken = allRooms
 
 .room-row-main {
   display: grid;
-  grid-template-columns: 2fr 3.5rem 5.5rem 4rem 6rem auto 6.5rem;
+  grid-template-columns: 2fr 3.5rem 5.5rem 4rem 6rem 7.5rem 5.5rem;
   align-items: center;
   gap: 1rem;
 }
@@ -276,6 +276,7 @@ const taken = allRooms
   display: flex;
   align-items: center;
   gap: 0.35rem;
+  justify-self: center;
   color: var(--muted);
   font-family: var(--font-sans);
   font-size: 0.62rem;
@@ -307,7 +308,7 @@ const taken = allRooms
 
 @media (max-width: 780px) {
   .room-row-main {
-    grid-template-columns: 2fr 3.5rem 5rem 3.5rem 5.5rem auto;
+    grid-template-columns: 2fr 3.5rem 5rem 3.5rem 5.5rem 7.5rem;
   }
   .col-from, .room-from { display: none; }
 }
