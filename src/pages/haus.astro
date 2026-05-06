@@ -100,7 +100,7 @@ const roomCount = allRooms.length;
 <!-- RIGHT: image gallery -->
 <div class="middle-gallery" data-blend data-bd="110ms">
   <img
-    class="reveal gallery-large"
+    class="reveal"
     src={`${base}das-haus/staircase.webp`}
     alt="Treppenhaus der Stadtvilla"
     loading="lazy"
@@ -270,11 +270,6 @@ const roomCount = allRooms.length;
   height: clamp(180px, 20vw, 300px);
   object-fit: cover;
   object-position: center;
-}
-
-.middle-gallery .gallery-large {
-  grid-column: span 2;
-  height: clamp(240px, 28vw, 420px);
 }
 
 /* ── Bottom section ── */
