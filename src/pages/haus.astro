@@ -182,11 +182,18 @@ const roomCount = allRooms.length;
   padding-top: clamp(2rem, 4vw, 3.5rem);
 }
 
-.middle-grid {
+/* .middle-grid {
   display: grid;
   grid-template-columns: 2fr 3fr;
   align-items: stretch;
   min-height: clamp(480px, 60vw, 780px);
+} */
+
+.middle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: start;
 }
 
 /* Left column: title at top, pull-quote at bottom */
