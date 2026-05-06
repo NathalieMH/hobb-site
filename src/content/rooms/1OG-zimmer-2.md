@@ -8,6 +8,6 @@ nebenkosten_eur: 85
 gesamtmiete_eur: 705
 available_from: "18.05.2026"
 available: true
-teaser_de: "Schönes Altbauzimmer mit Einbauschränken, Bett 90 x 200 ."
-teaser_en: "Nice room with historic built-in closets,bed 90 x 200 "
+teaser_de: "Schönes Altbauzimmer mit Einbauschränken\nBett 90 x 200."
+teaser_en: "Nice room with historic built-in closets\nBed 90 x 200."
 ---

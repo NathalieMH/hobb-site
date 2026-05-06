@@ -5,9 +5,10 @@ description_de: "Helle Altbauwohnung mit 4 Zimmern, Küche, Bad, separatem WC, s
 description_en: "Bright historic apartment with 4 rooms, a kitchen, a bathroom, a separate WC, and a comfortable living and dining area with a balcony terrace and garden views."
 shared_spaces:
   - {prefix: dining-room, de: Wohn-Essbereich, en: Living-Dining Area}
+  - {prefix: terrace, de: Balkonterrasse, en: Balcony Terrace}
   - {prefix: kitchen, de: Küche, en: Kitchen}
   - {prefix: bathroom1, de: Bad mit sep. WC, en: Bathroom with sep. WC}
-  - {prefix: terrace, de: Balkonterrasse, en: Balcony Terrace}
+  - {prefix: grundriss, de: Grundriss, en: Floor Plan}
   - {prefix: laundry, de: Waschküche, en: Laundry Room}
   - {prefix: digital-lock, de: Digitales Schloss, en: Digital Lock}
 shared_m2: 87
