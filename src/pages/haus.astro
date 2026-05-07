@@ -40,23 +40,13 @@ const roomCount = allRooms.length;
         </p>
       </div>
 
-      <div class="intro-collage" data-blend data-bd="110ms">
-        <figure class="intro-collage__main reveal">
-          <img
-            src={`${base}das-haus/staircase.webp`}
-            alt="Treppenhaus der Stadtvilla"
-            loading="lazy"
-            decoding="async"
-          />
+      <div class="image-composition image-composition--intro" data-blend data-bd="110ms">
+        <figure class="composition-image composition-image--hero reveal">
+          <img src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
 
-        <figure class="intro-collage__accent reveal">
-          <img
-            src={`${base}das-haus/houseaesthetic.webp`}
-            alt="Innenansicht der Stadtvilla"
-            loading="lazy"
-            decoding="async"
-          />
+        <figure class="composition-image composition-image--floating reveal">
+          <img src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
 
         <!-- ausgeklammert -->
@@ -72,12 +62,7 @@ const roomCount = allRooms.length;
     <div class="container history-grid history-grid--garden">
 
       <figure class="garden-image reveal" data-blend data-bd="110ms">
-        <img
-          src={`${base}das-haus/vonoben.webp`}
-          alt="Ansicht der Stadtvilla von oben"
-          loading="lazy"
-          decoding="async"
-        />
+        <img src={`${base}das-haus/vonoben.webp`} alt="Ansicht der Stadtvilla von oben" loading="lazy" decoding="async" />
 
         <!-- ausgeklammert -->
         <!-- <img class="reveal" src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" /> -->
@@ -135,23 +120,13 @@ const roomCount = allRooms.length;
         </p>
       </div>
 
-      <div class="architect-collage" data-blend data-bd="110ms">
-        <figure class="architect-collage__main reveal">
-          <img
-            src={`${base}das-haus/houseaesthetic.webp`}
-            alt="Innenansicht der Stadtvilla"
-            loading="lazy"
-            decoding="async"
-          />
+      <div class="image-composition image-composition--architect" data-blend data-bd="110ms">
+        <figure class="composition-image architect-image--main reveal">
+          <img src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
 
-        <figure class="architect-collage__accent reveal">
-          <img
-            src={`${base}das-haus/Aussenansicht.webp`}
-            alt="Außenansicht der Stadtvilla"
-            loading="lazy"
-            decoding="async"
-          />
+        <figure class="composition-image architect-image--side reveal">
+          <img src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
 
         <!-- ausgeklammert -->
@@ -165,43 +140,44 @@ const roomCount = allRooms.length;
 </Layout>
 
 <style>
+
 /* Sections */
 
-.haus-history.section {
+.haus-history {
   padding-block: 0;
 }
 
 .haus-history--intro {
-  padding-top: clamp(2.25rem, 4vw, 3.5rem);
+  padding-top: clamp(3rem, 5vw, 5rem);
 }
 
 .haus-history--garden {
-  padding-top: clamp(2.75rem, 4.5vw, 4rem);
+  padding-top: clamp(3.25rem, 5.5vw, 5.5rem);
 }
 
 .haus-history--architect {
-  padding-top: clamp(3rem, 5vw, 4.75rem);
-  padding-bottom: clamp(3.5rem, 6vw, 5.5rem);
+  padding-top: clamp(3.5rem, 6vw, 6rem);
+  padding-bottom: clamp(4rem, 7vw, 7rem);
 }
 
 /* Layout */
 
 .history-grid {
   display: grid;
-  gap: clamp(2rem, 3.5vw, 4rem);
   align-items: center;
+  gap: clamp(2.25rem, 4vw, 4.5rem);
 }
 
 .history-grid--intro {
-  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
 }
 
 .history-grid--garden {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
 }
 
 .history-grid--architect {
-  grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.04fr);
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
   align-items: start;
 }
 
@@ -214,20 +190,21 @@ const roomCount = allRooms.length;
 }
 
 .history-text--intro {
-  max-width: 33rem;
+  align-self: start;
+  padding-top: clamp(0.5rem, 2vw, 1.5rem);
 }
 
 .history-text--garden {
-  max-width: 31rem;
+  max-width: 48ch;
 }
 
 .history-text--architect {
-  max-width: 35rem;
+  max-width: 56ch;
 }
 
 .middle-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(1.95rem, 3vw, 2.7rem);
+  font-size: clamp(1.9rem, 3.1vw, 2.65rem);
   font-weight: 300;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -238,100 +215,107 @@ const roomCount = allRooms.length;
 
 .middle-body {
   font-size: 0.95rem;
-  line-height: 1.72;
+  line-height: 1.7;
   color: var(--muted);
   margin: 0;
 }
 
-/* Shared images */
+/* Images shared */
 
-.intro-collage figure,
-.garden-image,
-.architect-collage figure {
+.image-composition,
+.composition-image,
+.garden-image {
   margin: 0;
+}
+
+.composition-image,
+.garden-image {
   overflow: hidden;
   background: var(--bg);
 }
 
-.intro-collage img,
-.garden-image img,
-.architect-collage img {
+.composition-image img,
+.garden-image img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* Neue obere Collage */
+/* Block 1 collage */
 
-.intro-collage {
-  width: 100%;
-  max-width: 37rem;
-  margin-left: auto;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(5, clamp(54px, 4.7vw, 78px));
-  align-items: stretch;
+.image-composition--intro {
+  position: relative;
+  height: clamp(360px, 39vw, 560px);
 }
 
-.intro-collage__main {
-  grid-column: 2 / 7;
-  grid-row: 1 / 5;
+.composition-image--hero {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 68%;
+  height: 82%;
+  z-index: 1;
 }
 
-.intro-collage__accent {
-  grid-column: 1 / 4;
-  grid-row: 4 / 6;
+.composition-image--floating {
+  position: absolute;
+  left: 13%;
+  bottom: 0;
+  width: 43%;
+  height: 40%;
   z-index: 2;
-  border: 0.65rem solid var(--bg);
+  border: 0.75rem solid var(--bg);
 }
 
-.intro-collage__main img {
+.composition-image--hero img {
   object-position: center;
 }
 
-.intro-collage__accent img {
+.composition-image--floating img {
   object-position: center;
 }
 
-/* Gartenbild */
+/* Block 2 large image */
 
 .garden-image {
   width: 100%;
-  aspect-ratio: 4 / 3;
-  max-height: 410px;
+  height: clamp(330px, 34vw, 500px);
 }
 
 .garden-image img {
   object-position: center;
 }
 
-/* Architekt-Collage */
+/* Block 3 collage */
 
-.architect-collage {
-  width: 100%;
-  max-width: 38rem;
-  margin-left: auto;
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(6, clamp(54px, 4.5vw, 76px));
-  align-items: stretch;
+.image-composition--architect {
+  position: sticky;
+  top: 7rem;
+  height: clamp(520px, 54vw, 720px);
 }
 
-.architect-collage__main {
-  grid-column: 1 / 6;
-  grid-row: 1 / 6;
+.architect-image--main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 82%;
+  height: 67%;
+  z-index: 1;
 }
 
-.architect-collage__accent {
-  grid-column: 4 / 8;
-  grid-row: 5 / 7;
+.architect-image--side {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 54%;
+  height: 36%;
   z-index: 2;
-  border: 0.65rem solid var(--bg);
+  border: 0.75rem solid var(--bg);
 }
 
-.architect-collage__main img,
-.architect-collage__accent img {
+.architect-image--main img,
+.architect-image--side img {
   object-position: center;
 }
 
@@ -352,83 +336,66 @@ const roomCount = allRooms.length;
     order: 1;
   }
 
-  .history-text--intro,
   .history-text--garden,
   .history-text--architect {
     max-width: none;
   }
 
-  .intro-collage,
-  .architect-collage {
-    max-width: none;
-    margin-left: 0;
-  }
-
-  .intro-collage {
-    grid-template-rows: repeat(5, clamp(54px, 9vw, 82px));
-  }
-
-  .architect-collage {
-    grid-template-rows: repeat(6, clamp(52px, 8.5vw, 78px));
-  }
-
-  .garden-image {
-    max-height: none;
+  .image-composition--architect {
+    position: relative;
+    top: auto;
+    height: clamp(360px, 72vw, 580px);
   }
 }
 
 @media (max-width: 600px) {
   .haus-history--intro {
-    padding-top: clamp(2rem, 8vw, 2.75rem);
+    padding-top: clamp(2.25rem, 9vw, 3.25rem);
   }
 
   .haus-history--garden,
   .haus-history--architect {
-    padding-top: clamp(2.25rem, 9vw, 3.25rem);
+    padding-top: clamp(2.75rem, 10vw, 4rem);
   }
 
   .history-grid {
-    gap: 1.5rem;
+    gap: clamp(1.75rem, 7vw, 2.5rem);
   }
 
-  .middle-title {
-    font-size: clamp(1.9rem, 8vw, 2.5rem);
+  .image-composition--intro {
+    height: 108vw;
   }
 
-  .intro-collage {
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(6, 14vw);
+  .composition-image--hero {
+    width: 82%;
+    height: 67%;
   }
 
-  .intro-collage__main {
-    grid-column: 1 / 5;
-    grid-row: 1 / 5;
-  }
-
-  .intro-collage__accent {
-    grid-column: 1 / 3;
-    grid-row: 4 / 7;
-    border-width: 0.45rem;
+  .composition-image--floating {
+    left: 0;
+    width: 58%;
+    height: 34%;
+    border-width: 0.5rem;
   }
 
   .garden-image {
-    aspect-ratio: 1 / 1;
+    height: 68vw;
   }
 
-  .architect-collage {
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(6, 14vw);
+  .image-composition--architect {
+    height: 105vw;
   }
 
-  .architect-collage__main {
-    grid-column: 1 / 5;
-    grid-row: 1 / 5;
+  .architect-image--main {
+    width: 84%;
+    height: 66%;
   }
 
-  .architect-collage__accent {
-    grid-column: 2 / 5;
-    grid-row: 4 / 7;
-    border-width: 0.45rem;
+  .architect-image--side {
+    width: 58%;
+    height: 34%;
+    border-width: 0.5rem;
   }
 }
+
 </style>
