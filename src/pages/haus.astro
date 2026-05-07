@@ -165,7 +165,7 @@ const roomCount = allRooms.length;
 }
 
 .history-grid--intro {
-  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
   align-items: end;
 }
 
@@ -176,7 +176,7 @@ const roomCount = allRooms.length;
 
 .history-grid--architect {
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  align-items: stretch;
+  align-items: start;
 }
 
 /* Text */
@@ -300,7 +300,7 @@ figure {
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 96%;
+  width: 100%;
   height: 92%;
   z-index: 1;
   box-shadow: 0 1.5rem 4rem rgba(35, 29, 24, 0.13);
@@ -311,9 +311,10 @@ figure {
 }
 
 .intro-detail-card {
-  width: min(78%, 340px);
-  aspect-ratio: 1.12 / 1;
-  margin-left: clamp(2.5rem, 6vw, 5rem);
+  width: 100%;
+  max-width: none;
+  aspect-ratio: 1.45 / 1;
+  margin-left: 0;
   box-shadow: 0 1.1rem 2.8rem rgba(35, 29, 24, 0.12);
 }
 
@@ -364,12 +365,12 @@ figure {
 /* Block 3 architect gallery */
 
 .architect-gallery {
-  align-self: stretch;
+  align-self: start;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) clamp(150px, 12vw, 210px);
+  grid-template-rows: clamp(340px, 31vw, 470px) clamp(115px, 10vw, 155px);
   gap: clamp(0.65rem, 1vw, 0.95rem);
-  height: 100%;
-  max-height: 100%;
+  height: auto;
+  max-height: none;
   overflow: hidden;
 }
 
@@ -385,10 +386,7 @@ figure {
   min-height: 0;
 }
 
-.architect-gallery__image--main {
-  height: 100%;
-}
-
+.architect-gallery__image--main,
 .architect-gallery__image--small {
   height: 100%;
 }
@@ -459,6 +457,7 @@ figure {
   .intro-detail-card {
     width: min(58%, 300px);
     margin-left: 0;
+    aspect-ratio: 1.12 / 1;
   }
 
   .intro-image-stage {
