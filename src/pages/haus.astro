@@ -11,7 +11,7 @@ const roomCount = allRooms.length;
 
 <Layout title="Haderslebener 26 — Das Haus" noPadding={true}>
 
-  <!-- Hero bleibt unverändert -->
+  <!-- Hero -->
   <section class="subpage-hero" data-blend-move>
     <div class="hero-image-wrap">
       <img
@@ -29,28 +29,24 @@ const roomCount = allRooms.length;
     <div class="container history-grid history-grid--intro">
 
       <div class="history-text history-text--intro" data-blend>
-        <p class="section-kicker reveal">Das Haus</p>
-
         <h2 class="middle-title reveal">
-          HISTORISCHE VILLA,<br> HEUTIGES WOHNEN
+          EINE STADTVILLA<br> MIT GESCHICHTE
         </h2>
 
         <p class="middle-body reveal">
-          Die Stadtvilla in der Haderslebener Straße 26 wurde ab 1924 nach Plänen des Berliner Architekten Leo Nachtlicht errichtet. Bis heute prägen klare Proportionen, originale Details und das geschwungene Treppenhaus den Charakter des Hauses.
-        </p>
-
-        <p class="middle-body reveal">
-          Schritt für Schritt wird die Villa behutsam modernisiert — mit zeitgemäßen Wohnungen und Zimmern für Studierende, ohne die besondere Atmosphäre des Hauses zu verlieren.
+          Unser Haus in der Haderslebener Straße 26 wurde ab 1924 von dem Architekten Leo Nachtlicht erbaut, der im Berliner Raum zu den bedeutendsten Architekten der Jahrhundertwende gehörte. 
+          Der damalige Garten wurde von dem ebenfalls bekannten Gartenarchitekten Ethik Pepinsky angelegt.
+          In den 1980er Jahren erfolgte ein moderner Anbau an die Stadtvilla.
         </p>
       </div>
 
       <div class="image-composition image-composition--intro" data-blend data-bd="110ms">
-        <figure class="composition-image composition-image--hero reveal">
-          <img src={`${base}das-haus/staircase.webp`} alt="Originales Treppenhaus mit Holzverkleidung" loading="lazy" decoding="async" />
+        <figure class="composition-image composition-image--intro-main reveal">
+          <img src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
 
-        <figure class="composition-image composition-image--floating reveal">
-          <img src={`${base}das-haus/houseaesthetic.webp`} alt="Detailaufnahme historischer Ausstattung" loading="lazy" decoding="async" />
+        <figure class="composition-image composition-image--intro-detail reveal">
+          <img src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
       </div>
 
@@ -61,23 +57,29 @@ const roomCount = allRooms.length;
   <section class="section haus-history haus-history--garden">
     <div class="container history-grid history-grid--garden">
 
-      <figure class="garden-image reveal" data-blend data-bd="110ms">
-        <img src={`${base}das-haus/vonoben.webp`} alt="Die Stadtvilla und der Garten aus der Vogelperspektive" loading="lazy" decoding="async" />
-      </figure>
+      <div class="garden-composition" data-blend data-bd="110ms">
+        <figure class="garden-image garden-image--main reveal">
+          <img src={`${base}das-haus/garten.webp`} alt="Garten der Stadtvilla" loading="lazy" decoding="async" />
+        </figure>
+
+        <!-- Fallback, falls du noch kein garten.webp hast:
+        <figure class="garden-image garden-image--main reveal">
+          <img src={`${base}das-haus/Aussenansicht.webp`} alt="Garten und Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
+        </figure>
+        -->
+      </div>
 
       <div class="history-text history-text--garden" data-blend>
-        <p class="section-kicker reveal">Lage & Garten</p>
-
         <h2 class="middle-title reveal">
-          RUHIG GELEGEN,<br> GROSSZÜGIG GEDACHT
+          DER GARTEN
         </h2>
 
         <p class="middle-body reveal">
-          Der Garten ist ein zentraler Teil des Hauses: grün, ruhig und zurückgesetzt von der Straße. Er schafft Abstand zum Alltag und gibt der historischen Architektur Raum.
+          Heute verbindet die Stadtvilla historische Architektur mit modernem studentischem Wohnen. Die erhaltenen Details des Hauses, der großzügige Garten und die ruhige Lage in Berlin Steglitz-Dahlem prägen den besonderen Charakter der Haderslebener Straße 26.
         </p>
 
         <p class="middle-body reveal">
-          In Berlin Steglitz-Dahlem verbindet die Haderslebener 26 eine entspannte Wohnatmosphäre mit guter Anbindung — ideal für konzentriertes Lernen, kurze Wege und gemeinschaftliches Wohnen.
+          Die Wohnungen und Zimmer werden Schritt für Schritt modernisiert und so gestaltet, dass sie zeitgemäßes Wohnen ermöglichen, ohne den ursprünglichen Charme des Hauses zu verlieren.
         </p>
       </div>
 
@@ -89,36 +91,45 @@ const roomCount = allRooms.length;
     <div class="container history-grid history-grid--architect">
 
       <div class="history-text history-text--architect" data-blend>
-        <p class="section-kicker reveal">Architektur</p>
-
         <h2 class="middle-title reveal">
-          LEO NACHTLICHT<br> UND DIE H26
+          DER ARCHITEKT
         </h2>
 
         <p class="middle-body reveal">
-          Leo Nachtlicht zählt zu den prägenden Berliner Architekten der frühen Moderne. Er entwarf Villen, Landhäuser und Innenräume mit besonderem Gespür für Material, Handwerk und räumliche Wirkung.
+          Leo Nachtlicht wurde 1872 in Bielitz, Schlesien, geboren. Nach seinem Architektur-Studium arbeitete er bei Bruno Möhring und betrieb ab 1904 ein eigenes Atelier in Berlin. 
+          Leo Nachtlicht entwarf und baute Landhäuser, Villen und deren 
+          Inneneinrichtungen, wie z.B. auch in der H26 ein schönes Holzzimmer und das geschwungene holzverkleidete Treppenhaus, die original erhalten sind.
         </p>
 
         <p class="middle-body reveal">
-          In der Haderslebener 26 sind bis heute Elemente dieser Haltung sichtbar: Holz, Licht, Proportion und Bewegung verbinden sich zu einem Haus, das nicht nur funktional, sondern atmosphärisch gedacht ist.
+          Zu Nachtlichts bedeutendsten Gebäuden zählt neben dem Ausstellungsgebäude der Berliner Secession vor allem auch der Gourmenia-Palast, dem Vorläufer des heutigen BIKINI BERLIN am Zoo. 
+          Als besondere Attraktion wurde im rückwärtigen Teil des Gebäudes, 
+          direkt am Berliner Zoo, das dreigeschossige Weinrestaurant „Traube“ mit einem subtropischen Garten mit Bäumen und großblättrigen Pflanzen, Blumen und bunten Vögeln errichtet. 
         </p>
 
         <p class="middle-body reveal">
-          Die Geschichte des Architekten ist zugleich Teil der Berliner Geschichte. Ab 1933 wurde Nachtlicht als Jude die Arbeitserlaubnis entzogen. Er starb 1942 und wurde auf dem Jüdischen Friedhof Berlin-Weißensee bestattet.
-        </p>
-
-        <p class="source-note reveal">
-          Quellenhinweis: Textgrundlage u. a. openPR „BIKINI BERLIN — Hommage an Leo Nachtlicht“ sowie stolpersteine-berlin.de.
+          Der Gourmenia-Palast gehörte zu den größten Gaststätten, die Ende der zwanziger Jahre eröffnet wurden. Nach nur wenigen Betriebsjahren wurde das Gebäude im Zweiten Weltkrieg allerdings völlig zerstört.
+          <br><br>
+          Ab 1933 wurde Leo Nachtlicht als Jude die Arbeitserlaubnis entzogen. Am 22.09.1942 starb er, wahrscheinlich an den Folgen eines Selbstmordversuchs,
+          und wurde auf dem jüdischen Friedhof Berlin-Weißensee bestattet.
+          <br><br>
+          Textquellen:
+          <br>
+          Text auszugsweise aus openpr.de „BIKINI BERLIN - Hommage an Leo Nachtlicht“ und stolpersteine-berlin/Leo Nachtlicht
         </p>
       </div>
 
-      <div class="image-composition image-composition--architect" data-blend data-bd="110ms">
-        <figure class="composition-image architect-image--main reveal">
-          <img src={`${base}das-haus/houseaesthetic.webp`} alt="Historisches Detail im Innenraum der Stadtvilla" loading="lazy" decoding="async" />
+      <div class="architect-gallery" data-blend data-bd="110ms">
+        <figure class="architect-gallery__image architect-gallery__image--main reveal">
+          <img src={`${base}das-haus/houseaesthetic.webp`} alt="Historische Details im Inneren der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
 
-        <figure class="composition-image architect-image--side reveal">
-          <img src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla Haderslebener 26" loading="lazy" decoding="async" />
+        <figure class="architect-gallery__image architect-gallery__image--small reveal">
+          <img src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
+        </figure>
+
+        <figure class="architect-gallery__image architect-gallery__image--small reveal">
+          <img src={`${base}das-haus/staircase.webp`} alt="Holzverkleidetes Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
       </div>
 
@@ -129,7 +140,7 @@ const roomCount = allRooms.length;
 
 <style>
 
-/* Sections — Abstände bleiben im Prinzip wie bisher */
+/* Sections */
 
 .haus-history {
   padding-block: 0;
@@ -161,7 +172,7 @@ const roomCount = allRooms.length;
 }
 
 .history-grid--garden {
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
 }
 
 .history-grid--architect {
@@ -190,15 +201,6 @@ const roomCount = allRooms.length;
   max-width: 56ch;
 }
 
-.section-kicker {
-  font-size: 0.72rem;
-  line-height: 1;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin: 0 0 0.15rem;
-}
-
 .middle-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.9rem, 3.1vw, 2.65rem);
@@ -217,122 +219,146 @@ const roomCount = allRooms.length;
   margin: 0;
 }
 
-.source-note {
-  max-width: 54ch;
-  font-size: 0.78rem;
-  line-height: 1.6;
-  color: color-mix(in srgb, var(--muted) 78%, transparent);
-  margin: 0.35rem 0 0;
-}
-
 /* Images shared */
 
 .image-composition,
 .composition-image,
-.garden-image {
+.garden-composition,
+.garden-image,
+.architect-gallery,
+.architect-gallery__image {
   margin: 0;
 }
 
 .composition-image,
-.garden-image {
+.garden-image,
+.architect-gallery__image {
   overflow: hidden;
   background: var(--bg);
 }
 
 .composition-image img,
-.garden-image img {
+.garden-image img,
+.architect-gallery__image img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.01);
+  transition: transform 900ms cubic-bezier(.2, .8, .2, 1);
 }
 
-/* dezente, moderne Bildsprache */
-
-.composition-image,
-.garden-image {
-  box-shadow: 0 1.5rem 4rem rgba(30, 25, 20, 0.08);
+@media (hover: hover) {
+  .composition-image:hover img,
+  .garden-image:hover img,
+  .architect-gallery__image:hover img {
+    transform: scale(1.035);
+  }
 }
 
-/* Block 1 collage */
+/* Block 1 editorial image composition */
 
 .image-composition--intro {
   position: relative;
-  height: clamp(360px, 39vw, 560px);
+  min-height: clamp(430px, 44vw, 650px);
 }
 
-.composition-image--hero {
+.composition-image--intro-main {
   position: absolute;
   top: 0;
   right: 0;
-  width: 68%;
-  height: 82%;
+  width: 70%;
+  height: 88%;
   z-index: 1;
+  box-shadow: 0 1.4rem 3.5rem rgba(35, 29, 24, 0.12);
 }
 
-.composition-image--floating {
+.composition-image--intro-detail {
   position: absolute;
-  left: 13%;
+  left: 4%;
   bottom: 0;
   width: 43%;
-  height: 40%;
-  z-index: 2;
-  border: 0.75rem solid var(--bg);
-}
-
-.composition-image--hero img {
-  object-position: center 54%;
-}
-
-.composition-image--floating img {
-  object-position: center 48%;
-}
-
-/* Block 2 large image */
-
-.garden-image {
-  width: 100%;
-  height: clamp(330px, 34vw, 500px);
-}
-
-.garden-image img {
-  object-position: center;
-}
-
-/* Block 3 collage */
-
-.image-composition--architect {
-  position: sticky;
-  top: 7rem;
-  height: clamp(520px, 54vw, 720px);
-}
-
-.architect-image--main {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 82%;
-  height: 67%;
-  z-index: 1;
-}
-
-.architect-image--side {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 54%;
   height: 36%;
   z-index: 2;
   border: 0.75rem solid var(--bg);
+  box-shadow: 0 1.2rem 2.8rem rgba(35, 29, 24, 0.14);
 }
 
-.architect-image--main img {
-  object-position: center 45%;
+.composition-image--intro-main img {
+  object-position: center;
 }
 
-.architect-image--side img {
-  object-position: center 24%;
+.composition-image--intro-detail img {
+  object-position: center;
+}
+
+/* Block 2 garden */
+
+.garden-composition {
+  position: relative;
+}
+
+.garden-image--main {
+  width: 100%;
+  height: clamp(360px, 36vw, 520px);
+  box-shadow: 0 1.4rem 3.8rem rgba(35, 29, 24, 0.11);
+}
+
+.garden-image--main img {
+  object-position: center;
+}
+
+/* Block 3 architect gallery */
+
+.architect-gallery {
+  position: sticky;
+  top: 7rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.65rem, 1vw, 0.95rem);
+}
+
+.architect-gallery__image {
+  box-shadow: 0 1.2rem 3rem rgba(35, 29, 24, 0.1);
+}
+
+.architect-gallery__image--main {
+  grid-column: 1 / -1;
+  height: clamp(300px, 30vw, 430px);
+}
+
+.architect-gallery__image--small {
+  height: clamp(180px, 18vw, 260px);
+}
+
+.architect-gallery__image--main img {
+  object-position: center;
+}
+
+.architect-gallery__image--small:first-of-type img {
+  object-position: center 25%;
+}
+
+.architect-gallery__image--small:last-of-type img {
+  object-position: center;
+}
+
+/* Optional refinement lines */
+
+.haus-history--garden,
+.haus-history--architect {
+  position: relative;
+}
+
+.haus-history--garden::before,
+.haus-history--architect::before {
+  content: "";
+  position: absolute;
+  top: clamp(1.5rem, 3vw, 2.5rem);
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(35, 29, 24, 0.08);
+  pointer-events: none;
 }
 
 /* Responsive */
@@ -344,7 +370,7 @@ const roomCount = allRooms.length;
     grid-template-columns: 1fr;
   }
 
-  .history-grid--garden .garden-image {
+  .history-grid--garden .garden-composition {
     order: 2;
   }
 
@@ -357,10 +383,13 @@ const roomCount = allRooms.length;
     max-width: none;
   }
 
-  .image-composition--architect {
+  .image-composition--intro {
+    min-height: clamp(420px, 72vw, 620px);
+  }
+
+  .architect-gallery {
     position: relative;
     top: auto;
-    height: clamp(360px, 72vw, 580px);
   }
 }
 
@@ -379,40 +408,36 @@ const roomCount = allRooms.length;
   }
 
   .image-composition--intro {
-    height: 108vw;
+    min-height: 112vw;
   }
 
-  .composition-image--hero {
+  .composition-image--intro-main {
     width: 82%;
-    height: 67%;
+    height: 68%;
   }
 
-  .composition-image--floating {
+  .composition-image--intro-detail {
     left: 0;
     width: 58%;
     height: 34%;
     border-width: 0.5rem;
   }
 
-  .garden-image {
-    height: 68vw;
+  .garden-image--main {
+    height: 72vw;
   }
 
-  .image-composition--architect {
-    height: 105vw;
+  .architect-gallery {
+    gap: 0.5rem;
   }
 
-  .architect-image--main {
-    width: 84%;
-    height: 66%;
+  .architect-gallery__image--main {
+    height: 64vw;
   }
 
-  .architect-image--side {
-    width: 58%;
-    height: 34%;
-    border-width: 0.5rem;
+  .architect-gallery__image--small {
+    height: 38vw;
   }
 }
 
 </style>
-
