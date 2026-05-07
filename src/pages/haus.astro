@@ -38,14 +38,18 @@ const roomCount = allRooms.length;
           Der damalige Garten wurde von dem ebenfalls bekannten Gartenarchitekten Ethik Pepinsky angelegt.
           In den 1980er Jahren erfolgte ein moderner Anbau an die Stadtvilla.
         </p>
-
       </div>
 
       <div class="history-gallery" data-blend data-bd="110ms">
-        <img class="reveal" src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
-        <img class="reveal" src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" />
-        <img class="reveal" src={`${base}das-haus/vonoben.webp`} alt="Ansicht der Stadtvilla von oben" loading="lazy" decoding="async" />
-        <img class="reveal" src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
+        <!-- oben links ausgeklammert -->
+        <!-- <img class="reveal" src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" /> -->
+
+        <img class="reveal gallery-top-right" src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" />
+
+        <img class="reveal gallery-bottom-left" src={`${base}das-haus/vonoben.webp`} alt="Ansicht der Stadtvilla von oben" loading="lazy" decoding="async" />
+
+        <!-- unten rechts ausgeklammert -->
+        <!-- <img class="reveal" src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" /> -->
       </div>
 
     </div>
@@ -55,26 +59,28 @@ const roomCount = allRooms.length;
   <section class="haus-history haus-history--second">
     <div class="history-grid history-grid--reverse">
 
-      <div class="history-gallery" data-blend data-bd="110ms">
-        <img class="reveal" src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
+      <div class="history-gallery history-gallery--single" data-blend data-bd="110ms">
         <img class="reveal" src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" />
-        <img class="reveal" src={`${base}das-haus/vonoben.webp`} alt="Ansicht der Stadtvilla von oben" loading="lazy" decoding="async" />
-        <img class="reveal" src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
+
+        <!-- ausgeklammert -->
+        <!-- <img class="reveal" src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" /> -->
+        <!-- <img class="reveal" src={`${base}das-haus/vonoben.webp`} alt="Ansicht der Stadtvilla von oben" loading="lazy" decoding="async" /> -->
+        <!-- <img class="reveal" src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" /> -->
       </div>
 
-     <div class="history-text" data-blend>
-  <h2 class="middle-title reveal">
-    DER GARTEN
-  </h2>
+      <div class="history-text" data-blend>
+        <h2 class="middle-title reveal">
+          DER GARTEN
+        </h2>
 
-  <p class="middle-body reveal">
-    Heute verbindet die Stadtvilla historische Architektur mit modernem studentischem Wohnen. Die erhaltenen Details des Hauses, der großzügige Garten und die ruhige Lage in Berlin Steglitz-Dahlem prägen den besonderen Charakter der Haderslebener Straße 26.
-  </p>
+        <p class="middle-body reveal">
+          Heute verbindet die Stadtvilla historische Architektur mit modernem studentischem Wohnen. Die erhaltenen Details des Hauses, der großzügige Garten und die ruhige Lage in Berlin Steglitz-Dahlem prägen den besonderen Charakter der Haderslebener Straße 26.
+        </p>
 
-  <p class="middle-body reveal">
-    Die Wohnungen und Zimmer werden Schritt für Schritt modernisiert und so gestaltet, dass sie zeitgemäßes Wohnen ermöglichen, ohne den ursprünglichen Charme des Hauses zu verlieren.
-  </p>
-</div>
+        <p class="middle-body reveal">
+          Die Wohnungen und Zimmer werden Schritt für Schritt modernisiert und so gestaltet, dass sie zeitgemäßes Wohnen ermöglichen, ohne den ursprünglichen Charme des Hauses zu verlieren.
+        </p>
+      </div>
 
     </div>
   </section>
@@ -83,44 +89,50 @@ const roomCount = allRooms.length;
   <section class="haus-history haus-history--third">
     <div class="history-grid">
 
-<div class="history-text" data-blend>
-  <h2 class="middle-title reveal">
-    DER ARCHITEKT
-  </h2>
+      <div class="history-text" data-blend>
+        <h2 class="middle-title reveal">
+          DER ARCHITEKT
+        </h2>
 
-  <p class="middle-body reveal">
-    Leo Nachtlicht wurde 1872 in Bielitz, Schlesien, geboren. Nach seinem Architektur-Studium arbeitete er bei Bruno Möhring und betrieb ab 1904 ein eigenes Atelier in Berlin. 
-    Leo Nachtlicht entwarf und baute Landhäuser, Villen und deren 
-    Inneneinrichtungen, wie z.B. auch in der H26 ein schönes Holzzimmer und das geschwungene holzverkleidete Treppenhaus, die original erhalten sind.
-  </p>
+        <p class="middle-body reveal">
+          Leo Nachtlicht wurde 1872 in Bielitz, Schlesien, geboren. Nach seinem Architektur-Studium arbeitete er bei Bruno Möhring und betrieb ab 1904 ein eigenes Atelier in Berlin. 
+          Leo Nachtlicht entwarf und baute Landhäuser, Villen und deren 
+          Inneneinrichtungen, wie z.B. auch in der H26 ein schönes Holzzimmer und das geschwungene holzverkleidete Treppenhaus, die original erhalten sind.
+        </p>
 
-  <p class="middle-body reveal">
-    Zu Nachtlichts bedeutendsten Gebäuden zählt neben dem Ausstellungsgebäude der Berliner Secession vor allem auch der Gourmenia-Palast, dem Vorläufer des heutigen BIKINI BERLIN am Zoo. 
-    Als besondere Attraktion wurde im rückwärtigen Teil des Gebäudes, 
-    direkt am Berliner Zoo, das dreigeschossige Weinrestaurant „Traube“ mit einem subtropischen Garten mit Bäumen und großblättrigen Pflanzen, Blumen und bunten Vögeln errichtet. 
-  </p>
+        <p class="middle-body reveal">
+          Zu Nachtlichts bedeutendsten Gebäuden zählt neben dem Ausstellungsgebäude der Berliner Secession vor allem auch der Gourmenia-Palast, dem Vorläufer des heutigen BIKINI BERLIN am Zoo. 
+          Als besondere Attraktion wurde im rückwärtigen Teil des Gebäudes, 
+          direkt am Berliner Zoo, das dreigeschossige Weinrestaurant „Traube“ mit einem subtropischen Garten mit Bäumen und großblättrigen Pflanzen, Blumen und bunten Vögeln errichtet. 
+        </p>
 
-  <p class="middle-body reveal">
-    Der Gourmenia-Palast gehörte zu den größten Gaststätten, die Ende der zwanziger Jahre eröffnet wurden. Nach nur wenigen Betriebsjahren wurde das Gebäude im Zweiten Weltkrieg allerdings völlig zerstört.
-    <br><br>
-    Ab 1933 wurde Leo Nachtlicht als Jude die Arbeitserlaubnis entzogen. Am 22.09.1942 starb er, wahrscheinlich an den Folgen eines Selbstmordversuchs,
-    und wurde auf dem jüdischen Friedhof Berlin-Weißensee bestattet.
-    <br><br>
-    Textquellen:
-    <br>
-    Text auszugsweise aus openpr.de „BIKINI BERLIN - Hommage an Leo Nachtlicht“ und stolpersteine-berlin/Leo Nachtlicht
-  </p>
-</div>
+        <p class="middle-body reveal">
+          Der Gourmenia-Palast gehörte zu den größten Gaststätten, die Ende der zwanziger Jahre eröffnet wurden. Nach nur wenigen Betriebsjahren wurde das Gebäude im Zweiten Weltkrieg allerdings völlig zerstört.
+          <br><br>
+          Ab 1933 wurde Leo Nachtlicht als Jude die Arbeitserlaubnis entzogen. Am 22.09.1942 starb er, wahrscheinlich an den Folgen eines Selbstmordversuchs,
+          und wurde auf dem jüdischen Friedhof Berlin-Weißensee bestattet.
+          <br><br>
+          Textquellen:
+          <br>
+          Text auszugsweise aus openpr.de „BIKINI BERLIN - Hommage an Leo Nachtlicht“ und stolpersteine-berlin/Leo Nachtlicht
+        </p>
+      </div>
 
       <div class="history-gallery" data-blend data-bd="110ms">
-        <img class="reveal" src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
-        <img class="reveal" src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" />
-        <img class="reveal" src={`${base}das-haus/vonoben.webp`} alt="Ansicht der Stadtvilla von oben" loading="lazy" decoding="async" />
-        <img class="reveal" src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
+        <img class="reveal gallery-top-left" src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
+
+        <!-- oben rechts ausgeklammert -->
+        <!-- <img class="reveal" src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" /> -->
+
+        <!-- unten links ausgeklammert -->
+        <!-- <img class="reveal" src={`${base}das-haus/vonoben.webp`} alt="Ansicht der Stadtvilla von oben" loading="lazy" decoding="async" /> -->
+
+        <img class="reveal gallery-bottom-right" src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
       </div>
 
     </div>
   </section>
+
 </Layout>
 
 <style>
@@ -183,6 +195,7 @@ const roomCount = allRooms.length;
 .history-gallery {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: clamp(180px, 20vw, 300px);
   gap: clamp(0.75rem, 1.5vw, 1.25rem);
   align-content: start;
 }
@@ -190,7 +203,40 @@ const roomCount = allRooms.length;
 .history-gallery img {
   display: block;
   width: 100%;
-  height: clamp(180px, 20vw, 300px);
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Positionen für ausgewählte Bilder */
+.gallery-top-left {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.gallery-top-right {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.gallery-bottom-left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.gallery-bottom-right {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* Zweiter Block: ein großes Bild */
+.history-gallery--single {
+  display: block;
+}
+
+.history-gallery--single img {
+  width: 100%;
+  height: clamp(380px, 42vw, 640px);
   object-fit: cover;
   object-position: center;
 }
@@ -219,10 +265,24 @@ const roomCount = allRooms.length;
 
   .history-gallery {
     grid-template-columns: 1fr;
+    grid-auto-rows: auto;
   }
 
   .history-gallery img {
     height: 64vw;
   }
+
+  .gallery-top-left,
+  .gallery-top-right,
+  .gallery-bottom-left,
+  .gallery-bottom-right {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .history-gallery--single img {
+    height: 64vw;
+  }
 }
+
 </style>
