@@ -140,49 +140,45 @@ const roomCount = allRooms.length;
 </Layout>
 
 <style>
-
 /* Sections */
-
-.haus-history {
+.haus-history.section {
   padding-block: 0;
 }
 
 .haus-history--intro {
-  padding-top: clamp(3rem, 5vw, 5rem);
+  padding-top: clamp(2.25rem, 4vw, 3.5rem);
 }
 
 .haus-history--garden {
-  padding-top: clamp(3.25rem, 5.5vw, 5.5rem);
+  padding-top: clamp(2.5rem, 4.5vw, 4rem);
 }
 
 .haus-history--architect {
-  padding-top: clamp(3.5rem, 6vw, 6rem);
-  padding-bottom: clamp(4rem, 7vw, 7rem);
+  padding-top: clamp(2.75rem, 5vw, 4.5rem);
+  padding-bottom: clamp(3rem, 5vw, 5rem);
 }
 
 /* Layout */
-
 .history-grid {
   display: grid;
-  align-items: center;
-  gap: clamp(2.25rem, 4vw, 4.5rem);
+  gap: clamp(2rem, 3.2vw, 3.5rem);
+  align-items: start;
 }
 
 .history-grid--intro {
-  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
 }
 
 .history-grid--garden {
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+  align-items: center;
 }
 
 .history-grid--architect {
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  align-items: start;
 }
 
 /* Text */
-
 .history-text {
   display: flex;
   flex-direction: column;
@@ -190,21 +186,21 @@ const roomCount = allRooms.length;
 }
 
 .history-text--intro {
-  align-self: start;
-  padding-top: clamp(0.5rem, 2vw, 1.5rem);
+  max-width: 33rem;
+  padding-top: 0.5rem;
 }
 
 .history-text--garden {
-  max-width: 48ch;
+  max-width: 31rem;
 }
 
 .history-text--architect {
-  max-width: 56ch;
+  max-width: 35rem;
 }
 
 .middle-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(1.9rem, 3.1vw, 2.65rem);
+  font-size: clamp(1.95rem, 3vw, 2.7rem);
   font-weight: 300;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -215,13 +211,12 @@ const roomCount = allRooms.length;
 
 .middle-body {
   font-size: 0.95rem;
-  line-height: 1.7;
+  line-height: 1.72;
   color: var(--muted);
   margin: 0;
 }
 
-/* Images shared */
-
+/* Shared image styles */
 .image-composition,
 .composition-image,
 .garden-image {
@@ -242,65 +237,59 @@ const roomCount = allRooms.length;
   object-fit: cover;
 }
 
-/* Block 1 collage */
-
+/* Block 1 collage - tighter */
 .image-composition--intro {
   position: relative;
-  height: clamp(360px, 39vw, 560px);
+  height: clamp(300px, 31vw, 430px);
 }
 
 .composition-image--hero {
   position: absolute;
   top: 0;
   right: 0;
-  width: 68%;
-  height: 82%;
+  width: 66%;
+  height: 92%;
   z-index: 1;
 }
 
 .composition-image--floating {
   position: absolute;
-  left: 13%;
-  bottom: 0;
-  width: 43%;
-  height: 40%;
+  left: 6%;
+  bottom: -0.25rem;
+  width: 34%;
+  height: 38%;
   z-index: 2;
-  border: 0.75rem solid var(--bg);
+  border: 0.65rem solid var(--bg);
 }
 
-.composition-image--hero img {
-  object-position: center;
-}
-
+.composition-image--hero img,
 .composition-image--floating img {
   object-position: center;
 }
 
-/* Block 2 large image */
-
+/* Block 2 */
 .garden-image {
   width: 100%;
-  height: clamp(330px, 34vw, 500px);
+  aspect-ratio: 1 / 1;
+  max-height: 420px;
 }
 
 .garden-image img {
   object-position: center;
 }
 
-/* Block 3 collage */
-
+/* Block 3 - compact collage */
 .image-composition--architect {
-  position: sticky;
-  top: 7rem;
-  height: clamp(520px, 54vw, 720px);
+  position: relative;
+  height: clamp(380px, 38vw, 520px);
 }
 
 .architect-image--main {
   position: absolute;
   top: 0;
   left: 0;
-  width: 82%;
-  height: 67%;
+  width: 74%;
+  height: 78%;
   z-index: 1;
 }
 
@@ -308,10 +297,10 @@ const roomCount = allRooms.length;
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 54%;
-  height: 36%;
+  width: 46%;
+  height: 34%;
   z-index: 2;
-  border: 0.75rem solid var(--bg);
+  border: 0.65rem solid var(--bg);
 }
 
 .architect-image--main img,
@@ -320,7 +309,6 @@ const roomCount = allRooms.length;
 }
 
 /* Responsive */
-
 @media (max-width: 900px) {
   .history-grid--intro,
   .history-grid--garden,
@@ -336,66 +324,77 @@ const roomCount = allRooms.length;
     order: 1;
   }
 
+  .history-text--intro,
   .history-text--garden,
   .history-text--architect {
     max-width: none;
   }
 
+  .image-composition--intro {
+    height: clamp(320px, 60vw, 460px);
+  }
+
   .image-composition--architect {
-    position: relative;
-    top: auto;
-    height: clamp(360px, 72vw, 580px);
+    height: clamp(340px, 62vw, 500px);
+  }
+
+  .garden-image {
+    max-height: none;
+    aspect-ratio: 4 / 3;
   }
 }
 
 @media (max-width: 600px) {
   .haus-history--intro {
-    padding-top: clamp(2.25rem, 9vw, 3.25rem);
+    padding-top: clamp(2rem, 8vw, 2.75rem);
   }
 
   .haus-history--garden,
   .haus-history--architect {
-    padding-top: clamp(2.75rem, 10vw, 4rem);
+    padding-top: clamp(2.25rem, 9vw, 3.25rem);
   }
 
   .history-grid {
-    gap: clamp(1.75rem, 7vw, 2.5rem);
+    gap: 1.5rem;
+  }
+
+  .middle-title {
+    font-size: clamp(1.9rem, 8vw, 2.5rem);
   }
 
   .image-composition--intro {
-    height: 108vw;
+    height: 90vw;
   }
 
   .composition-image--hero {
     width: 82%;
-    height: 67%;
+    height: 72%;
   }
 
   .composition-image--floating {
     left: 0;
-    width: 58%;
-    height: 34%;
-    border-width: 0.5rem;
+    width: 54%;
+    height: 30%;
+    border-width: 0.45rem;
   }
 
   .garden-image {
-    height: 68vw;
+    aspect-ratio: 1 / 1;
   }
 
   .image-composition--architect {
-    height: 105vw;
+    height: 88vw;
   }
 
   .architect-image--main {
-    width: 84%;
-    height: 66%;
+    width: 82%;
+    height: 72%;
   }
 
   .architect-image--side {
-    width: 58%;
-    height: 34%;
-    border-width: 0.5rem;
+    width: 54%;
+    height: 28%;
+    border-width: 0.45rem;
   }
 }
-
 </style>
