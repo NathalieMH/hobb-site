@@ -607,10 +607,38 @@ const spaceGroups = prefixesInOrder
   margin-bottom: 1rem;
 }
 .modal-title-row h3 { font-size: 1.6rem; font-weight: 300; flex: 1; }
-.room-facts { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem; }
-.room-facts li { display: flex; gap: 1rem; align-items: baseline; }
-.fact-label { font-family: var(--font-serif); font-size: 1rem; color: var(--muted); min-width: 8rem; }
-.fact-val { font-family: var(--font-serif); font-size: 1rem; }
+
+.room-facts {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.room-facts li {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.fact-label,
+.fact-val {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.45;
+}
+
+.fact-label {
+  color: var(--muted);
+  min-width: 8rem;
+}
+
+.fact-val {
+  color: var(--ink);
+}
+
 .modal-teaser { color: var(--muted); font-style: italic; font-size: 0.85rem; white-space: pre-line; margin-bottom: 0.75rem; }
 
 /* Gold "vergeben" badge — modal only */
