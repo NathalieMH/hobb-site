@@ -29,15 +29,17 @@ const roomCount = allRooms.length;
     <div class="container history-grid history-grid--intro">
 
       <div class="history-text history-text--intro" data-blend>
-        <h2 class="middle-title reveal">
-          EINE STADTVILLA<br> MIT GESCHICHTE
-        </h2>
+        <div class="intro-copy">
+          <h2 class="middle-title reveal">
+            EINE STADTVILLA<br> MIT GESCHICHTE
+          </h2>
 
-        <p class="middle-body reveal">
-          Unser Haus in der Haderslebener Straße 26 wurde ab 1924 von dem Architekten Leo Nachtlicht erbaut, der im Berliner Raum zu den bedeutendsten Architekten der Jahrhundertwende gehörte. 
-          Der damalige Garten wurde von dem ebenfalls bekannten Gartenarchitekten Ethik Pepinsky angelegt.
-          In den 1980er Jahren erfolgte ein moderner Anbau an die Stadtvilla.
-        </p>
+          <p class="middle-body reveal">
+            Unser Haus in der Haderslebener Straße 26 wurde ab 1924 von dem Architekten Leo Nachtlicht erbaut, der im Berliner Raum zu den bedeutendsten Architekten der Jahrhundertwende gehörte. 
+            Der damalige Garten wurde von dem ebenfalls bekannten Gartenarchitekten Ethik Pepinsky angelegt.
+            In den 1980er Jahren erfolgte ein moderner Anbau an die Stadtvilla.
+          </p>
+        </div>
 
         <figure class="intro-detail-card reveal" data-blend data-bd="140ms">
           <img src={`${base}das-haus/houseaesthetic.webp`} alt="Historisches Detail im Inneren der Stadtvilla" loading="lazy" decoding="async" />
@@ -118,13 +120,15 @@ const roomCount = allRooms.length;
           <img src={`${base}das-haus/houseaesthetic.webp`} alt="Historische Details im Inneren der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
 
-        <figure class="architect-gallery__image architect-gallery__image--small reveal">
-          <img src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
-        </figure>
+        <div class="architect-gallery__row">
+          <figure class="architect-gallery__image architect-gallery__image--small reveal">
+            <img src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
+          </figure>
 
-        <figure class="architect-gallery__image architect-gallery__image--small reveal">
-          <img src={`${base}das-haus/staircase.webp`} alt="Holzverkleidetes Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
-        </figure>
+          <figure class="architect-gallery__image architect-gallery__image--small reveal">
+            <img src={`${base}das-haus/staircase.webp`} alt="Holzverkleidetes Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
+          </figure>
+        </div>
       </div>
 
     </div>
@@ -157,22 +161,22 @@ const roomCount = allRooms.length;
 
 .history-grid {
   display: grid;
-  align-items: center;
   gap: clamp(2.25rem, 4vw, 4.5rem);
 }
 
 .history-grid--intro {
   grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
-  align-items: start;
+  align-items: end;
 }
 
 .history-grid--garden {
   grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  align-items: center;
 }
 
 .history-grid--architect {
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  align-items: start;
+  align-items: stretch;
 }
 
 /* Text */
@@ -184,8 +188,16 @@ const roomCount = allRooms.length;
 }
 
 .history-text--intro {
-  align-self: start;
-  padding-top: clamp(2.25rem, 5vw, 4.75rem);
+  align-self: end;
+  gap: clamp(2.6rem, 5vw, 4.75rem);
+  padding-top: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.intro-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 46ch;
 }
 
 .history-text--garden {
@@ -194,6 +206,7 @@ const roomCount = allRooms.length;
 
 .history-text--architect {
   max-width: 56ch;
+  align-self: stretch;
 }
 
 .middle-title {
@@ -266,14 +279,15 @@ figure {
 
 .intro-image-stage {
   position: relative;
-  min-height: clamp(470px, 48vw, 690px);
+  align-self: end;
+  height: clamp(470px, 48vw, 690px);
 }
 
 .intro-image-stage::before {
   content: "";
   position: absolute;
-  top: clamp(1rem, 2vw, 1.75rem);
   right: clamp(1rem, 2vw, 1.75rem);
+  bottom: clamp(1rem, 2vw, 1.75rem);
   width: 68%;
   height: 86%;
   border: 1px solid rgba(35, 29, 24, 0.16);
@@ -284,8 +298,8 @@ figure {
 
 .intro-main-image {
   position: absolute;
-  top: 0;
   right: 0;
+  bottom: 0;
   width: 78%;
   height: 92%;
   z-index: 1;
@@ -299,7 +313,6 @@ figure {
 .intro-detail-card {
   width: min(70%, 290px);
   aspect-ratio: 1.12 / 1;
-  margin-top: clamp(1.5rem, 3vw, 2.75rem);
   margin-left: clamp(2.5rem, 6vw, 5rem);
   box-shadow: 0 1.1rem 2.8rem rgba(35, 29, 24, 0.12);
 }
@@ -351,8 +364,15 @@ figure {
 /* Block 3 architect gallery */
 
 .architect-gallery {
-  position: sticky;
-  top: 7rem;
+  align-self: stretch;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: clamp(0.65rem, 1vw, 0.95rem);
+  height: 100%;
+  min-height: 100%;
+}
+
+.architect-gallery__row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: clamp(0.65rem, 1vw, 0.95rem);
@@ -363,8 +383,7 @@ figure {
 }
 
 .architect-gallery__image--main {
-  grid-column: 1 / -1;
-  height: clamp(300px, 30vw, 430px);
+  min-height: 0;
 }
 
 .architect-gallery__image--small {
@@ -375,11 +394,11 @@ figure {
   object-position: center;
 }
 
-.architect-gallery__image--small:first-of-type img {
+.architect-gallery__image--small:first-child img {
   object-position: center 25%;
 }
 
-.architect-gallery__image--small:last-of-type img {
+.architect-gallery__image--small:last-child img {
   object-position: center;
 }
 
@@ -411,6 +430,10 @@ figure {
     grid-template-columns: 1fr;
   }
 
+  .history-grid--intro {
+    align-items: start;
+  }
+
   .history-grid--garden .garden-image-stage {
     order: 2;
   }
@@ -421,10 +444,12 @@ figure {
 
   .history-text--intro {
     padding-top: 0;
+    gap: clamp(1.75rem, 5vw, 2.75rem);
   }
 
   .history-text--garden,
-  .history-text--architect {
+  .history-text--architect,
+  .intro-copy {
     max-width: none;
   }
 
@@ -434,7 +459,7 @@ figure {
   }
 
   .intro-image-stage {
-    min-height: clamp(420px, 72vw, 620px);
+    height: clamp(420px, 72vw, 620px);
   }
 
   .intro-main-image {
@@ -443,8 +468,12 @@ figure {
   }
 
   .architect-gallery {
-    position: relative;
-    top: auto;
+    height: auto;
+    min-height: 0;
+  }
+
+  .architect-gallery__image--main {
+    height: clamp(300px, 55vw, 460px);
   }
 }
 
@@ -464,11 +493,10 @@ figure {
 
   .intro-detail-card {
     width: 66%;
-    margin-top: 1.35rem;
   }
 
   .intro-image-stage {
-    min-height: 112vw;
+    height: 112vw;
   }
 
   .intro-image-stage::before {
@@ -486,7 +514,8 @@ figure {
     height: 72vw;
   }
 
-  .architect-gallery {
+  .architect-gallery,
+  .architect-gallery__row {
     gap: 0.5rem;
   }
 
