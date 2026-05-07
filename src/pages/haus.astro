@@ -11,7 +11,7 @@ const roomCount = allRooms.length;
 
 <Layout title="Haderslebener 26 — Das Haus" noPadding={true}>
 
-  <!-- Hero -->
+  <!-- Hero bleibt unverändert -->
   <section class="subpage-hero" data-blend-move>
     <div class="hero-image-wrap">
       <img
@@ -29,29 +29,29 @@ const roomCount = allRooms.length;
     <div class="container history-grid history-grid--intro">
 
       <div class="history-text history-text--intro" data-blend>
+        <p class="section-kicker reveal">Das Haus</p>
+
         <h2 class="middle-title reveal">
-          EINE STADTVILLA<br> MIT GESCHICHTE
+          HISTORISCHE VILLA,<br> HEUTIGES WOHNEN
         </h2>
 
         <p class="middle-body reveal">
-          Unser Haus in der Haderslebener Straße 26 wurde ab 1924 von dem Architekten Leo Nachtlicht erbaut, der im Berliner Raum zu den bedeutendsten Architekten der Jahrhundertwende gehörte. 
-          Der damalige Garten wurde von dem ebenfalls bekannten Gartenarchitekten Ethik Pepinsky angelegt.
-          In den 1980er Jahren erfolgte ein moderner Anbau an die Stadtvilla.
+          Die Stadtvilla in der Haderslebener Straße 26 wurde ab 1924 nach Plänen des Berliner Architekten Leo Nachtlicht errichtet. Bis heute prägen klare Proportionen, originale Details und das geschwungene Treppenhaus den Charakter des Hauses.
+        </p>
+
+        <p class="middle-body reveal">
+          Schritt für Schritt wird die Villa behutsam modernisiert — mit zeitgemäßen Wohnungen und Zimmern für Studierende, ohne die besondere Atmosphäre des Hauses zu verlieren.
         </p>
       </div>
 
       <div class="image-composition image-composition--intro" data-blend data-bd="110ms">
         <figure class="composition-image composition-image--hero reveal">
-          <img src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
+          <img src={`${base}das-haus/staircase.webp`} alt="Originales Treppenhaus mit Holzverkleidung" loading="lazy" decoding="async" />
         </figure>
 
         <figure class="composition-image composition-image--floating reveal">
-          <img src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" />
+          <img src={`${base}das-haus/houseaesthetic.webp`} alt="Detailaufnahme historischer Ausstattung" loading="lazy" decoding="async" />
         </figure>
-
-        <!-- ausgeklammert -->
-        <!-- <img class="reveal" src={`${base}das-haus/vonoben.webp`} alt="Ansicht der Stadtvilla von oben" loading="lazy" decoding="async" /> -->
-        <!-- <img class="reveal" src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" /> -->
       </div>
 
     </div>
@@ -62,25 +62,22 @@ const roomCount = allRooms.length;
     <div class="container history-grid history-grid--garden">
 
       <figure class="garden-image reveal" data-blend data-bd="110ms">
-        <img src={`${base}das-haus/vonoben.webp`} alt="Ansicht der Stadtvilla von oben" loading="lazy" decoding="async" />
-
-        <!-- ausgeklammert -->
-        <!-- <img class="reveal" src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" /> -->
-        <!-- <img class="reveal" src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" /> -->
-        <!-- <img class="reveal" src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" /> -->
+        <img src={`${base}das-haus/vonoben.webp`} alt="Die Stadtvilla und der Garten aus der Vogelperspektive" loading="lazy" decoding="async" />
       </figure>
 
       <div class="history-text history-text--garden" data-blend>
+        <p class="section-kicker reveal">Lage & Garten</p>
+
         <h2 class="middle-title reveal">
-          DER GARTEN
+          RUHIG GELEGEN,<br> GROSSZÜGIG GEDACHT
         </h2>
 
         <p class="middle-body reveal">
-          Heute verbindet die Stadtvilla historische Architektur mit modernem studentischem Wohnen. Die erhaltenen Details des Hauses, der großzügige Garten und die ruhige Lage in Berlin Steglitz-Dahlem prägen den besonderen Charakter der Haderslebener Straße 26.
+          Der Garten ist ein zentraler Teil des Hauses: grün, ruhig und zurückgesetzt von der Straße. Er schafft Abstand zum Alltag und gibt der historischen Architektur Raum.
         </p>
 
         <p class="middle-body reveal">
-          Die Wohnungen und Zimmer werden Schritt für Schritt modernisiert und so gestaltet, dass sie zeitgemäßes Wohnen ermöglichen, ohne den ursprünglichen Charme des Hauses zu verlieren.
+          In Berlin Steglitz-Dahlem verbindet die Haderslebener 26 eine entspannte Wohnatmosphäre mit guter Anbindung — ideal für konzentriertes Lernen, kurze Wege und gemeinschaftliches Wohnen.
         </p>
       </div>
 
@@ -92,46 +89,37 @@ const roomCount = allRooms.length;
     <div class="container history-grid history-grid--architect">
 
       <div class="history-text history-text--architect" data-blend>
+        <p class="section-kicker reveal">Architektur</p>
+
         <h2 class="middle-title reveal">
-          DER ARCHITEKT
+          LEO NACHTLICHT<br> UND DIE H26
         </h2>
 
         <p class="middle-body reveal">
-          Leo Nachtlicht wurde 1872 in Bielitz, Schlesien, geboren. Nach seinem Architektur-Studium arbeitete er bei Bruno Möhring und betrieb ab 1904 ein eigenes Atelier in Berlin. 
-          Leo Nachtlicht entwarf und baute Landhäuser, Villen und deren 
-          Inneneinrichtungen, wie z.B. auch in der H26 ein schönes Holzzimmer und das geschwungene holzverkleidete Treppenhaus, die original erhalten sind.
+          Leo Nachtlicht zählt zu den prägenden Berliner Architekten der frühen Moderne. Er entwarf Villen, Landhäuser und Innenräume mit besonderem Gespür für Material, Handwerk und räumliche Wirkung.
         </p>
 
         <p class="middle-body reveal">
-          Zu Nachtlichts bedeutendsten Gebäuden zählt neben dem Ausstellungsgebäude der Berliner Secession vor allem auch der Gourmenia-Palast, dem Vorläufer des heutigen BIKINI BERLIN am Zoo. 
-          Als besondere Attraktion wurde im rückwärtigen Teil des Gebäudes, 
-          direkt am Berliner Zoo, das dreigeschossige Weinrestaurant „Traube“ mit einem subtropischen Garten mit Bäumen und großblättrigen Pflanzen, Blumen und bunten Vögeln errichtet. 
+          In der Haderslebener 26 sind bis heute Elemente dieser Haltung sichtbar: Holz, Licht, Proportion und Bewegung verbinden sich zu einem Haus, das nicht nur funktional, sondern atmosphärisch gedacht ist.
         </p>
 
         <p class="middle-body reveal">
-          Der Gourmenia-Palast gehörte zu den größten Gaststätten, die Ende der zwanziger Jahre eröffnet wurden. Nach nur wenigen Betriebsjahren wurde das Gebäude im Zweiten Weltkrieg allerdings völlig zerstört.
-          <br><br>
-          Ab 1933 wurde Leo Nachtlicht als Jude die Arbeitserlaubnis entzogen. Am 22.09.1942 starb er, wahrscheinlich an den Folgen eines Selbstmordversuchs,
-          und wurde auf dem jüdischen Friedhof Berlin-Weißensee bestattet.
-          <br><br>
-          Textquellen:
-          <br>
-          Text auszugsweise aus openpr.de „BIKINI BERLIN - Hommage an Leo Nachtlicht“ und stolpersteine-berlin/Leo Nachtlicht
+          Die Geschichte des Architekten ist zugleich Teil der Berliner Geschichte. Ab 1933 wurde Nachtlicht als Jude die Arbeitserlaubnis entzogen. Er starb 1942 und wurde auf dem Jüdischen Friedhof Berlin-Weißensee bestattet.
+        </p>
+
+        <p class="source-note reveal">
+          Quellenhinweis: Textgrundlage u. a. openPR „BIKINI BERLIN — Hommage an Leo Nachtlicht“ sowie stolpersteine-berlin.de.
         </p>
       </div>
 
       <div class="image-composition image-composition--architect" data-blend data-bd="110ms">
         <figure class="composition-image architect-image--main reveal">
-          <img src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" />
+          <img src={`${base}das-haus/houseaesthetic.webp`} alt="Historisches Detail im Innenraum der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
 
         <figure class="composition-image architect-image--side reveal">
-          <img src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
+          <img src={`${base}das-haus/Aussenansicht.webp`} alt="Außenansicht der Stadtvilla Haderslebener 26" loading="lazy" decoding="async" />
         </figure>
-
-        <!-- ausgeklammert -->
-        <!-- <img class="reveal" src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" /> -->
-        <!-- <img class="reveal" src={`${base}das-haus/vonoben.webp`} alt="Ansicht der Stadtvilla von oben" loading="lazy" decoding="async" /> -->
       </div>
 
     </div>
@@ -141,7 +129,7 @@ const roomCount = allRooms.length;
 
 <style>
 
-/* Sections */
+/* Sections — Abstände bleiben im Prinzip wie bisher */
 
 .haus-history {
   padding-block: 0;
@@ -202,6 +190,15 @@ const roomCount = allRooms.length;
   max-width: 56ch;
 }
 
+.section-kicker {
+  font-size: 0.72rem;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.15rem;
+}
+
 .middle-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.9rem, 3.1vw, 2.65rem);
@@ -218,6 +215,14 @@ const roomCount = allRooms.length;
   line-height: 1.7;
   color: var(--muted);
   margin: 0;
+}
+
+.source-note {
+  max-width: 54ch;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--muted) 78%, transparent);
+  margin: 0.35rem 0 0;
 }
 
 /* Images shared */
@@ -240,6 +245,14 @@ const roomCount = allRooms.length;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(1.01);
+}
+
+/* dezente, moderne Bildsprache */
+
+.composition-image,
+.garden-image {
+  box-shadow: 0 1.5rem 4rem rgba(30, 25, 20, 0.08);
 }
 
 /* Block 1 collage */
@@ -269,11 +282,11 @@ const roomCount = allRooms.length;
 }
 
 .composition-image--hero img {
-  object-position: center;
+  object-position: center 54%;
 }
 
 .composition-image--floating img {
-  object-position: center;
+  object-position: center 48%;
 }
 
 /* Block 2 large image */
@@ -314,9 +327,12 @@ const roomCount = allRooms.length;
   border: 0.75rem solid var(--bg);
 }
 
-.architect-image--main img,
+.architect-image--main img {
+  object-position: center 45%;
+}
+
 .architect-image--side img {
-  object-position: center;
+  object-position: center 24%;
 }
 
 /* Responsive */
@@ -399,3 +415,4 @@ const roomCount = allRooms.length;
 }
 
 </style>
+
