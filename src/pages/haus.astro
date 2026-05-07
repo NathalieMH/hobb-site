@@ -153,7 +153,7 @@ const roomCount = allRooms.length;
 }
 
 .haus-history--architect {
-  padding-top: clamp(3.5rem, 6vw, 6rem);
+  padding-top: clamp(2rem, 3.5vw, 3.75rem);
   padding-bottom: clamp(4rem, 7vw, 7rem);
 }
 
@@ -176,7 +176,7 @@ const roomCount = allRooms.length;
 
 .history-grid--architect {
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  align-items: start;
+  align-items: stretch;
 }
 
 /* Text */
@@ -365,12 +365,12 @@ figure {
 /* Block 3 architect gallery */
 
 .architect-gallery {
-  align-self: start;
+  align-self: stretch;
   display: grid;
-  grid-template-rows: clamp(340px, 31vw, 470px) clamp(115px, 10vw, 155px);
+  grid-template-rows: minmax(0, 1fr) clamp(145px, 11vw, 185px);
   gap: clamp(0.65rem, 1vw, 0.95rem);
-  height: auto;
-  max-height: none;
+  height: 100%;
+  max-height: 100%;
   overflow: hidden;
 }
 
@@ -414,7 +414,7 @@ figure {
 .haus-history--architect::before {
   content: "";
   position: absolute;
-  top: clamp(1.5rem, 3vw, 2.5rem);
+  top: clamp(1.25rem, 2.5vw, 2rem);
   left: 0;
   right: 0;
   height: 1px;
