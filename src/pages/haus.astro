@@ -38,15 +38,15 @@ const roomCount = allRooms.length;
           Der damalige Garten wurde von dem ebenfalls bekannten Gartenarchitekten Ethik Pepinsky angelegt.
           In den 1980er Jahren erfolgte ein moderner Anbau an die Stadtvilla.
         </p>
+
+        <figure class="intro-detail-card reveal" data-blend data-bd="140ms">
+          <img src={`${base}das-haus/houseaesthetic.webp`} alt="Historisches Detail im Inneren der Stadtvilla" loading="lazy" decoding="async" />
+        </figure>
       </div>
 
-      <div class="image-composition image-composition--intro" data-blend data-bd="110ms">
-        <figure class="composition-image composition-image--intro-main reveal">
+      <div class="intro-image-stage" data-blend data-bd="110ms">
+        <figure class="intro-main-image reveal">
           <img src={`${base}das-haus/staircase.webp`} alt="Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
-        </figure>
-
-        <figure class="composition-image composition-image--intro-detail reveal">
-          <img src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
       </div>
 
@@ -57,16 +57,10 @@ const roomCount = allRooms.length;
   <section class="section haus-history haus-history--garden">
     <div class="container history-grid history-grid--garden">
 
-      <div class="garden-composition" data-blend data-bd="110ms">
-        <figure class="garden-image garden-image--main reveal">
-          <img src={`${base}das-haus/garten.webp`} alt="Garten der Stadtvilla" loading="lazy" decoding="async" />
-        </figure>
-
-        <!-- Fallback, falls du noch kein garten.webp hast:
+      <div class="garden-image-stage" data-blend data-bd="110ms">
         <figure class="garden-image garden-image--main reveal">
           <img src={`${base}das-haus/Aussenansicht.webp`} alt="Garten und Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
-        -->
       </div>
 
       <div class="history-text history-text--garden" data-blend>
@@ -169,6 +163,7 @@ const roomCount = allRooms.length;
 
 .history-grid--intro {
   grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  align-items: start;
 }
 
 .history-grid--garden {
@@ -190,7 +185,7 @@ const roomCount = allRooms.length;
 
 .history-text--intro {
   align-self: start;
-  padding-top: clamp(0.5rem, 2vw, 1.5rem);
+  padding-top: clamp(2.25rem, 5vw, 4.75rem);
 }
 
 .history-text--garden {
@@ -219,25 +214,36 @@ const roomCount = allRooms.length;
   margin: 0;
 }
 
-/* Images shared */
+/* Shared image styling */
 
-.image-composition,
-.composition-image,
-.garden-composition,
-.garden-image,
-.architect-gallery,
-.architect-gallery__image {
+figure {
   margin: 0;
 }
 
-.composition-image,
+.intro-detail-card,
+.intro-main-image,
 .garden-image,
 .architect-gallery__image {
+  position: relative;
   overflow: hidden;
   background: var(--bg);
+  isolation: isolate;
 }
 
-.composition-image img,
+.intro-detail-card::after,
+.intro-main-image::after,
+.garden-image::after,
+.architect-gallery__image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(35, 29, 24, 0.12);
+}
+
+.intro-detail-card img,
+.intro-main-image img,
 .garden-image img,
 .architect-gallery__image img {
   display: block;
@@ -248,53 +254,88 @@ const roomCount = allRooms.length;
 }
 
 @media (hover: hover) {
-  .composition-image:hover img,
+  .intro-detail-card:hover img,
+  .intro-main-image:hover img,
   .garden-image:hover img,
   .architect-gallery__image:hover img {
     transform: scale(1.035);
   }
 }
 
-/* Block 1 editorial image composition */
+/* Block 1 */
 
-.image-composition--intro {
+.intro-image-stage {
   position: relative;
-  min-height: clamp(430px, 44vw, 650px);
+  min-height: clamp(470px, 48vw, 690px);
 }
 
-.composition-image--intro-main {
+.intro-image-stage::before {
+  content: "";
+  position: absolute;
+  top: clamp(1rem, 2vw, 1.75rem);
+  right: clamp(1rem, 2vw, 1.75rem);
+  width: 68%;
+  height: 86%;
+  border: 1px solid rgba(35, 29, 24, 0.16);
+  transform: translate(1rem, 1rem);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.intro-main-image {
   position: absolute;
   top: 0;
   right: 0;
-  width: 70%;
-  height: 88%;
+  width: 78%;
+  height: 92%;
   z-index: 1;
-  box-shadow: 0 1.4rem 3.5rem rgba(35, 29, 24, 0.12);
+  box-shadow: 0 1.5rem 4rem rgba(35, 29, 24, 0.13);
 }
 
-.composition-image--intro-detail {
-  position: absolute;
-  left: 4%;
-  bottom: 0;
-  width: 43%;
-  height: 36%;
-  z-index: 2;
-  border: 0.75rem solid var(--bg);
-  box-shadow: 0 1.2rem 2.8rem rgba(35, 29, 24, 0.14);
-}
-
-.composition-image--intro-main img {
+.intro-main-image img {
   object-position: center;
 }
 
-.composition-image--intro-detail img {
+.intro-detail-card {
+  width: min(70%, 290px);
+  aspect-ratio: 1.12 / 1;
+  margin-top: clamp(1.5rem, 3vw, 2.75rem);
+  margin-left: clamp(2.5rem, 6vw, 5rem);
+  box-shadow: 0 1.1rem 2.8rem rgba(35, 29, 24, 0.12);
+}
+
+.intro-detail-card::before {
+  content: "";
+  position: absolute;
+  inset: auto auto -0.65rem -0.65rem;
+  width: 42%;
+  height: 42%;
+  border-left: 1px solid rgba(35, 29, 24, 0.2);
+  border-bottom: 1px solid rgba(35, 29, 24, 0.2);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.intro-detail-card img {
   object-position: center;
 }
 
 /* Block 2 garden */
 
-.garden-composition {
+.garden-image-stage {
   position: relative;
+}
+
+.garden-image-stage::before {
+  content: "";
+  position: absolute;
+  inset: clamp(1rem, 2vw, 1.5rem) auto auto clamp(1rem, 2vw, 1.5rem);
+  width: 42%;
+  height: 42%;
+  border-top: 1px solid rgba(35, 29, 24, 0.17);
+  border-left: 1px solid rgba(35, 29, 24, 0.17);
+  z-index: 3;
+  pointer-events: none;
 }
 
 .garden-image--main {
@@ -304,7 +345,7 @@ const roomCount = allRooms.length;
 }
 
 .garden-image--main img {
-  object-position: center;
+  object-position: center 28%;
 }
 
 /* Block 3 architect gallery */
@@ -342,7 +383,7 @@ const roomCount = allRooms.length;
   object-position: center;
 }
 
-/* Optional refinement lines */
+/* Section separators */
 
 .haus-history--garden,
 .haus-history--architect {
@@ -370,7 +411,7 @@ const roomCount = allRooms.length;
     grid-template-columns: 1fr;
   }
 
-  .history-grid--garden .garden-composition {
+  .history-grid--garden .garden-image-stage {
     order: 2;
   }
 
@@ -378,13 +419,27 @@ const roomCount = allRooms.length;
     order: 1;
   }
 
+  .history-text--intro {
+    padding-top: 0;
+  }
+
   .history-text--garden,
   .history-text--architect {
     max-width: none;
   }
 
-  .image-composition--intro {
+  .intro-detail-card {
+    width: min(58%, 300px);
+    margin-left: 0;
+  }
+
+  .intro-image-stage {
     min-height: clamp(420px, 72vw, 620px);
+  }
+
+  .intro-main-image {
+    width: 86%;
+    height: 92%;
   }
 
   .architect-gallery {
@@ -407,20 +462,24 @@ const roomCount = allRooms.length;
     gap: clamp(1.75rem, 7vw, 2.5rem);
   }
 
-  .image-composition--intro {
+  .intro-detail-card {
+    width: 66%;
+    margin-top: 1.35rem;
+  }
+
+  .intro-image-stage {
     min-height: 112vw;
   }
 
-  .composition-image--intro-main {
-    width: 82%;
-    height: 68%;
+  .intro-image-stage::before {
+    width: 75%;
+    height: 82%;
+    transform: translate(0.6rem, 0.6rem);
   }
 
-  .composition-image--intro-detail {
-    left: 0;
-    width: 58%;
-    height: 34%;
-    border-width: 0.5rem;
+  .intro-main-image {
+    width: 88%;
+    height: 88%;
   }
 
   .garden-image--main {
