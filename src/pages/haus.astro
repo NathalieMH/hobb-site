@@ -25,8 +25,8 @@ const roomCount = allRooms.length;
   </section>
 
   <!-- History block 1: text left | images right -->
-  <section class="haus-history">
-    <div class="history-grid">
+  <section class="section haus-history">
+    <div class="container history-grid">
 
       <div class="history-text" data-blend>
         <h2 class="middle-title reveal">
@@ -56,8 +56,8 @@ const roomCount = allRooms.length;
   </section>
 
   <!-- History block 2: images left | text right -->
-  <section class="haus-history haus-history--second">
-    <div class="history-grid history-grid--reverse">
+  <section class="section haus-history haus-history--second">
+    <div class="container history-grid history-grid--reverse">
 
       <div class="history-gallery history-gallery--single" data-blend data-bd="110ms">
         <img class="reveal" src={`${base}das-haus/houseaesthetic.webp`} alt="Innenansicht der Stadtvilla" loading="lazy" decoding="async" />
@@ -86,8 +86,8 @@ const roomCount = allRooms.length;
   </section>
 
   <!-- History block 3: text left | images right -->
-  <section class="haus-history haus-history--third">
-    <div class="history-grid">
+  <section class="section haus-history haus-history--third">
+    <div class="container history-grid">
 
       <div class="history-text" data-blend>
         <h2 class="middle-title reveal">
@@ -137,24 +137,19 @@ const roomCount = allRooms.length;
 
 <style>
 
-/* ── Shared horizontal padding ── */
-
-.haus-history {
-  padding-inline: clamp(2rem, 8vw, 5rem);
-}
-
 /* ── History sections ── */
+
 .haus-history {
   padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: 0;
 }
 
-.haus-history--second {
-  padding-top: clamp(2rem, 4vw, 3.5rem);
-}
-
+.haus-history--second,
 .haus-history--third {
   padding-top: clamp(2rem, 4vw, 3.5rem);
 }
+
+/* ── Grid layout ── */
 
 .history-grid {
   display: grid;
@@ -166,6 +161,8 @@ const roomCount = allRooms.length;
 .history-grid--reverse {
   grid-template-columns: 1.15fr 1fr;
 }
+
+/* ── Text ── */
 
 .history-text {
   display: flex;
@@ -191,7 +188,8 @@ const roomCount = allRooms.length;
   margin: 0;
 }
 
-/* Image gallery */
+/* ── Image gallery ── */
+
 .history-gallery {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -209,6 +207,7 @@ const roomCount = allRooms.length;
 }
 
 /* Positionen für ausgewählte Bilder */
+
 .gallery-top-left {
   grid-column: 1;
   grid-row: 1;
@@ -230,6 +229,7 @@ const roomCount = allRooms.length;
 }
 
 /* Zweiter Block: ein großes Bild */
+
 .history-gallery--single {
   display: block;
 }
@@ -242,6 +242,7 @@ const roomCount = allRooms.length;
 }
 
 /* ── Responsive ── */
+
 @media (max-width: 900px) {
   .history-grid,
   .history-grid--reverse {
@@ -258,11 +259,6 @@ const roomCount = allRooms.length;
 }
 
 @media (max-width: 600px) {
-  .haus-history,
-  .haus-facts-section {
-    padding-inline: clamp(1.25rem, 6vw, 2rem);
-  }
-
   .history-gallery {
     grid-template-columns: 1fr;
     grid-auto-rows: auto;
