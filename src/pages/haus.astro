@@ -290,6 +290,10 @@ figure {
   .architect-gallery__image:hover img {
     transform: scale(1.035);
   }
+
+  .architect-gallery__image--main:hover img {
+    transform: scale(1.16);
+  }
 }
 
 /* Block 1 */
@@ -384,7 +388,10 @@ figure {
 .architect-gallery {
   align-self: start;
   display: grid;
-  grid-template-rows: clamp(380px, 33vw, 515px) clamp(125px, 9vw, 160px);
+
+  /* Untere Bilder um ca. 1cm höher gemacht */
+  grid-template-rows: clamp(380px, 33vw, 515px) calc(clamp(125px, 9vw, 160px) + 1cm);
+
   gap: clamp(0.65rem, 1vw, 0.95rem);
   height: auto;
   max-height: none;
@@ -408,8 +415,10 @@ figure {
   height: 100%;
 }
 
+/* Oberes Bild stärker reingezoomt, damit der Frame komplett gefüllt wirkt */
 .architect-gallery__image--main img {
   object-position: center;
+  transform: scale(1.12);
 }
 
 .architect-gallery__image--small:first-child img {
@@ -502,7 +511,7 @@ figure {
   }
 
   .architect-gallery__image--small {
-    height: clamp(180px, 28vw, 260px);
+    height: calc(clamp(180px, 28vw, 260px) + 1cm);
   }
 }
 
@@ -548,7 +557,7 @@ figure {
   }
 
   .architect-gallery__image--small {
-    height: 38vw;
+    height: calc(38vw + 1cm);
   }
 }
 
