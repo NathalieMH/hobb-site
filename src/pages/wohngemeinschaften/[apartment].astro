@@ -301,9 +301,9 @@ const spaceGroups = prefixesInOrder
             </div>
             <ul class="room-facts">
               {d.size_m2 && <li><span class="fact-label" data-de>Größe</span><span class="fact-label" data-en>Size</span><span class="fact-val">{d.size_m2} m²</span></li>}
-              {d.kaltmiete_eur && <li><span class="fact-label" data-de>Kaltmiete</span><span class="fact-label" data-en>Rent (excl. utilities)</span><span class="fact-val">{d.kaltmiete_eur} €/Mo.</span></li>}
-              {d.nebenkosten_eur && <li><span class="fact-label" data-de>Nebenkosten</span><span class="fact-label" data-en>Utilities</span><span class="fact-val">{d.nebenkosten_eur} €/Mo.</span></li>}
-              {d.gesamtmiete_eur && <li><span class="fact-label" data-de>Gesamtmiete</span><span class="fact-label" data-en>Total rent</span><span class="fact-val">{d.gesamtmiete_eur} €/Mo.</span></li>}
+              {d.kaltmiete_eur && <li><span class="fact-label" data-de>Kaltmiete</span><span class="fact-label" data-en>Rent (excl. utilities)</span><span class="fact-val">{d.kaltmiete_eur} €/M</span></li>}
+              {d.nebenkosten_eur && <li><span class="fact-label" data-de>Nebenkosten</span><span class="fact-label" data-en>Utilities</span><span class="fact-val">{d.nebenkosten_eur} €/M</span></li>}
+              {d.gesamtmiete_eur && <li><span class="fact-label" data-de>Gesamtmiete</span><span class="fact-label" data-en>Total rent</span><span class="fact-val">{d.gesamtmiete_eur} €/M</span></li>}
               {d.available_from && <li><span class="fact-label" data-de>Verfügbar ab</span><span class="fact-label" data-en>Available from</span><span class="fact-val">{d.available_from}</span></li>}
               {apt?.data.shared_m2 && <li><span class="fact-label" data-de>Gemeinschaftsfläche</span><span class="fact-label" data-en>Communal area</span><span class="fact-val">ca. {apt.data.shared_m2} m²</span></li>}
             </ul>
@@ -617,9 +617,10 @@ const spaceGroups = prefixesInOrder
 }
 
 .room-facts li {
-  display: flex;
-  gap: 1rem;
-  align-items: baseline;
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  column-gap: 1rem;
+  align-items: center;
 }
 
 .fact-label,
@@ -627,12 +628,14 @@ const spaceGroups = prefixesInOrder
   font-family: var(--font-serif);
   font-size: 1rem;
   font-weight: 300;
-  line-height: 1.45;
+  line-height: 1.35;
+  letter-spacing: 0;
+  font-variant-numeric: lining-nums;
+  font-feature-settings: "lnum";
 }
 
 .fact-label {
   color: var(--muted);
-  min-width: 8rem;
 }
 
 .fact-val {
@@ -693,6 +696,10 @@ const spaceGroups = prefixesInOrder
   .modal-nav-prev, .modal-nav-next { display: none; }
   .modal-counter-overlay { opacity: 1; }
   .thumbs { display: none; }
+
+  .room-facts li {
+    grid-template-columns: 8rem 1fr;
+  }
 }
 </style>
 
