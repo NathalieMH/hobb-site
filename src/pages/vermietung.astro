@@ -12,6 +12,15 @@ const allApts  = await getCollection("apartments");
 
 const aptMap = Object.fromEntries(allApts.map(a => [a.id.replace(/\.[^.]+$/, '').toLowerCase(), a.data]));
 
+/*
+  Platzhalterbild für Fotos.
+  Lege dafür z. B. eine Datei hier ab:
+  /public/placeholder-room-photo.jpg
+
+  Später kannst du diesen Pfad einfach ersetzen oder pro Zimmer dynamisch machen.
+*/
+const photoPlaceholder = `${base}placeholder-room-photo.jpg`;
+
 async function findGrundriss(imageFolder: string | undefined): Promise<string> {
   if (!imageFolder) return '';
   const dir = path.resolve(process.cwd(), "public", "wohngemeinschaften", imageFolder);
@@ -96,6 +105,8 @@ const taken = allRooms
               const apt = aptMap[aptKey];
               const grundriss = grundrissMap[aptKey] ?? '';
               const hasFloorplan = !!grundriss;
+              const hasPhotos = !!photoPlaceholder;
+
               return (
                 <div class="room-row">
                   <div class="room-row-main">
@@ -103,29 +114,53 @@ const taken = allRooms
                       <span data-de>{r.data.title_de}</span>
                       <span data-en>{r.data.title_en}</span>
                     </a>
+
                     <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2} m²` : '—'}</span>
                     <span class="col-num room-num">{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
                     <span class="col-num room-num">{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
                     <span class="col-num room-num room-total">{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
-                    <button
-                      class={`floorplan-btn${hasFloorplan ? '' : ' fp-placeholder'}`}
-                      data-iz-open
-                      data-iz-src={grundriss}
-                      data-iz-title-de={apt?.title_de ?? ''}
-                      data-iz-title-en={apt?.title_en ?? ''}
-                      aria-label="Grundriss ansehen"
-                    >
-                      <span class="fp-icon" aria-hidden="true">
-                        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <rect x="1.5" y="1.5" width="15" height="15" stroke="currentColor" stroke-width="1.2"/>
-                          <rect x="1.5" y="1.5" width="9" height="8" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
-                          <rect x="10.5" y="1.5" width="6" height="5" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
-                          <rect x="1.5" y="9.5" width="6" height="7" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
-                        </svg>
-                      </span>
-                      <span class="fp-label" data-de>Grundriss</span>
-                      <span class="fp-label" data-en>Floorplan</span>
-                    </button>
+
+                    <div class="room-actions">
+                      <button
+                        class={`floorplan-btn${hasFloorplan ? '' : ' fp-placeholder'}`}
+                        data-iz-open
+                        data-iz-src={grundriss}
+                        data-iz-title-de={apt?.title_de ?? ''}
+                        data-iz-title-en={apt?.title_en ?? ''}
+                        aria-label="Grundriss ansehen"
+                      >
+                        <span class="fp-icon" aria-hidden="true">
+                          <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="1.5" y="1.5" width="15" height="15" stroke="currentColor" stroke-width="1.2"/>
+                            <rect x="1.5" y="1.5" width="9" height="8" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                            <rect x="10.5" y="1.5" width="6" height="5" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                            <rect x="1.5" y="9.5" width="6" height="7" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                          </svg>
+                        </span>
+                        <span class="fp-label" data-de>Grundriss</span>
+                        <span class="fp-label" data-en>Floorplan</span>
+                      </button>
+
+                      <button
+                        class={`floorplan-btn photos-btn${hasPhotos ? '' : ' fp-placeholder'}`}
+                        data-iz-open
+                        data-iz-src={photoPlaceholder}
+                        data-iz-title-de={`${r.data.title_de ?? apt?.title_de ?? ''} — Fotos`}
+                        data-iz-title-en={`${r.data.title_en ?? apt?.title_en ?? ''} — Photos`}
+                        aria-label="Fotos ansehen"
+                      >
+                        <span class="fp-icon" aria-hidden="true">
+                          <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6.2 4.2L7.3 2.8H10.7L11.8 4.2H14.5C15.1 4.2 15.6 4.7 15.6 5.3V14.1C15.6 14.7 15.1 15.2 14.5 15.2H3.5C2.9 15.2 2.4 14.7 2.4 14.1V5.3C2.4 4.7 2.9 4.2 3.5 4.2H6.2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+                            <circle cx="9" cy="9.8" r="3" stroke="currentColor" stroke-width="1.1"/>
+                            <circle cx="13.1" cy="6.6" r="0.45" fill="currentColor"/>
+                          </svg>
+                        </span>
+                        <span class="fp-label" data-de>Fotos</span>
+                        <span class="fp-label" data-en>Photos</span>
+                      </button>
+                    </div>
+
                     <span class="col-from room-from">{r.data.available_from ?? '—'}</span>
                   </div>
                   {r.data.teaser_de && <p class="room-teaser" data-de>{r.data.teaser_de}</p>}
@@ -148,6 +183,8 @@ const taken = allRooms
               const apt = aptMap[aptKey];
               const grundriss = grundrissMap[aptKey] ?? '';
               const hasFloorplan = !!grundriss;
+              const hasPhotos = !!photoPlaceholder;
+
               return (
                 <div class="room-row room-row-taken">
                   <div class="room-row-main">
@@ -155,29 +192,53 @@ const taken = allRooms
                       <span data-de>{r.data.title_de}</span>
                       <span data-en>{r.data.title_en}</span>
                     </a>
+
                     <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2} m²` : '—'}</span>
                     <span class="col-num room-num">{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
                     <span class="col-num room-num">{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
                     <span class="col-num room-num room-total">{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
-                    <button
-                      class={`floorplan-btn${hasFloorplan ? '' : ' fp-placeholder'}`}
-                      data-iz-open
-                      data-iz-src={grundriss}
-                      data-iz-title-de={apt?.title_de ?? ''}
-                      data-iz-title-en={apt?.title_en ?? ''}
-                      aria-label="Grundriss ansehen"
-                    >
-                      <span class="fp-icon" aria-hidden="true">
-                        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <rect x="1.5" y="1.5" width="15" height="15" stroke="currentColor" stroke-width="1.2"/>
-                          <rect x="1.5" y="1.5" width="9" height="8" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
-                          <rect x="10.5" y="1.5" width="6" height="5" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
-                          <rect x="1.5" y="9.5" width="6" height="7" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
-                        </svg>
-                      </span>
-                      <span class="fp-label" data-de>Grundriss</span>
-                      <span class="fp-label" data-en>Floorplan</span>
-                    </button>
+
+                    <div class="room-actions">
+                      <button
+                        class={`floorplan-btn${hasFloorplan ? '' : ' fp-placeholder'}`}
+                        data-iz-open
+                        data-iz-src={grundriss}
+                        data-iz-title-de={apt?.title_de ?? ''}
+                        data-iz-title-en={apt?.title_en ?? ''}
+                        aria-label="Grundriss ansehen"
+                      >
+                        <span class="fp-icon" aria-hidden="true">
+                          <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="1.5" y="1.5" width="15" height="15" stroke="currentColor" stroke-width="1.2"/>
+                            <rect x="1.5" y="1.5" width="9" height="8" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                            <rect x="10.5" y="1.5" width="6" height="5" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                            <rect x="1.5" y="9.5" width="6" height="7" stroke="currentColor" stroke-width="0.8" stroke-opacity="0.6"/>
+                          </svg>
+                        </span>
+                        <span class="fp-label" data-de>Grundriss</span>
+                        <span class="fp-label" data-en>Floorplan</span>
+                      </button>
+
+                      <button
+                        class={`floorplan-btn photos-btn${hasPhotos ? '' : ' fp-placeholder'}`}
+                        data-iz-open
+                        data-iz-src={photoPlaceholder}
+                        data-iz-title-de={`${r.data.title_de ?? apt?.title_de ?? ''} — Fotos`}
+                        data-iz-title-en={`${r.data.title_en ?? apt?.title_en ?? ''} — Photos`}
+                        aria-label="Fotos ansehen"
+                      >
+                        <span class="fp-icon" aria-hidden="true">
+                          <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6.2 4.2L7.3 2.8H10.7L11.8 4.2H14.5C15.1 4.2 15.6 4.7 15.6 5.3V14.1C15.6 14.7 15.1 15.2 14.5 15.2H3.5C2.9 15.2 2.4 14.7 2.4 14.1V5.3C2.4 4.7 2.9 4.2 3.5 4.2H6.2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+                            <circle cx="9" cy="9.8" r="3" stroke="currentColor" stroke-width="1.1"/>
+                            <circle cx="13.1" cy="6.6" r="0.45" fill="currentColor"/>
+                          </svg>
+                        </span>
+                        <span class="fp-label" data-de>Fotos</span>
+                        <span class="fp-label" data-en>Photos</span>
+                      </button>
+                    </div>
+
                     <span class="col-from room-from">—</span>
                   </div>
                 </div>
@@ -270,31 +331,45 @@ const taken = allRooms
 .taken-name { color: var(--muted); }
 .taken-name:hover { color: var(--muted); }
 
-/* Number columns */
+/* Number columns — angepasst wie "Verfügbar ab" */
 .room-num {
-  font-family: var(--font-serif);
-  font-size: 0.95rem;
-  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--muted);
   text-align: center;
+  letter-spacing: 0.03em;
 }
 .room-total { font-weight: 400; }
 
 .room-from {
+  font-family: var(--font-sans);
   font-size: 0.78rem;
+  font-weight: 400;
   color: var(--muted);
   text-align: center;
   letter-spacing: 0.03em;
 }
 
-/* Floorplan button */
+/* Button column */
+.room-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: center;
+  gap: 0.35rem;
+}
+
+/* Floorplan / Photos button */
 .floorplan-btn {
   background: none;
   border: 1px solid var(--border);
   padding: 0.3rem 0.6rem;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
-  justify-self: center;
+  width: 7.5rem;
   color: var(--muted);
   font-family: var(--font-sans);
   font-size: 0.62rem;
@@ -330,6 +405,7 @@ const taken = allRooms
   }
   .col-from, .room-from { display: none; }
 }
+
 @media (max-width: 620px) {
   /* Keep grid so header always aligns with data columns.
      Room name spans full width (row 1); numbers fill row 2. */
@@ -341,7 +417,17 @@ const taken = allRooms
   .room-name, .col-room {
     grid-column: 1 / -1;
   }
-  .room-num { font-size: 0.82rem; }
+  .room-num { font-size: 0.78rem; }
+
+  .room-actions {
+    gap: 0.3rem;
+  }
+
+  .floorplan-btn {
+    width: 5rem;
+    padding-inline: 0.45rem;
+  }
+
   .fp-label { display: none; }
 }
 </style>
