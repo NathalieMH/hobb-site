@@ -88,14 +88,14 @@ const WOHNUNG_1_OG_SPACE_ORDER = [
 ];
 
 const WOHNUNG_1_OG_SPACE_LABELS: Record<string, { de: string; en: string }> = {
-  "dining-room":  { de: "Wohn-Esszimmer",     en: "Living-Dining Room" },
-  "balcony":      { de: "Balkon 1.OG",        en: "Balcony 1st Floor" },
-  "kitchen":      { de: "Küche 1.OG",         en: "Kitchen 1st Floor" },
-  "bathroom1":    { de: "Bad 1 - 1.OG",       en: "Bathroom 1 - 1st Floor" },
-  "bathroom2":    { de: "Bad 2 - 1.OG",       en: "Bathroom 2 - 1st Floor" },
-  "grundriss":    { de: "Grundriss",          en: "Floor Plan" },
-  "digital-lock": { de: "Digitales Schloss",  en: "Digital Lock" },
-  "laundry":      { de: "Laundry (2.OG)",     en: "Laundry (2nd Floor)" },
+  "dining-room":  { de: "Wohn-Esszimmer",      en: "Living-Dining Room" },
+  "balcony":      { de: "Balkon · 1. OG",      en: "Balcony · 1st Floor" },
+  "kitchen":      { de: "Küche · 1. OG",       en: "Kitchen · 1st Floor" },
+  "bathroom1":    { de: "Bad 1 · 1. OG",       en: "Bathroom 1 · 1st Floor" },
+  "bathroom2":    { de: "Bad 2 · 1. OG",       en: "Bathroom 2 · 1st Floor" },
+  "grundriss":    { de: "Grundriss",           en: "Floor Plan" },
+  "digital-lock": { de: "Digitales Schloss",   en: "Digital Lock" },
+  "laundry":      { de: "Laundry · 2. OG",     en: "Laundry · 2nd Floor" },
 };
 
 function roomSortIndex(room: any) {
@@ -203,7 +203,6 @@ const spaceLabelMap = isWohnung1OG
     }
   : frontmatterSpaceLabelMap;
 
-// Wichtig:
 // Für Wohnung 1. OG werden alle gewünschten Kacheln angezeigt,
 // auch wenn keine Bilder vorhanden sind.
 // Für andere Wohnungen bleibt das alte Verhalten erhalten.
