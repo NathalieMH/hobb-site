@@ -88,14 +88,14 @@ const WOHNUNG_1_OG_SPACE_ORDER = [
 ];
 
 const WOHNUNG_1_OG_SPACE_LABELS: Record<string, { de: string; en: string }> = {
-  "dining-room":  { de: "Wohn-Esszimmer",       en: "Living-Dining Room" },
-  "balcony":      { de: "Balkon 1.OG",          en: "Balcony 1st Floor" },
-  "kitchen":      { de: "Küche 1.OG",           en: "Kitchen 1st Floor" },
-  "bathroom1":    { de: "Bad 1 - 1.OG",         en: "Bathroom 1 - 1st Floor" },
-  "bathroom2":    { de: "Bad 2 - 1.OG",         en: "Bathroom 2 - 1st Floor" },
-  "grundriss":    { de: "Grundriss",            en: "Floor Plan" },
-  "digital-lock": { de: "Digitales Schloss",    en: "Digital Lock" },
-  "laundry":      { de: "Laundry (2.OG)",       en: "Laundry (2nd Floor)" },
+  "dining-room":  { de: "Wohn-Esszimmer",     en: "Living-Dining Room" },
+  "balcony":      { de: "Balkon 1.OG",        en: "Balcony 1st Floor" },
+  "kitchen":      { de: "Küche 1.OG",         en: "Kitchen 1st Floor" },
+  "bathroom1":    { de: "Bad 1 - 1.OG",       en: "Bathroom 1 - 1st Floor" },
+  "bathroom2":    { de: "Bad 2 - 1.OG",       en: "Bathroom 2 - 1st Floor" },
+  "grundriss":    { de: "Grundriss",          en: "Floor Plan" },
+  "digital-lock": { de: "Digitales Schloss",  en: "Digital Lock" },
+  "laundry":      { de: "Laundry (2.OG)",     en: "Laundry (2nd Floor)" },
 };
 
 function roomSortIndex(room: any) {
@@ -203,27 +203,32 @@ const spaceLabelMap = isWohnung1OG
     }
   : frontmatterSpaceLabelMap;
 
-const prefixesInOrder = spaceOrder.filter((p: string) => grouped[p]);
+// Wichtig:
+// Für Wohnung 1. OG werden alle gewünschten Kacheln angezeigt,
+// auch wenn keine Bilder vorhanden sind.
+// Für andere Wohnungen bleibt das alte Verhalten erhalten.
+const prefixesInOrder = isWohnung1OG
+  ? spaceOrder
+  : spaceOrder.filter((p: string) => grouped[p]);
 
-const spaceGroups = prefixesInOrder
-  .filter((prefix) => (grouped[prefix]?.length ?? 0) > 0)
-  .map((prefix) => {
-    const images = grouped[prefix];
-    const labels = spaceLabelMap[prefix] ?? PREFIX_MAP[prefix] ?? { de: prefix, en: prefix };
-    const cover =
-      images.find((url) => {
-        const base = (url.split("/").pop() ?? "").replace(/\.[^.]+$/, "");
-        return base.endsWith("-cover");
-      }) ?? images[0];
+const spaceGroups = prefixesInOrder.map((prefix) => {
+  const images = grouped[prefix] ?? [];
+  const labels = spaceLabelMap[prefix] ?? PREFIX_MAP[prefix] ?? { de: prefix, en: prefix };
 
-    return {
-      prefix,
-      titleDe: labels.de,
-      titleEn: labels.en,
-      cover,
-      images,
-    };
-  });
+  const cover =
+    images.find((url) => {
+      const base = (url.split("/").pop() ?? "").replace(/\.[^.]+$/, "");
+      return base.endsWith("-cover");
+    }) ?? images[0] ?? null;
+
+  return {
+    prefix,
+    titleDe: labels.de,
+    titleEn: labels.en,
+    cover,
+    images,
+  };
+});
 ---
 
 <Layout title={`Haderslebener 26 — ${apt?.data.title_de ?? "Wohngemeinschaft"}`}>
@@ -316,12 +321,15 @@ const spaceGroups = prefixesInOrder
             return (
               <button
                 class="room-card floorplan-card"
-                data-iz-open
-                data-iz-src={cover}
+                data-iz-open={cover ? true : undefined}
+                data-iz-src={cover ?? undefined}
                 aria-label={titleDe}
               >
                 <div class="room-img-wrap">
-                  <img src={cover} alt={titleDe} loading="lazy" decoding="async" />
+                  {cover
+                    ? <img src={cover} alt={titleDe} loading="lazy" decoding="async" />
+                    : <div class="room-placeholder" />
+                  }
                 </div>
                 <div class="room-meta">
                   <span class="room-title" data-de>{titleDe}</span>
@@ -338,7 +346,10 @@ const spaceGroups = prefixesInOrder
               aria-label={titleDe}
             >
               <div class="room-img-wrap">
-                <img src={cover} alt={titleDe} loading="lazy" decoding="async" />
+                {cover
+                  ? <img src={cover} alt={titleDe} loading="lazy" decoding="async" />
+                  : <div class="room-placeholder" />
+                }
               </div>
               <div class="room-meta">
                 <span class="room-title" data-de>{titleDe}</span>
@@ -422,6 +433,8 @@ const spaceGroups = prefixesInOrder
   <!-- Space detail templates -->
   {spaceGroups.map(({ prefix, titleDe, titleEn, images }) => {
     const hasGallery = images.length > 1;
+    const firstImage = images[0] ?? null;
+
     return (
       <template id={`tpl-space-${prefix}`}>
         <article class="modal-content modal-content-space" data-images={JSON.stringify(images)}>
@@ -430,7 +443,10 @@ const spaceGroups = prefixesInOrder
               <h3><span data-de>{titleDe}</span><span data-en>{titleEn}</span></h3>
             </div>
             <div class="modal-img-wrap modal-img-wrap--zoomable">
-              <img class="modal-cover" src={images[0]} alt={titleDe} data-index="0" loading="lazy" decoding="async" />
+              {firstImage
+                ? <img class="modal-cover" src={firstImage} alt={titleDe} data-index="0" loading="lazy" decoding="async" />
+                : <div class="room-placeholder modal-cover" data-index="-1" />
+              }
               {hasGallery && <button class="nav prev modal-nav-prev" aria-label="Vorheriges Bild">‹</button>}
               {hasGallery && <button class="nav next modal-nav-next" aria-label="Nächstes Bild">›</button>}
               {hasGallery && <span class="modal-nav-counter modal-counter-overlay">{`1 / ${images.length}`}</span>}
@@ -862,6 +878,7 @@ const spaceGroups = prefixesInOrder
     const clone = tpl.content.cloneNode(true) as DocumentFragment;
     clone.querySelectorAll<HTMLImageElement>('img').forEach(img => {
       const src = img.getAttribute('src') ?? '';
+      if (!src) return;
       img.loading = 'eager';
       img.src = '';
       img.src = src;
