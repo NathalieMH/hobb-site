@@ -1,8 +1,8 @@
 ---
 title_de: "Wohnung 2. Obergeschoss"
 title_en: "Apartment 2nd Upper Floor"
-description_de: "Helle Altbauwohnung mit 4 Zimmern, Küche, Bad, separatem WC, schönem Wohn-Essbereich mit Balkonterrasse und Blick in den Garten."
-description_en: "Bright historic apartment with 4 rooms, a kitchen, a bathroom, a separate WC, and a comfortable living and dining area with a balcony terrace and garden views."
+description_de: "Helle Altbauwohnung mit 4 Zimmern, Küche, Bad, separatem WC, schönem Wohn-Essbereich mit Balkonterrasse und Blick in den Garten.\nGemeinschaftsfläche: ca. 87 m²"
+description_en: "Bright historic apartment with 4 rooms, a kitchen, a bathroom, a separate WC, and a comfortable living and dining area with a balcony terrace and garden views.\nShared area: approx. 87 m²"
 shared_spaces:
   - {prefix: dining-room, de: Wohn-Essbereich, en: Living-Dining Area}
   - {prefix: terrace, de: Balkonterrasse, en: Balcony Terrace}
