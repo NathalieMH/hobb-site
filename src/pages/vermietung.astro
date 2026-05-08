@@ -32,16 +32,29 @@ async function findGrundriss(imageFolder: string | undefined): Promise<string> {
 }
 
 const grundrissMap = Object.fromEntries(
-  await Promise.all(allApts.map(async (a) => [a.id.replace(/\.[^.]+$/, '').toLowerCase(), await findGrundriss(a.data.image_folder)]))
+  await Promise.all(
+    allApts.map(async (a) => [
+      a.id.replace(/\.[^.]+$/, '').toLowerCase(),
+      await findGrundriss(a.data.image_folder)
+    ])
+  )
 );
 
 const available = allRooms
   .filter(r => r.data.available)
-  .sort((a, b) => (aptMap[a.data.apartment.toLowerCase()]?.order ?? 0) - (aptMap[b.data.apartment.toLowerCase()]?.order ?? 0));
+  .sort(
+    (a, b) =>
+      (aptMap[a.data.apartment.toLowerCase()]?.order ?? 0) -
+      (aptMap[b.data.apartment.toLowerCase()]?.order ?? 0)
+  );
 
 const taken = allRooms
   .filter(r => !r.data.available)
-  .sort((a, b) => (aptMap[a.data.apartment.toLowerCase()]?.order ?? 0) - (aptMap[b.data.apartment.toLowerCase()]?.order ?? 0));
+  .sort(
+    (a, b) =>
+      (aptMap[a.data.apartment.toLowerCase()]?.order ?? 0) -
+      (aptMap[b.data.apartment.toLowerCase()]?.order ?? 0)
+  );
 ---
 
 <Layout title="Haderslebener 26 — Vermietung">
@@ -71,6 +84,7 @@ const taken = allRooms
         <a href="#">Nebenkostenpauschale-Klausel</a><br>
         <a href="#">Belegungs-Rotationsprinzip</a>
       </p>
+
       <p class="pricing-note" data-en>
         Utilities (electricity, water, heating, internet) are included in the rent — all-inclusive.<br>
         <br>
@@ -88,6 +102,7 @@ const taken = allRooms
         <div class="avail-group">
           <h2 class="group-heading" data-de>Verfügbare Zimmer</h2>
           <h2 class="group-heading" data-en>Available Rooms</h2>
+
           <div class="room-list">
             <div class="room-row row-header">
               <div class="room-row-main">
@@ -100,6 +115,7 @@ const taken = allRooms
                 <span class="col-from">Verfügbar ab</span>
               </div>
             </div>
+
             {available.map(r => {
               const aptKey = r.data.apartment.toLowerCase();
               const apt = aptMap[aptKey];
@@ -110,10 +126,20 @@ const taken = allRooms
               return (
                 <div class="room-row">
                   <div class="room-row-main">
-                    <a class="room-name" href={`${base}wohngemeinschaften/${aptKey}/`}>
-                      <span data-de>{r.data.title_de}</span>
-                      <span data-en>{r.data.title_en}</span>
-                    </a>
+                    <div class="room-meta">
+                      <a class="room-name" href={`${base}wohngemeinschaften/${aptKey}/`}>
+                        <span data-de>{r.data.title_de}</span>
+                        <span data-en>{r.data.title_en}</span>
+                      </a>
+
+                      <div class="room-teaser-wrap">
+                        {r.data.teaser_de && <p class="room-teaser" data-de>{r.data.teaser_de}</p>}
+                        {r.data.teaser_en && <p class="room-teaser" data-en>{r.data.teaser_en}</p>}
+                        {!r.data.teaser_de && !r.data.teaser_en && (
+                          <span class="room-teaser room-teaser-empty" aria-hidden="true"></span>
+                        )}
+                      </div>
+                    </div>
 
                     <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2} m²` : '—'}</span>
                     <span class="col-num room-num">{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
@@ -163,8 +189,6 @@ const taken = allRooms
 
                     <span class="col-from room-from">{r.data.available_from ?? '—'}</span>
                   </div>
-                  {r.data.teaser_de && <p class="room-teaser" data-de>{r.data.teaser_de}</p>}
-                  {r.data.teaser_en && <p class="room-teaser" data-en>{r.data.teaser_en}</p>}
                 </div>
               );
             })}
@@ -177,6 +201,7 @@ const taken = allRooms
           <DecoRule />
           <h2 class="group-heading taken-heading" data-de>Vergeben</h2>
           <h2 class="group-heading taken-heading" data-en>Currently Taken</h2>
+
           <div class="room-list taken-list">
             {taken.map(r => {
               const aptKey = r.data.apartment.toLowerCase();
@@ -188,10 +213,16 @@ const taken = allRooms
               return (
                 <div class="room-row room-row-taken">
                   <div class="room-row-main">
-                    <a class="room-name taken-name" href={`${base}wohngemeinschaften/${aptKey}/`}>
-                      <span data-de>{r.data.title_de}</span>
-                      <span data-en>{r.data.title_en}</span>
-                    </a>
+                    <div class="room-meta">
+                      <a class="room-name taken-name" href={`${base}wohngemeinschaften/${aptKey}/`}>
+                        <span data-de>{r.data.title_de}</span>
+                        <span data-en>{r.data.title_en}</span>
+                      </a>
+
+                      <div class="room-teaser-wrap">
+                        <span class="room-teaser room-teaser-empty" aria-hidden="true"></span>
+                      </div>
+                    </div>
 
                     <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2} m²` : '—'}</span>
                     <span class="col-num room-num">{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
@@ -270,8 +301,15 @@ const taken = allRooms
   background: rgba(184, 149, 42, 0.04);
 }
 
-.avail-group { display: flex; flex-direction: column; gap: 1rem; }
-.taken-group { gap: 1.25rem; }
+.avail-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.taken-group {
+  gap: 1.25rem;
+}
 
 .group-heading {
   font-size: clamp(0.85rem, 1.2vw, 1rem);
@@ -281,22 +319,32 @@ const taken = allRooms
   text-transform: uppercase;
   color: var(--muted);
 }
-.taken-heading { color: var(--border); }
 
-.room-list { display: flex; flex-direction: column; }
-.room-row {
-  border-top: 1px solid var(--border);
-  padding-block: 0.9rem;
+.taken-heading {
+  color: var(--border);
+}
+
+.room-list {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
 }
-.room-list .room-row:last-child { border-bottom: 1px solid var(--border); }
+
+.room-row {
+  --action-row-height: 1.75rem;
+  --action-row-gap: 0.35rem;
+
+  border-top: 1px solid var(--border);
+  padding-block: 0.9rem;
+}
+
+.room-list .room-row:last-child {
+  border-bottom: 1px solid var(--border);
+}
 
 .room-row-main {
   display: grid;
   grid-template-columns: 2fr 3.5rem 5.5rem 4rem 6rem 7.5rem 5.5rem;
-  align-items: center;
+  align-items: stretch;
   gap: 1rem;
 }
 
@@ -305,6 +353,11 @@ const taken = allRooms
   border-top: none;
   padding-block: 0 0.5rem;
 }
+
+.row-header .room-row-main {
+  align-items: center;
+}
+
 .row-header span {
   font-family: var(--font-sans);
   font-size: 0.6rem;
@@ -313,11 +366,27 @@ const taken = allRooms
   color: var(--muted);
   white-space: nowrap;
 }
-.col-num { text-align: center; }
-.col-fp  { text-align: center; }
-.col-from { text-align: center; }
 
-/* Room name — link to wohnung */
+.col-num {
+  text-align: center;
+}
+
+.col-fp {
+  text-align: center;
+}
+
+.col-from {
+  text-align: center;
+}
+
+/* Left side: room name + teaser aligned to Grundriss/Fotos */
+.room-meta {
+  display: grid;
+  grid-template-rows: var(--action-row-height) var(--action-row-height);
+  row-gap: var(--action-row-gap);
+  align-content: start;
+}
+
 .room-name {
   font-family: var(--font-serif);
   font-size: 1.05rem;
@@ -326,10 +395,42 @@ const taken = allRooms
   color: var(--ink);
   text-decoration: none;
   transition: color var(--ease);
+  display: flex;
+  align-items: center;
+  min-height: var(--action-row-height);
 }
-.room-name:hover { color: var(--gold); }
-.taken-name { color: var(--muted); }
-.taken-name:hover { color: var(--muted); }
+
+.room-name:hover {
+  color: var(--gold);
+}
+
+.taken-name {
+  color: var(--muted);
+}
+
+.taken-name:hover {
+  color: var(--muted);
+}
+
+.room-teaser-wrap {
+  display: flex;
+  align-items: center;
+  min-height: var(--action-row-height);
+}
+
+.room-teaser {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-style: italic;
+  max-width: 56ch;
+  display: flex;
+  align-items: center;
+}
+
+.room-teaser-empty {
+  visibility: hidden;
+}
 
 /* Number columns — angepasst wie "Verfügbar ab" */
 .room-num {
@@ -339,8 +440,16 @@ const taken = allRooms
   color: var(--muted);
   text-align: center;
   letter-spacing: 0.03em;
+
+  min-height: calc(var(--action-row-height) * 2 + var(--action-row-gap));
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.room-total { font-weight: 400; }
+
+.room-total {
+  font-weight: 400;
+}
 
 .room-from {
   font-family: var(--font-sans);
@@ -349,27 +458,34 @@ const taken = allRooms
   color: var(--muted);
   text-align: center;
   letter-spacing: 0.03em;
-}
 
-/* Button column */
-.room-actions {
+  min-height: calc(var(--action-row-height) * 2 + var(--action-row-gap));
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-self: center;
-  gap: 0.35rem;
+  justify-content: center;
 }
 
-/* Floorplan / Photos button */
+/* Buttons aligned as 2 rows */
+.room-actions {
+  display: grid;
+  grid-template-rows: var(--action-row-height) var(--action-row-height);
+  row-gap: var(--action-row-gap);
+  justify-self: center;
+  align-content: start;
+}
+
 .floorplan-btn {
   background: none;
   border: 1px solid var(--border);
   padding: 0.3rem 0.6rem;
+  height: var(--action-row-height);
+  width: 7.5rem;
+
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  width: 7.5rem;
+
   color: var(--muted);
   font-family: var(--font-sans);
   font-size: 0.62rem;
@@ -379,55 +495,94 @@ const taken = allRooms
   transition: border-color var(--ease), color var(--ease);
   white-space: nowrap;
 }
+
 .floorplan-btn:hover:not(.fp-placeholder) {
   border-color: var(--gold);
   color: var(--ink);
 }
-.fp-placeholder { opacity: 0.4; cursor: default; }
-.fp-icon { width: 14px; height: 14px; flex-shrink: 0; display: flex; }
-.fp-icon svg { width: 100%; height: 100%; }
 
-.room-row-taken .room-num,
-.room-row-taken .room-from { color: var(--muted); opacity: 0.5; }
-
-.room-teaser {
-  font-size: 0.82rem;
-  color: var(--muted);
-  font-style: italic;
-  max-width: 56ch;
+.fp-placeholder {
+  opacity: 0.4;
+  cursor: default;
 }
 
-.taken-list .room-row { opacity: 0.6; }
+.fp-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  display: flex;
+}
+
+.fp-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.room-row-taken .room-num,
+.room-row-taken .room-from {
+  color: var(--muted);
+  opacity: 0.5;
+}
+
+.taken-list .room-row {
+  opacity: 0.6;
+}
 
 @media (max-width: 780px) {
   .room-row-main {
     grid-template-columns: 2fr 3.5rem 5rem 3.5rem 5.5rem 7.5rem;
   }
-  .col-from, .room-from { display: none; }
+
+  .col-from,
+  .room-from {
+    display: none;
+  }
 }
 
 @media (max-width: 620px) {
-  /* Keep grid so header always aligns with data columns.
-     Room name spans full width (row 1); numbers fill row 2. */
+  .row-header {
+    display: none;
+  }
+
   .room-row-main {
-    grid-template-columns: 1fr 1fr 1fr 1.2fr 5rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     column-gap: 0.5rem;
-    row-gap: 0.35rem;
+    row-gap: 0.5rem;
   }
-  .room-name, .col-room {
+
+  .room-meta {
     grid-column: 1 / -1;
+    grid-template-rows: auto auto;
+    row-gap: 0.2rem;
   }
-  .room-num { font-size: 0.78rem; }
+
+  .room-name,
+  .room-teaser-wrap {
+    min-height: auto;
+  }
+
+  .room-num {
+    min-height: auto;
+    font-size: 0.78rem;
+  }
 
   .room-actions {
-    gap: 0.3rem;
+    grid-column: 1 / -1;
+    grid-template-rows: none;
+    grid-template-columns: auto auto;
+    gap: 0.35rem;
+    justify-self: start;
+    margin-top: 0.15rem;
   }
 
   .floorplan-btn {
-    width: 5rem;
+    width: auto;
+    min-width: 5rem;
     padding-inline: 0.45rem;
   }
 
-  .fp-label { display: none; }
+  .fp-label {
+    display: none;
+  }
 }
 </style>
