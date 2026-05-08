@@ -241,8 +241,8 @@ const taken = allRooms
                         data-photos-open
                         data-photo-src={photoCover}
                         data-photo-images={JSON.stringify(fotos)}
-                        data-photo-title-de={`${r.data.title_de ?? apt?.title_de ?? ''} — Fotos`}
-                        data-photo-title-en={`${r.data.title_en ?? apt?.title_en ?? ''} — Photos`}
+                        data-photo-title-de={r.data.title_de ?? apt?.title_de ?? ''}
+                        data-photo-title-en={r.data.title_en ?? apt?.title_en ?? ''}
                         aria-label="Fotos ansehen"
                       >
                         <span class="fp-icon" aria-hidden="true">
@@ -329,8 +329,8 @@ const taken = allRooms
                         data-photos-open
                         data-photo-src={photoCover}
                         data-photo-images={JSON.stringify(fotos)}
-                        data-photo-title-de={`${r.data.title_de ?? apt?.title_de ?? ''} — Fotos`}
-                        data-photo-title-en={`${r.data.title_en ?? apt?.title_en ?? ''} — Photos`}
+                        data-photo-title-de={r.data.title_de ?? apt?.title_de ?? ''}
+                        data-photo-title-en={r.data.title_en ?? apt?.title_en ?? ''}
                         aria-label="Fotos ansehen"
                       >
                         <span class="fp-icon" aria-hidden="true">
@@ -677,6 +677,9 @@ const taken = allRooms
     const src = button.getAttribute("data-photo-src") ?? "";
     const imagesRaw = button.getAttribute("data-photo-images") ?? "[]";
 
+    const titleDe = button.getAttribute("data-photo-title-de") ?? "";
+    const titleEn = button.getAttribute("data-photo-title-en") ?? "";
+
     let images: string[] = [];
 
     try {
@@ -692,7 +695,13 @@ const taken = allRooms
         detail: {
           src: src || images[0],
           images,
-          idx: 0
+          idx: 0,
+
+          titleDe,
+          titleEn,
+          title_de: titleDe,
+          title_en: titleEn,
+          title: titleDe
         }
       })
     );
