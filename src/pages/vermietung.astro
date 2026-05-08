@@ -7,28 +7,69 @@ import path from "path";
 
 const base = import.meta.env.BASE_URL;
 
+function entrySlug(id: string) {
+  return id.replace(/\.[^.]+$/, '').toLowerCase();
+}
+
+async function loadImages(folder: string) {
+  const dir = path.resolve(process.cwd(), "public", folder);
+
+  try {
+    const files = await fs.readdir(dir);
+
+    const sortKey = (f: string) => {
+      const stem = f.replace(/\.[^.]+$/, '');
+      const us = stem.indexOf('_');
+      return us >= 0 ? stem.slice(us + 1) : stem;
+    };
+
+    return files
+      .filter((f) => /\.(jpe?g|png|webp|gif)$/i.test(f))
+      .sort((a, b) => {
+        const ka = sortKey(a).toLowerCase();
+        const kb = sortKey(b).toLowerCase();
+
+        if (ka === 'cover') return -1;
+        if (kb === 'cover') return 1;
+
+        return ka.localeCompare(kb, undefined, {
+          numeric: true,
+          sensitivity: 'base'
+        });
+      })
+      .map((f) => `${base}${folder}/${f}`);
+  } catch {
+    return [];
+  }
+}
+
 const allRooms = await getCollection("rooms");
 const allApts  = await getCollection("apartments");
 
-const aptMap = Object.fromEntries(allApts.map(a => [a.id.replace(/\.[^.]+$/, '').toLowerCase(), a.data]));
-
-/*
-  Platzhalterbild für Fotos.
-  Lege dafür z. B. eine Datei hier ab:
-  /public/placeholder-room-photo.jpg
-
-  Später kannst du diesen Pfad einfach ersetzen oder pro Zimmer dynamisch machen.
-*/
-const photoPlaceholder = `${base}placeholder-room-photo.jpg`;
+const aptMap = Object.fromEntries(
+  allApts.map(a => [
+    a.id.replace(/\.[^.]+$/, '').toLowerCase(),
+    a.data
+  ])
+);
 
 async function findGrundriss(imageFolder: string | undefined): Promise<string> {
   if (!imageFolder) return '';
-  const dir = path.resolve(process.cwd(), "public", "wohngemeinschaften", imageFolder);
+
+  const dir = path.resolve(
+    process.cwd(),
+    "public",
+    "wohngemeinschaften",
+    imageFolder
+  );
+
   try {
     const files = await fs.readdir(dir);
     const found = files.find(f => /^grundriss\./i.test(f));
     return found ? `${base}wohngemeinschaften/${imageFolder}/${found}` : '';
-  } catch { return ''; }
+  } catch {
+    return '';
+  }
 }
 
 const grundrissMap = Object.fromEntries(
@@ -37,6 +78,30 @@ const grundrissMap = Object.fromEntries(
       a.id.replace(/\.[^.]+$/, '').toLowerCase(),
       await findGrundriss(a.data.image_folder)
     ])
+  )
+);
+
+const roomImages = Object.fromEntries(
+  await Promise.all(
+    allRooms.map(async (r) => {
+      const slug = entrySlug(r.id);
+      const allImgs = await loadImages(`zimmer/${slug}`);
+
+      const isRoomCover = (url: string) => {
+        const stem = (url.split('/').pop() ?? '').replace(/\.[^.]+$/, '');
+        const key = stem.includes('_')
+          ? stem.split('_').slice(1).join('_')
+          : stem;
+
+        return key.toLowerCase() === 'cover';
+      };
+
+      const coverUrl = allImgs.find(isRoomCover) ?? null;
+      const galleryImgs = allImgs.filter(url => !isRoomCover(url));
+      const imgs = coverUrl ? [coverUrl, ...galleryImgs] : galleryImgs;
+
+      return [slug, imgs];
+    })
   )
 );
 
@@ -117,11 +182,15 @@ const taken = allRooms
             </div>
 
             {available.map(r => {
+              const slug = entrySlug(r.id);
               const aptKey = r.data.apartment.toLowerCase();
               const apt = aptMap[aptKey];
               const grundriss = grundrissMap[aptKey] ?? '';
               const hasFloorplan = !!grundriss;
-              const hasPhotos = !!photoPlaceholder;
+
+              const fotos = roomImages[slug] ?? [];
+              const photoCover = fotos[0] ?? '';
+              const hasPhotos = fotos.length > 0;
 
               return (
                 <div class="room-row">
@@ -169,10 +238,11 @@ const taken = allRooms
 
                       <button
                         class={`floorplan-btn photos-btn${hasPhotos ? '' : ' fp-placeholder'}`}
-                        data-iz-open
-                        data-iz-src={photoPlaceholder}
-                        data-iz-title-de={`${r.data.title_de ?? apt?.title_de ?? ''} — Fotos`}
-                        data-iz-title-en={`${r.data.title_en ?? apt?.title_en ?? ''} — Photos`}
+                        data-photos-open
+                        data-photo-src={photoCover}
+                        data-photo-images={JSON.stringify(fotos)}
+                        data-photo-title-de={`${r.data.title_de ?? apt?.title_de ?? ''} — Fotos`}
+                        data-photo-title-en={`${r.data.title_en ?? apt?.title_en ?? ''} — Photos`}
                         aria-label="Fotos ansehen"
                       >
                         <span class="fp-icon" aria-hidden="true">
@@ -204,11 +274,15 @@ const taken = allRooms
 
           <div class="room-list taken-list">
             {taken.map(r => {
+              const slug = entrySlug(r.id);
               const aptKey = r.data.apartment.toLowerCase();
               const apt = aptMap[aptKey];
               const grundriss = grundrissMap[aptKey] ?? '';
               const hasFloorplan = !!grundriss;
-              const hasPhotos = !!photoPlaceholder;
+
+              const fotos = roomImages[slug] ?? [];
+              const photoCover = fotos[0] ?? '';
+              const hasPhotos = fotos.length > 0;
 
               return (
                 <div class="room-row room-row-taken">
@@ -252,10 +326,11 @@ const taken = allRooms
 
                       <button
                         class={`floorplan-btn photos-btn${hasPhotos ? '' : ' fp-placeholder'}`}
-                        data-iz-open
-                        data-iz-src={photoPlaceholder}
-                        data-iz-title-de={`${r.data.title_de ?? apt?.title_de ?? ''} — Fotos`}
-                        data-iz-title-en={`${r.data.title_en ?? apt?.title_en ?? ''} — Photos`}
+                        data-photos-open
+                        data-photo-src={photoCover}
+                        data-photo-images={JSON.stringify(fotos)}
+                        data-photo-title-de={`${r.data.title_de ?? apt?.title_de ?? ''} — Fotos`}
+                        data-photo-title-en={`${r.data.title_en ?? apt?.title_en ?? ''} — Photos`}
                         aria-label="Fotos ansehen"
                       >
                         <span class="fp-icon" aria-hidden="true">
@@ -586,3 +661,40 @@ const taken = allRooms
   }
 }
 </style>
+
+<script>
+  document.addEventListener("click", (event) => {
+    const target = event.target as Element;
+    const button = target.closest("[data-photos-open]") as HTMLElement | null;
+
+    if (!button) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    if (button.classList.contains("fp-placeholder")) return;
+
+    const src = button.getAttribute("data-photo-src") ?? "";
+    const imagesRaw = button.getAttribute("data-photo-images") ?? "[]";
+
+    let images: string[] = [];
+
+    try {
+      images = JSON.parse(imagesRaw);
+    } catch {
+      images = src ? [src] : [];
+    }
+
+    if (!src && images.length === 0) return;
+
+    document.dispatchEvent(
+      new CustomEvent("iz:open", {
+        detail: {
+          src: src || images[0],
+          images,
+          idx: 0
+        }
+      })
+    );
+  }, true);
+</script>
