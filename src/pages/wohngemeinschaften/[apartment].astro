@@ -33,8 +33,8 @@ async function loadImages(folder: string) {
       .sort((a, b) => {
         const ka = sortKey(a).toLowerCase();
         const kb = sortKey(b).toLowerCase();
-        if (ka === "cover") return -1;
-        if (kb === "cover") return 1;
+        if (ka === "cover" || ka.endsWith("-cover")) return -1;
+        if (kb === "cover" || kb.endsWith("-cover")) return 1;
         return ka.localeCompare(kb, undefined, { numeric: true, sensitivity: "base" });
       })
       .map((f) => `${base}${folder}/${f}`);
