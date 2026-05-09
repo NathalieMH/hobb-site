@@ -403,6 +403,12 @@ const renderedRooms = await Promise.all(
     lockBodyScroll();
   }
 
+  function openRoomModal(slug: string | null) {
+    if (!slug) return;
+    const tpl = document.getElementById(`tpl-${slug}`) as HTMLTemplateElement | null;
+    if (tpl) openModal(tpl);
+  }
+
   // ── Drag-to-pan (module-level so it survives navigation) ───────
   document.addEventListener('mousemove', (e) => {
     if (!zDragging) return;
@@ -426,12 +432,11 @@ const renderedRooms = await Promise.all(
     const target = e.target as Element;
 
     // Room card
-    const roomBtn = target.closest(".open-room") as HTMLElement | null;
+    const roomBtn = target.closest(".open-room, [data-room-modal-open]") as HTMLElement | null;
     if (roomBtn) {
       e.preventDefault();
-      const slug = roomBtn.getAttribute("data-room");
-      const tpl = document.getElementById(`tpl-${slug}`) as HTMLTemplateElement | null;
-      if (tpl) openModal(tpl);
+      const slug = roomBtn.getAttribute("data-room-modal-open") ?? roomBtn.getAttribute("data-room");
+      openRoomModal(slug);
       return;
     }
 

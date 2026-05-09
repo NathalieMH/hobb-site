@@ -218,8 +218,8 @@ const taken = allRooms
 
                       <button
                         type="button"
-                        class={`floorplan-btn photos-btn open-room${hasPhotos ? '' : ' fp-placeholder'}`}
-                        data-room={slug}
+                        class={`floorplan-btn photos-btn${hasPhotos ? '' : ' fp-placeholder'}`}
+                        data-room-modal-open={slug}
                         aria-label="Fotos ansehen"
                       >
                         <span class="fp-icon" aria-hidden="true">
@@ -304,8 +304,8 @@ const taken = allRooms
 
                       <button
                         type="button"
-                        class={`floorplan-btn photos-btn open-room${hasPhotos ? '' : ' fp-placeholder'}`}
-                        data-room={slug}
+                        class={`floorplan-btn photos-btn${hasPhotos ? '' : ' fp-placeholder'}`}
+                        data-room-modal-open={slug}
                         aria-label="Fotos ansehen"
                       >
                         <span class="fp-icon" aria-hidden="true">
