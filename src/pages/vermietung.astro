@@ -189,10 +189,25 @@ const taken = allRooms
                       </div>
                     </div>
 
-                    <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2} m²` : '—'}</span>
-                    <span class="col-num room-num">{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
-                    <span class="col-num room-num">{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
-                    <span class="col-num room-num room-total">{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
+                    <span class="col-num room-num">
+                      <span class="mobile-col-label" data-de>Größe</span>
+                      <span class="mobile-col-label" data-en>Size</span>
+                      <span>{r.data.size_m2 != null ? `${r.data.size_m2} m²` : '—'}</span>
+                    </span>
+                    <span class="col-num room-num">
+                      <span class="mobile-col-label" data-de>Kalt</span>
+                      <span class="mobile-col-label" data-en>Rent</span>
+                      <span>{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
+                    </span>
+                    <span class="col-num room-num">
+                      <span class="mobile-col-label">NK</span>
+                      <span>{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
+                    </span>
+                    <span class="col-num room-num room-total">
+                      <span class="mobile-col-label" data-de>Gesamt/M</span>
+                      <span class="mobile-col-label" data-en>Total/M</span>
+                      <span>{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
+                    </span>
 
                     <div class="room-actions">
                       <button
@@ -275,10 +290,25 @@ const taken = allRooms
                       </div>
                     </div>
 
-                    <span class="col-num room-num">{r.data.size_m2 != null ? `${r.data.size_m2} m²` : '—'}</span>
-                    <span class="col-num room-num">{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
-                    <span class="col-num room-num">{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
-                    <span class="col-num room-num room-total">{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
+                    <span class="col-num room-num">
+                      <span class="mobile-col-label" data-de>Größe</span>
+                      <span class="mobile-col-label" data-en>Size</span>
+                      <span>{r.data.size_m2 != null ? `${r.data.size_m2} m²` : '—'}</span>
+                    </span>
+                    <span class="col-num room-num">
+                      <span class="mobile-col-label" data-de>Kalt</span>
+                      <span class="mobile-col-label" data-en>Rent</span>
+                      <span>{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
+                    </span>
+                    <span class="col-num room-num">
+                      <span class="mobile-col-label">NK</span>
+                      <span>{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
+                    </span>
+                    <span class="col-num room-num room-total">
+                      <span class="mobile-col-label" data-de>Gesamt/M</span>
+                      <span class="mobile-col-label" data-en>Total/M</span>
+                      <span>{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
+                    </span>
 
                     <div class="room-actions">
                       <button
@@ -525,6 +555,10 @@ const taken = allRooms
   font-weight: 400;
 }
 
+.mobile-col-label {
+  display: none;
+}
+
 .room-from {
   font-family: var(--font-sans);
   font-size: 0.78rem;
@@ -638,6 +672,22 @@ const taken = allRooms
   .room-num {
     min-height: auto;
     font-size: 0.78rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    line-height: 1.25;
+  }
+
+  .mobile-col-label {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.56rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.72;
   }
 
   .room-actions {
