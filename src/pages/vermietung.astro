@@ -110,6 +110,9 @@ const taken = allRooms
 
       <p class="pricing-note" data-de>
         Nebenkosten (Strom, Wasser, Heizung, Internet) sind im Mietpreis inbegriffen — die Miete ist also alles inclusive.<br>
+        <button class="text-modal-link" type="button" data-open-nebenkosten>
+          Nebenkostenpauschale-Klausel
+        </button><br>
         <br>
         <span style="font-weight:500;">Unterlagen für die Bewerbung:</span><br>
         Immatrikulationsbescheinigung<br>
@@ -121,7 +124,6 @@ const taken = allRooms
         <br>
         <span style="font-weight:500;">Außerdem wichtig:</span><br>
         Kaution: 3 Monatsmieten kalt (mit unkomplizierter Abrechnung bei Auszug)<br>
-        <a href="#">Nebenkostenpauschale-Klausel</a><br>
         <button class="text-modal-link" type="button" data-open-rotation>
           Belegungs-Rotationsprinzip
         </button>
@@ -129,6 +131,9 @@ const taken = allRooms
 
       <p class="pricing-note" data-en>
         Utilities (electricity, water, heating, internet) are included in the rent — all-inclusive.<br>
+        <button class="text-modal-link" type="button" data-open-nebenkosten>
+          Utility flat-rate clause
+        </button><br>
         <br>
         <span style="font-weight:500;">Application documents:</span><br>
         University enrollment certificate<br>
@@ -136,7 +141,6 @@ const taken = allRooms
         <br>
         <span style="font-weight:500;">Additional information:</span><br>
         Security deposit (with a straightforward refund process)<br>
-        <a href="#">Utility flat-rate clause</a><br>
         <button class="text-modal-link" type="button" data-open-rotation>
           Occupancy rotation principle
         </button>
@@ -168,7 +172,6 @@ const taken = allRooms
               const hasFloorplan = !!grundriss;
 
               const fotos = roomImages[slug] ?? [];
-              const photoCover = fotos[0] ?? '';
               const hasPhotos = fotos.length > 0;
 
               return (
@@ -272,7 +275,6 @@ const taken = allRooms
               const hasFloorplan = !!grundriss;
 
               const fotos = roomImages[slug] ?? [];
-              const photoCover = fotos[0] ?? '';
               const hasPhotos = fotos.length > 0;
 
               return (
@@ -354,7 +356,53 @@ const taken = allRooms
     </div>
   </section>
 
+  <div
+    id="nebenkosten-overlay"
+    class="text-modal-overlay hidden"
+    aria-hidden="true"
+  >
+    <div
+      class="text-modal-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="nebenkosten-title-de"
+    >
+      <button class="text-modal-close" type="button" aria-label="Schließen">
+        ×
+      </button>
+
+      <div class="text-modal-content">
+        <div data-de>
+          <h2 id="nebenkosten-title-de">Nebenkostenpauschale-Klausel</h2>
+          <p>
+            Aufgrund der aktuellen Weltlage, insbesondere der Energiepreise, kann es sein,
+            dass wir deinen Anteil an den Nebenkosten künftig während deiner Mietperiode
+            anpassen müssen.
+          </p>
+          <p>
+            Wir garantieren, dass wir aus solchen Nebenkostenerhöhungen niemals einen
+            Gewinn ziehen werden, sondern ausschließlich Kostensteigerungen im aktuellen
+            Markt abdecken.
+          </p>
+        </div>
+
+        <div data-en>
+          <h2 id="nebenkosten-title-en">Utility flat-rate clause</h2>
+          <p>
+            Due to the current global situation, especially energy prices, it may become
+            necessary to adjust your share of the utility costs during your rental period.
+          </p>
+          <p>
+            We guarantee that we will never make a profit from such utility increases.
+            Any adjustment will only cover actual cost increases in the current market.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <RotationModal />
+
   <RoomModal rooms={allRooms.map(r => ({
     entry: r,
     imgs: roomImages[entrySlug(r.id)] ?? [],
@@ -399,6 +447,81 @@ const taken = allRooms
   font: inherit;
   cursor: pointer;
   text-align: left;
+}
+
+/* Modal für Nebenkostenpauschale */
+.text-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(34, 31, 27, 0.28);
+}
+
+.text-modal-overlay.hidden {
+  display: none;
+}
+
+.text-modal-dialog {
+  position: relative;
+  width: min(680px, 100%);
+  max-height: min(72vh, 560px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+
+  padding: 2rem 2.25rem;
+  border-left: 2px solid var(--gold);
+  background: var(--paper, #f7f4ee);
+  color: var(--muted);
+  box-shadow: 0 18px 48px rgba(34, 31, 27, 0.16);
+}
+
+.text-modal-content {
+  font-size: 0.85rem;
+  line-height: 1.75;
+}
+
+.text-modal-content h2 {
+  margin: 0 0 1rem;
+  font-family: var(--font-serif);
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+}
+
+.text-modal-content p {
+  margin: 0 0 1rem;
+}
+
+.text-modal-content p:last-child {
+  margin-bottom: 0;
+}
+
+.text-modal-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  margin-top: -0.65rem;
+  margin-right: -0.75rem;
+
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--ease);
+}
+
+.text-modal-close:hover {
+  color: var(--ink);
 }
 
 .avail-group {
@@ -644,6 +767,16 @@ const taken = allRooms
 }
 
 @media (max-width: 620px) {
+  .text-modal-overlay {
+    align-items: flex-start;
+    padding: 5rem 1rem 1rem;
+  }
+
+  .text-modal-dialog {
+    max-height: calc(100vh - 6rem);
+    padding: 1.5rem 1.4rem;
+  }
+
   .room-row-main {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     column-gap: 0.5rem;
@@ -736,32 +869,69 @@ const taken = allRooms
 </style>
 
 <script>
+  let activeScrollLocks = 0;
+
   function lockBodyScroll() {
+    activeScrollLocks += 1;
     document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
   }
 
   function unlockBodyScroll() {
-    document.documentElement.style.overflow = '';
+    activeScrollLocks = Math.max(0, activeScrollLocks - 1);
+
+    if (activeScrollLocks === 0) {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    }
   }
 
-  function openRotationModal() {
-    const overlay = document.getElementById("rotation-overlay");
-    if (!overlay) return;
+  function openModal(overlay: HTMLElement | null) {
+    if (!overlay || !overlay.classList.contains("hidden")) return;
 
     const lang = document.documentElement.getAttribute("data-lang") ?? "de";
-    overlay.querySelector<HTMLElement>("[role=dialog]")?.setAttribute("aria-labelledby", `rotation-title-${lang}`);
+    const dialog = overlay.querySelector<HTMLElement>("[role=dialog]");
+
+    if (overlay.id === "rotation-overlay") {
+      dialog?.setAttribute("aria-labelledby", `rotation-title-${lang}`);
+    }
+
+    if (overlay.id === "nebenkosten-overlay") {
+      dialog?.setAttribute("aria-labelledby", `nebenkosten-title-${lang}`);
+    }
+
     overlay.classList.remove("hidden");
     overlay.setAttribute("aria-hidden", "false");
     lockBodyScroll();
   }
 
-  function closeRotationModal() {
-    const overlay = document.getElementById("rotation-overlay");
-    if (!overlay) return;
+  function closeModal(overlay: HTMLElement | null) {
+    if (!overlay || overlay.classList.contains("hidden")) return;
 
     overlay.classList.add("hidden");
     overlay.setAttribute("aria-hidden", "true");
     unlockBodyScroll();
+  }
+
+  function openRotationModal() {
+    openModal(document.getElementById("rotation-overlay"));
+  }
+
+  function closeRotationModal() {
+    closeModal(document.getElementById("rotation-overlay"));
+  }
+
+  function openNebenkostenModal() {
+    openModal(document.getElementById("nebenkosten-overlay"));
+  }
+
+  function closeNebenkostenModal() {
+    closeModal(document.getElementById("nebenkosten-overlay"));
+  }
+
+  function closeAllTextModals() {
+    closeRotationModal();
+    closeNebenkostenModal();
   }
 
   document.addEventListener("click", (event) => {
@@ -773,31 +943,111 @@ const taken = allRooms
       return;
     }
 
-    const overlay = document.getElementById("rotation-overlay");
+    if (target.closest("[data-open-nebenkosten]")) {
+      event.preventDefault();
+      openNebenkostenModal();
+      return;
+    }
 
-    if (
-      target.closest(".text-modal-close") ||
-      target === overlay
-    ) {
+    const nebenkostenOverlay = document.getElementById("nebenkosten-overlay");
+    const rotationOverlay = document.getElementById("rotation-overlay");
+
+    if (target.closest(".text-modal-close")) {
+      event.preventDefault();
+      closeModal(target.closest(".text-modal-overlay") as HTMLElement | null);
+      closeModal(target.closest("#rotation-overlay") as HTMLElement | null);
+      return;
+    }
+
+    if (target === nebenkostenOverlay) {
+      event.preventDefault();
+      closeNebenkostenModal();
+      return;
+    }
+
+    if (target === rotationOverlay) {
       event.preventDefault();
       closeRotationModal();
     }
   });
 
-  const rotationOverlay = document.getElementById("rotation-overlay");
-  rotationOverlay?.addEventListener("wheel", (event) => {
-    if (rotationOverlay.classList.contains("hidden")) return;
-    event.stopPropagation();
-  }, { passive: true });
+  function keepScrollInsideModal(overlay: HTMLElement | null) {
+    if (!overlay) return;
 
-  rotationOverlay?.addEventListener("touchmove", (event) => {
-    if (rotationOverlay.classList.contains("hidden")) return;
-    event.stopPropagation();
-  }, { passive: true });
+    const scrollBox =
+      overlay.querySelector<HTMLElement>(".text-modal-dialog") ??
+      overlay.querySelector<HTMLElement>("[role=dialog]");
+
+    if (!scrollBox) return;
+
+    overlay.addEventListener("wheel", (event) => {
+      if (overlay.classList.contains("hidden")) return;
+
+      const wheelEvent = event as WheelEvent;
+      const target = wheelEvent.target as Element;
+
+      if (!scrollBox.contains(target)) {
+        wheelEvent.preventDefault();
+        return;
+      }
+
+      const canScroll = scrollBox.scrollHeight > scrollBox.clientHeight;
+      if (!canScroll) {
+        wheelEvent.preventDefault();
+        return;
+      }
+
+      const atTop = scrollBox.scrollTop <= 0;
+      const atBottom =
+        Math.ceil(scrollBox.scrollTop + scrollBox.clientHeight) >= scrollBox.scrollHeight;
+
+      if ((wheelEvent.deltaY < 0 && atTop) || (wheelEvent.deltaY > 0 && atBottom)) {
+        wheelEvent.preventDefault();
+      }
+    }, { passive: false });
+
+    let touchStartY = 0;
+
+    overlay.addEventListener("touchstart", (event) => {
+      if (overlay.classList.contains("hidden")) return;
+      touchStartY = event.touches[0]?.clientY ?? 0;
+    }, { passive: true });
+
+    overlay.addEventListener("touchmove", (event) => {
+      if (overlay.classList.contains("hidden")) return;
+
+      const target = event.target as Element;
+
+      if (!scrollBox.contains(target)) {
+        event.preventDefault();
+        return;
+      }
+
+      const currentY = event.touches[0]?.clientY ?? 0;
+      const deltaY = touchStartY - currentY;
+      const canScroll = scrollBox.scrollHeight > scrollBox.clientHeight;
+
+      if (!canScroll) {
+        event.preventDefault();
+        return;
+      }
+
+      const atTop = scrollBox.scrollTop <= 0;
+      const atBottom =
+        Math.ceil(scrollBox.scrollTop + scrollBox.clientHeight) >= scrollBox.scrollHeight;
+
+      if ((deltaY < 0 && atTop) || (deltaY > 0 && atBottom)) {
+        event.preventDefault();
+      }
+    }, { passive: false });
+  }
+
+  keepScrollInsideModal(document.getElementById("rotation-overlay"));
+  keepScrollInsideModal(document.getElementById("nebenkosten-overlay"));
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      closeRotationModal();
+      closeAllTextModals();
     }
   });
 </script>
