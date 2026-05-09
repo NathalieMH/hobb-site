@@ -2,6 +2,7 @@
 title_de: "Zimmer 1 · 1. OG"
 title_en: "Room 1 · 1st Floor"
 apartment: "1OG"
+order: 1
 size_m2: 24.5
 kaltmiete_eur: 970
 nebenkosten_eur: 130

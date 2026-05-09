@@ -2,45 +2,12 @@
 import Layout from "../../layouts/Layout.astro";
 import DecoRule from "../../components/DecoRule.astro";
 import { getCollection, render } from "astro:content";
-import fs from "node:fs/promises";
-import path from "node:path";
+import { loadImages } from "../../utils/images";
 
 const base = import.meta.env.BASE_URL;
 
 function entrySlug(id: string) {
   return id.replace(/\.[^.]+$/, "").toLowerCase();
-}
-
-function normalizeKey(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/\s+/g, "")
-    .replace(/\./g, "")
-    .replace(/-/g, "");
-}
-
-async function loadImages(folder: string) {
-  const dir = path.resolve(process.cwd(), "public", folder);
-  try {
-    const files = await fs.readdir(dir);
-    const sortKey = (f: string) => {
-      const stem = f.replace(/\.[^.]+$/, "");
-      const us = stem.indexOf("_");
-      return us >= 0 ? stem.slice(us + 1) : stem;
-    };
-    return files
-      .filter((f) => /\.(jpe?g|png|webp|gif)$/i.test(f))
-      .sort((a, b) => {
-        const ka = sortKey(a).toLowerCase();
-        const kb = sortKey(b).toLowerCase();
-        if (ka === "cover") return -1;
-        if (kb === "cover") return 1;
-        return ka.localeCompare(kb, undefined, { numeric: true, sensitivity: "base" });
-      })
-      .map((f) => `${base}${folder}/${f}`);
-  } catch {
-    return [];
-  }
 }
 
 // Filename prefix → bilingual shared space names
@@ -68,49 +35,6 @@ function getPrefix(filename: string): string {
   return base;
 }
 
-const WOHNUNG_1_OG_ROOM_ORDER = [
-  "zimmer1",
-  "zimmer2",
-  "zimmer3",
-  "zimmer4",
-  "zimmer5",
-];
-
-const WOHNUNG_1_OG_SPACE_ORDER = [
-  "dining-room",
-  "balcony",
-  "kitchen",
-  "bathroom1",
-  "bathroom2",
-  "grundriss",
-  "digital-lock",
-  "laundry",
-];
-
-const WOHNUNG_1_OG_SPACE_LABELS: Record<string, { de: string; en: string }> = {
-  "dining-room":  { de: "Wohn-Esszimmer",      en: "Living-Dining Room" },
-  "balcony":      { de: "Balkon · 1. OG",      en: "Balcony · 1st Floor" },
-  "kitchen":      { de: "Küche · 1. OG",       en: "Kitchen · 1st Floor" },
-  "bathroom1":    { de: "Bad 1 · 1. OG",       en: "Bathroom 1 · 1st Floor" },
-  "bathroom2":    { de: "Bad 2 · 1. OG",       en: "Bathroom 2 · 1st Floor" },
-  "grundriss":    { de: "Grundriss",           en: "Floor Plan" },
-  "digital-lock": { de: "Digitales Schloss",   en: "Digital Lock" },
-  "laundry":      { de: "Laundry · 2. OG",     en: "Laundry · 2nd Floor" },
-};
-
-function roomSortIndex(room: any) {
-  const slug = normalizeKey(entrySlug(room.id));
-  const titleDe = normalizeKey(room.data.title_de ?? "");
-  const titleEn = normalizeKey(room.data.title_en ?? "");
-
-  const idx = WOHNUNG_1_OG_ROOM_ORDER.findIndex((key) => {
-    const k = normalizeKey(key);
-    return slug.includes(k) || titleDe.includes(k) || titleEn.includes(k);
-  });
-
-  return idx === -1 ? 999 : idx;
-}
-
 export async function getStaticPaths() {
   const apartments = await getCollection("apartments");
   return apartments.map((a) => ({
@@ -122,32 +46,12 @@ const { apartment } = Astro.params;
 const apartments = await getCollection("apartments");
 const apt = apartments.find((a) => entrySlug(a.id) === apartment);
 
-const isWohnung1OG = (() => {
-  const aptSlug = normalizeKey(apartment ?? "");
-  const titleDe = normalizeKey(apt?.data.title_de ?? "");
-  const titleEn = normalizeKey(apt?.data.title_en ?? "");
-
-  return (
-    aptSlug.includes("wohnung1og") ||
-    aptSlug.includes("1og") ||
-    titleDe.includes("wohnung1obergeschoss") ||
-    titleDe.includes("wohnung1og") ||
-    titleEn.includes("apartment1") ||
-    titleEn.includes("1stfloor")
-  );
-})();
-
-// Available rooms first, taken rooms last.
-// For Wohnung 1. OG the room order is fixed as:
-// Zimmer 1, Zimmer 2, Zimmer 3, Zimmer 4, Zimmer 5.
+// Sort rooms by frontmatter order, then available-first within same order value.
 const rooms = (await getCollection("rooms", (r) => r.data.apartment.toLowerCase() === apartment.toLowerCase()))
   .sort((a, b) => {
-    if (isWohnung1OG) {
-      const ai = roomSortIndex(a);
-      const bi = roomSortIndex(b);
-      if (ai !== bi) return ai - bi;
-    }
-
+    const ao = a.data.order ?? 999;
+    const bo = b.data.order ?? 999;
+    if (ao !== bo) return ao - bo;
     if (a.data.available === b.data.available) return 0;
     return a.data.available ? -1 : 1;
   });
@@ -155,7 +59,7 @@ const rooms = (await getCollection("rooms", (r) => r.data.apartment.toLowerCase(
 const renderedRooms = await Promise.all(
   rooms.map(async (r) => {
     const { Content } = await render(r);
-    const allImgs = await loadImages(`zimmer/${entrySlug(r.id)}`);
+    const allImgs = await loadImages(base, `zimmer/${entrySlug(r.id)}`);
     const isRoomCover = (url: string) => {
       const stem = (url.split("/").pop() ?? "").replace(/\.[^.]+$/, "");
       const key = stem.includes("_") ? stem.split("_").slice(1).join("_") : stem;
@@ -174,14 +78,14 @@ const roomImages = Object.fromEntries(
 
 // Apartment images from wohngemeinschaften/[image_folder]/
 const aptFolder = apt?.data.image_folder ? `wohngemeinschaften/${apt.data.image_folder}` : "";
-const allAptFiles = aptFolder ? await loadImages(aptFolder) : [];
+const allAptFiles = aptFolder ? await loadImages(base, aptFolder) : [];
 
 // Exclude only cover from space images; grundriss is handled as a named prefix
 const rawImages = allAptFiles.filter((url) => !/\/cover\.[^/]+$/i.test(url));
 
 // Space order and labels from apartment frontmatter
-const frontmatterSpaceOrder = (apt?.data.shared_spaces ?? []).map((s) => s.prefix);
-const frontmatterSpaceLabelMap = Object.fromEntries(
+const spaceOrder = (apt?.data.shared_spaces ?? []).map((s) => s.prefix);
+const spaceLabelMap = Object.fromEntries(
   (apt?.data.shared_spaces ?? []).map((s) => [s.prefix, { de: s.de, en: s.en }])
 );
 
@@ -194,23 +98,8 @@ for (const url of rawImages) {
   grouped[prefix].push(url);
 }
 
-const spaceOrder = isWohnung1OG ? WOHNUNG_1_OG_SPACE_ORDER : frontmatterSpaceOrder;
-
-const spaceLabelMap = isWohnung1OG
-  ? {
-      ...frontmatterSpaceLabelMap,
-      ...WOHNUNG_1_OG_SPACE_LABELS,
-    }
-  : frontmatterSpaceLabelMap;
-
-// Für Wohnung 1. OG werden alle gewünschten Kacheln angezeigt,
-// auch wenn keine Bilder vorhanden sind.
-// Für andere Wohnungen bleibt das alte Verhalten erhalten.
-const prefixesInOrder = isWohnung1OG
-  ? spaceOrder
-  : spaceOrder.filter((p: string) => grouped[p]);
-
-const spaceGroups = prefixesInOrder.map((prefix) => {
+// All spaces declared in shared_spaces are shown; placeholder renders when no photos exist yet.
+const spaceGroups = spaceOrder.map((prefix) => {
   const images = grouped[prefix] ?? [];
   const labels = spaceLabelMap[prefix] ?? PREFIX_MAP[prefix] ?? { de: prefix, en: prefix };
 

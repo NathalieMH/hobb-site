@@ -1,46 +1,16 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import DecoRule from "../components/DecoRule.astro";
+import RotationModal from "../components/RotationModal.astro";
 import { getCollection } from "astro:content";
 import { promises as fs } from "fs";
 import path from "path";
+import { loadImages } from "../utils/images";
 
 const base = import.meta.env.BASE_URL;
 
 function entrySlug(id: string) {
   return id.replace(/\.[^.]+$/, '').toLowerCase();
-}
-
-async function loadImages(folder: string) {
-  const dir = path.resolve(process.cwd(), "public", folder);
-
-  try {
-    const files = await fs.readdir(dir);
-
-    const sortKey = (f: string) => {
-      const stem = f.replace(/\.[^.]+$/, '');
-      const us = stem.indexOf('_');
-      return us >= 0 ? stem.slice(us + 1) : stem;
-    };
-
-    return files
-      .filter((f) => /\.(jpe?g|png|webp|gif)$/i.test(f))
-      .sort((a, b) => {
-        const ka = sortKey(a).toLowerCase();
-        const kb = sortKey(b).toLowerCase();
-
-        if (ka === 'cover') return -1;
-        if (kb === 'cover') return 1;
-
-        return ka.localeCompare(kb, undefined, {
-          numeric: true,
-          sensitivity: 'base'
-        });
-      })
-      .map((f) => `${base}${folder}/${f}`);
-  } catch {
-    return [];
-  }
 }
 
 const allRooms = await getCollection("rooms");
@@ -85,7 +55,7 @@ const roomImages = Object.fromEntries(
   await Promise.all(
     allRooms.map(async (r) => {
       const slug = entrySlug(r.id);
-      const allImgs = await loadImages(`zimmer/${slug}`);
+      const allImgs = await loadImages(base, `zimmer/${slug}`);
 
       const isRoomCover = (url: string) => {
         const stem = (url.split('/').pop() ?? '').replace(/\.[^.]+$/, '');
@@ -365,167 +335,8 @@ const taken = allRooms
     </div>
   </section>
 
-  <div id="rotation-overlay" class="text-overlay hidden" aria-hidden="true">
-    <div class="text-modal-card" role="dialog" aria-modal="true" aria-labelledby="rotation-title-de">
-      <button class="text-modal-close" type="button" aria-label="Schließen">×</button>
+  <RotationModal />
 
-      <article class="rotation-document" data-de>
-        <header class="rotation-header">
-          <span class="rotation-eyebrow">Belegungs-Rotationsprinzip</span>
-          <h2 id="rotation-title-de">Rotations- und Belegungskonzept</h2>
-          <p>Haderslebener Straße 26 · 12163 Berlin-Steglitz-Zehlendorf</p>
-        </header>
-
-        <section>
-          <h3>§ 1 Grundlagen und Zielsetzung</h3>
-          <p>(1) Die GSMB GmbH (im Folgenden „Trägerin") hat das Anwesen Haderslebener Straße 26 / 26a, 12163 Berlin, als Generalmieterin angemietet. Das vorliegende Konzept gilt für die Wohneinheiten 01, 03, 04 und 05/06 in dem Objekt. In den einzelnen Wohneinheiten, die jeweils in sich abgeschlossen sind, betreibt die Trägerin jeweils ein eigenständiges Studentenwohnheim.</p>
-          <p>(2) Leitgedanke dieses Konzepts ist es, möglichst vielen Studierenden während ihrer Ausbildungszeit den Zugang zu bezahlbarem Wohnraum zu ermöglichen. Die Trägerin versteht sich dabei als Teil eines funktionierenden Hochschulumfelds und möchte einen Beitrag zur sozialen und kulturellen Förderung der Studierendenschaft leisten.</p>
-          <p>(3) Um einen geregelten Wechsel der Bewohnerschaft sicherzustellen, hat sich die Trägerin das vorliegende Rotations- und Belegungskonzept gegeben. Die hierin festgelegten Grundsätze werden einheitlich und nachvollziehbar angewandt.</p>
-          <p>(4) Insbesondere wird durch die nachfolgenden Regelungen gewährleistet, dass die Dauer einzelner Mietverhältnisse weder vom Zufall noch vom Ermessen der Trägerin abhängt, sondern nach transparenten, für alle Bewerberinnen und Bewerber gleichermaßen geltenden Maßstäben bestimmt wird.</p>
-        </section>
-
-        <section>
-          <h3>§ 2 Berechtigter Personenkreis</h3>
-          <p>(1) Einen Wohnplatz können ausschließlich Personen erhalten, die einer der folgenden Gruppen angehören:</p>
-          <ul>
-            <li>eingeschriebene Studierende an einer staatlich anerkannten Hochschule,</li>
-            <li>Teilnehmerinnen und Teilnehmer an studienbegleitenden Praktika.</li>
-          </ul>
-          <p>(2) Die Zugehörigkeit zum berechtigten Personenkreis ist vor Abschluss eines Mietvertrages durch Vorlage geeigneter Originaldokumente zu belegen:</p>
-          <ul>
-            <li>Studierende legen eine gültige Immatrikulationsbescheinigung vor,</li>
-            <li>Praktikantinnen und Praktikanten weisen ihr Praktikum durch eine Bescheinigung der Hochschule und des Unternehmens nach.</li>
-          </ul>
-          <p>(3) Studierende sind darüber hinaus verpflichtet, zu Beginn jedes Semesters unaufgefordert eine aktuelle Immatrikulationsbescheinigung einzureichen. Diese Pflicht wird Bestandteil des Mietvertrages.</p>
-          <p>(4) Entfällt die Zugehörigkeit zum berechtigten Personenkreis – etwa durch Exmatrikulation, Studienabbruch oder Beendigung des Praktikums –, endet das Mietverhältnis spätestens zum Ablauf des laufenden Semesters. Die Bewohnerin oder der Bewohner ist verpflichtet, den Wegfall der Berechtigung unverzüglich schriftlich mitzuteilen.</p>
-        </section>
-
-        <section>
-          <h3>§ 3 Vergabeverfahren</h3>
-          <p>(1) Freie Wohnplätze werden nach dem Grundsatz der Gleichbehandlung vergeben. Gehen für einen Platz mehrere Bewerbungen ein, so ist der Zeitpunkt des Bewerbungseingangs maßgeblich (Prinzip der Warteliste).</p>
-          <p>(2) Von der chronologischen Reihenfolge der Warteliste darf nur abgewichen werden, wenn dies zur Wahrung einer ausgewogenen Belegung der jeweiligen Wohngemeinschaft erforderlich ist. Sachliche Gründe für eine Abweichung sind insbesondere:</p>
-          <ul>
-            <li>die Berücksichtigung besonderer Härtegründe gemäß Absatz 3,</li>
-            <li>die Bevorzugung internationaler Studierender gemäß § 4.</li>
-          </ul>
-          <p>Die Abweichung ist in der Warteliste unter Angabe des Grundes zu dokumentieren.</p>
-          <p>(3) Eine vorrangige Berücksichtigung außerhalb der regulären Warteliste ist bei Vorliegen besonderer Härtegründe möglich. Als solche gelten insbesondere:</p>
-          <ul>
-            <li>eine große räumliche Distanz zwischen Herkunftsort und Studienort,</li>
-            <li>nachweislich erschwerte persönliche, soziale oder finanzielle Lebensumstände.</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>§ 4 Internationale Studierende</h3>
-          <p>(1) Bewerberinnen und Bewerber aus dem Ausland, die aufgrund eines zeitlich begrenzten Studienaufenthalts (bis zu 12 Monate) oder sprachlicher Hürden bzw. fehlender Erfahrung mit dem deutschen Wohnungsmarkt in besonderem Maße auf Unterstützung bei der Wohnungssuche angewiesen sind, können bei fristgerechter Bewerbung bevorzugt berücksichtigt werden.</p>
-          <p>(2) Sämtliche Bewerberinnen und Bewerber werden vor dem Einzug gebeten, ihre Angaben zum Studien- oder Praktikantenverhältnis durch aktuelle Unterlagen vollständig zu belegen.</p>
-        </section>
-
-        <section>
-          <h3>§ 5 Wohndauer</h3>
-          <p>(1) Die Wohndauer ist grundsätzlich auf acht Semester (vier Jahre) begrenzt. Nach Ablauf dieser Frist endet das Mietverhältnis, sofern keine Verlängerung gemäß § 6 gewährt wird.</p>
-          <p>(2) Diese Begrenzung trägt dem Rotationsgedanken Rechnung: Durch den regelmäßigen Wechsel der Bewohnerschaft wird gewährleistet, dass nachfolgende Studierendengenerationen ebenfalls Zugang zu den Wohnplätzen erhalten.</p>
-          <p>(3) Die Mietverträge werden als Zeitmietverträge geschlossen. Die Befristung ergibt sich aus dem Zweck des Wohnheimplatzes gemäß § 549 Abs. 3 BGB in Verbindung mit dem vorliegenden Konzept.</p>
-        </section>
-
-        <section>
-          <h3>§ 6 Ausnahmsweise Verlängerung</h3>
-          <p>(1) In begründeten Ausnahmefällen kann die Wohndauer um höchstens zwei weitere Semester verlängert werden. Dies kommt in Betracht, wenn:</p>
-          <ul>
-            <li>sich die Bewohnerin oder der Bewohner in der Abschlussphase des Studiums befindet und die Examensvorbereitung oder -anmeldung nachweisen kann, oder</li>
-            <li>ein erster Prüfungsversuch nicht bestanden wurde und der Wiederholungstermin binnen sechs Monaten ansteht.</li>
-          </ul>
-          <p>(2) Unabhängig von den vorstehenden Regelungen gilt eine absolute Obergrenze von zwölf Semestern (sechs Jahren). Mit Erreichen dieser Grenze endet das Mietverhältnis in jedem Fall; eine darüber hinausgehende Verlängerung ist ausgeschlossen.</p>
-        </section>
-
-        <section>
-          <h3>§ 7 Inkrafttreten und Änderungen</h3>
-          <p>(1) Das vorliegende Konzept gilt ab dem Zeitpunkt der erstmaligen Vermietung eines Wohnplatzes in der betreffenden Wohneinheit.</p>
-          <p>(2) Änderungen oder Ergänzungen dieses Konzepts sind nur in schriftlicher Form wirksam.</p>
-          <p>(3) Die Unwirksamkeit einer einzelnen Bestimmung lässt die Gültigkeit der übrigen Regelungen unberührt.</p>
-        </section>
-      </article>
-
-      <article class="rotation-document" data-en>
-        <header class="rotation-header">
-          <span class="rotation-eyebrow">Occupancy rotation principle</span>
-          <h2 id="rotation-title-en">Rotation and Occupancy Concept</h2>
-          <p>Haderslebener Straße 26 · 12163 Berlin-Steglitz-Zehlendorf</p>
-        </header>
-
-        <section>
-          <h3>§ 1 Basis and Objective</h3>
-          <p>(1) GSMB GmbH, hereinafter referred to as the “Operator”, has leased the property at Haderslebener Straße 26 / 26a, 12163 Berlin, as the main tenant. This concept applies to residential units 01, 03, 04 and 05/06 in the property. In each of the separate and self-contained residential units, the Operator runs an independent student residence.</p>
-          <p>(2) The guiding principle of this concept is to give as many students as possible access to affordable housing during their period of education. In doing so, the Operator sees itself as part of a functioning academic environment and aims to contribute to the social and cultural support of the student community.</p>
-          <p>(3) In order to ensure an orderly change of residents, the Operator has adopted this rotation and occupancy concept. The principles set out herein are applied consistently and transparently.</p>
-          <p>(4) In particular, the following rules ensure that the duration of individual tenancies does not depend on chance or on the Operator’s discretion, but is determined according to transparent criteria that apply equally to all applicants.</p>
-        </section>
-
-        <section>
-          <h3>§ 2 Eligible Persons</h3>
-          <p>(1) A place of residence may only be granted to persons belonging to one of the following groups:</p>
-          <ul>
-            <li>students enrolled at a state-recognised university or higher education institution,</li>
-            <li>participants in internships related to or accompanying their studies.</li>
-          </ul>
-          <p>(2) Membership of the eligible group must be proven before conclusion of a rental agreement by presenting suitable original documents:</p>
-          <ul>
-            <li>students must present a valid certificate of enrolment,</li>
-            <li>interns must prove their internship by submitting confirmation from both the university and the company.</li>
-          </ul>
-          <p>(3) Students are also obliged to submit an up-to-date certificate of enrolment at the beginning of each semester without being specifically requested to do so. This obligation becomes part of the rental agreement.</p>
-          <p>(4) If the person no longer belongs to the eligible group — for example due to exmatriculation, discontinuation of studies or termination of the internship — the tenancy ends no later than at the end of the current semester. The resident is obliged to notify the Operator immediately in writing of the loss of eligibility.</p>
-        </section>
-
-        <section>
-          <h3>§ 3 Allocation Procedure</h3>
-          <p>(1) Vacant places are allocated according to the principle of equal treatment. If several applications are received for one place, the time at which the application was received is decisive (waiting list principle).</p>
-          <p>(2) Deviation from the chronological order of the waiting list is only permitted if this is necessary to maintain a balanced occupancy of the respective shared apartment. Objective reasons for such a deviation include in particular:</p>
-          <ul>
-            <li>consideration of special hardship cases pursuant to paragraph 3,</li>
-            <li>preferential consideration of international students pursuant to § 4.</li>
-          </ul>
-          <p>The deviation must be documented in the waiting list, including the reason for it.</p>
-          <p>(3) Preferential consideration outside the regular waiting list is possible where special hardship grounds exist. These include in particular:</p>
-          <ul>
-            <li>a significant geographical distance between the applicant’s place of origin and place of study,</li>
-            <li>demonstrably difficult personal, social or financial circumstances.</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3>§ 4 International Students</h3>
-          <p>(1) Applicants from abroad who, due to a temporary study stay of up to 12 months, language barriers or lack of experience with the German housing market, are particularly dependent on support in finding accommodation may be given preferential consideration if they apply in due time.</p>
-          <p>(2) All applicants are asked to provide complete and up-to-date documentation proving their student or internship status before moving in.</p>
-        </section>
-
-        <section>
-          <h3>§ 5 Duration of Residence</h3>
-          <p>(1) The duration of residence is generally limited to eight semesters, equivalent to four years. After this period has expired, the tenancy ends unless an extension is granted pursuant to § 6.</p>
-          <p>(2) This limitation reflects the rotation principle: the regular change of residents ensures that future generations of students also have access to the residential places.</p>
-          <p>(3) Rental agreements are concluded as fixed-term rental agreements. The fixed term results from the purpose of the student residence place pursuant to § 549 para. 3 of the German Civil Code (BGB) in conjunction with this concept.</p>
-        </section>
-
-        <section>
-          <h3>§ 6 Exceptional Extension</h3>
-          <p>(1) In justified exceptional cases, the duration of residence may be extended by a maximum of two additional semesters. This may be considered if:</p>
-          <ul>
-            <li>the resident is in the final phase of their studies and can provide proof of exam preparation or exam registration, or</li>
-            <li>a first examination attempt has not been passed and the repeat examination is scheduled within six months.</li>
-          </ul>
-          <p>(2) Irrespective of the above rules, an absolute maximum limit of twelve semesters, equivalent to six years, applies. Once this limit has been reached, the tenancy ends in all cases; any further extension is excluded.</p>
-        </section>
-
-        <section>
-          <h3>§ 7 Entry into Force and Amendments</h3>
-          <p>(1) This concept applies from the time of the first rental of a residential place in the respective residential unit.</p>
-          <p>(2) Amendments or additions to this concept are only effective if made in writing.</p>
-          <p>(3) The invalidity of an individual provision does not affect the validity of the remaining provisions.</p>
-        </section>
-      </article>
-    </div>
-  </div>
 
 </Layout>
 
@@ -688,8 +499,7 @@ const taken = allRooms
   color: var(--muted);
   font-style: italic;
   max-width: 56ch;
-  display: flex;
-  align-items: center;
+  white-space: pre-line;
 }
 
 .room-teaser-empty {
@@ -790,133 +600,6 @@ const taken = allRooms
   opacity: 0.6;
 }
 
-/* Text modal */
-.text-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(28, 26, 23, 0.55);
-  display: grid;
-  place-items: center;
-  padding: 2rem;
-  z-index: 300;
-}
-
-.text-overlay.hidden {
-  display: none;
-}
-
-.text-modal-card {
-  background: var(--bg);
-  width: min(100%, 920px);
-  max-height: 90vh;
-  overflow: auto;
-  position: relative;
-  padding: 2.25rem;
-  border: 1px solid var(--border);
-  box-shadow: 0 24px 64px rgba(28, 26, 23, 0.2);
-}
-
-.text-modal-close {
-  position: sticky;
-  top: 0;
-  float: right;
-  margin-top: -1.25rem;
-  margin-right: -1.25rem;
-  background: var(--bg);
-  border: 1px solid var(--gold);
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  line-height: 1;
-  color: var(--gold);
-  cursor: pointer;
-  transition: background var(--ease), color var(--ease);
-  z-index: 2;
-}
-
-.text-modal-close:hover {
-  background: var(--gold);
-  color: var(--bg);
-}
-
-.rotation-document {
-  color: var(--ink);
-  max-width: 74ch;
-  margin: 0 auto;
-}
-
-.rotation-header {
-  margin-bottom: 2rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.rotation-eyebrow {
-  display: block;
-  font-family: var(--font-sans);
-  font-size: 0.62rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 0.7rem;
-}
-
-.rotation-header h2 {
-  font-family: var(--font-serif);
-  font-size: clamp(1.7rem, 3vw, 2.4rem);
-  font-weight: 300;
-  letter-spacing: 0.02em;
-  margin: 0;
-}
-
-.rotation-header p {
-  margin-top: 0.5rem;
-  font-family: var(--font-sans);
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-}
-
-.rotation-document section {
-  margin-top: 1.6rem;
-}
-
-.rotation-document h3 {
-  font-family: var(--font-serif);
-  font-size: 1.2rem;
-  font-weight: 300;
-  color: var(--ink);
-  margin-bottom: 0.75rem;
-}
-
-.rotation-document p,
-.rotation-document li {
-  font-family: var(--font-sans);
-  font-size: 0.88rem;
-  line-height: 1.75;
-  color: var(--muted);
-}
-
-.rotation-document p {
-  margin: 0.65rem 0;
-}
-
-.rotation-document ul {
-  margin: 0.55rem 0 0.75rem 1.1rem;
-  padding: 0;
-}
-
-.rotation-document li {
-  padding-left: 0.25rem;
-  margin: 0.2rem 0;
-}
-
-.rotation-document li::marker {
-  color: var(--gold);
-}
 
 @media (max-width: 780px) {
   .room-row-main {
@@ -974,34 +657,6 @@ const taken = allRooms
   .fp-label {
     display: none;
   }
-
-  .text-overlay {
-    padding: 0;
-    align-items: flex-start;
-  }
-
-  .text-modal-card {
-    width: 100%;
-    min-height: 100%;
-    max-height: none;
-    padding: 1.35rem;
-    padding-top: 2.75rem;
-    border: none;
-    box-shadow: none;
-  }
-
-  .text-modal-close {
-    position: fixed;
-    top: 0.75rem;
-    right: 0.75rem;
-    margin: 0;
-  }
-
-  .rotation-document p,
-  .rotation-document li {
-    font-size: 0.84rem;
-    line-height: 1.7;
-  }
 }
 </style>
 
@@ -1054,6 +709,8 @@ const taken = allRooms
     const overlay = document.getElementById("rotation-overlay");
     if (!overlay) return;
 
+    const lang = document.documentElement.getAttribute("data-lang") ?? "de";
+    overlay.querySelector<HTMLElement>("[role=dialog]")?.setAttribute("aria-labelledby", `rotation-title-${lang}`);
     overlay.classList.remove("hidden");
     overlay.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";

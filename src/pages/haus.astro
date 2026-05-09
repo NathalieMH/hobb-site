@@ -10,7 +10,7 @@ const roomCount = allRooms.length;
 ---
 
 <Layout title="Haderslebener 26 — Das Haus" noPadding={true}>
-
+<div class="haus-content">
   <!-- Hero -->
   <section class="subpage-hero" data-blend-move>
     <div class="hero-image-wrap">
@@ -39,22 +39,22 @@ const roomCount = allRooms.length;
           </h2>
 
           <p class="middle-body reveal" data-de>
-            Unser Haus in der Haderslebener Straße 26 wurde ab 1924 von dem Architekten Leo Nachtlicht erbaut, der im Berliner Raum zu den bedeutendsten Architekten der Jahrhundertwende gehörte. 
-            <br>
-            Der damalige Garten wurde von dem ebenfalls bekannten Gartenarchitekten E. Pepinsky angelegt.<br>
-            In den 1980er Jahren erfolgte ein moderner Anbau an die Stadtvilla. 
+            Unser Haus in der Haderslebener Straße 26 wurde ab 1924 von dem Architekten Leo Nachtlicht erbaut, der im Berliner Raum zu den bedeutendsten Architekten der Jahrhundertwende gehörte.
+          </p>
+          <p class="middle-body reveal" data-de>
+            Der damalige Garten wurde von dem ebenfalls bekannten Gartenarchitekten E. Pepinsky angelegt. In den 1980er Jahren erfolgte ein moderner Anbau an die Stadtvilla.
           </p>
 
           <p class="middle-body reveal" data-en>
             Our house at Haderslebener Straße 26 was built from 1924 onwards by the architect Leo Nachtlicht, who was one of the most important architects in the Berlin area around the turn of the century.
-          <br>
-          The original garden was designed by the well-known garden architect E. Pepinsky.
-            In the 1980s, a modern extension was added to the town villa.
+          </p>
+          <p class="middle-body reveal" data-en>
+            The original garden was designed by the well-known garden architect E. Pepinsky. In the 1980s, a modern extension was added to the town villa.
           </p>
         </div>
 
         <figure class="intro-detail-card reveal" data-blend data-bd="140ms">
-          <img src={`${base}das-haus/Block1unten.png`} alt="Historisches Detail im Inneren der Stadtvilla" loading="lazy" decoding="async" />
+          <img src={`${base}das-haus/Block1unten.webp`} alt="Historisches Detail im Inneren der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
       </div>
 
@@ -73,7 +73,7 @@ const roomCount = allRooms.length;
 
       <div class="garden-image-stage" data-blend data-bd="110ms">
         <figure class="garden-image garden-image--main reveal">
-          <img src={`${base}das-haus/IMG_6392.webp`} alt="Garten und Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
+          <img src={`${base}das-haus/garten-aussenansicht.webp`} alt="Garten und Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
         </figure>
       </div>
 
@@ -138,26 +138,21 @@ const roomCount = allRooms.length;
           
         </p>
 
-        <p class="middle-body reveal" data-de>
-          Ab 1933 wurde Leo Nachtlicht als Jude die Arbeitserlaubnis entzogen und er verlor alle seine Ämter. Am 22.September 1942 starb er, wahrscheinlich an den Folgen eines Selbstmordversuchs, und wurde auf dem jüdischen Friedhof Berlin-Weißensee bestattet.<br>
-          Seine Frau Anna Nachtlicht geb. Levy (1880 - 1942) wurde im Oktober 1942 nach Riga deportiert und dort ermordet.
-          <br><br>
-          
-          <br><br>
-          Textquellen:
-          <br>
-          Text auszugsweise aus openpr.de „BIKINI BERLIN - Hommage an Leo Nachtlicht“ und stolpersteine-berlin/Leo Nachtlicht
+        <p class=”middle-body reveal” data-de>
+          Ab 1933 wurde Leo Nachtlicht als Jude die Arbeitserlaubnis entzogen und er verlor alle seine Ämter. Am 22. September 1942 starb er, wahrscheinlich an den Folgen eines Selbstmordversuchs, und wurde auf dem jüdischen Friedhof Berlin-Weißensee bestattet. Seine Frau Anna Nachtlicht geb. Levy (1880–1942) wurde im Oktober 1942 nach Riga deportiert und dort ermordet.
+        </p>
+        <p class=”middle-body reveal” data-de>
+          Textquellen: Text auszugsweise aus openpr.de „BIKINI BERLIN - Hommage an Leo Nachtlicht” und stolpersteine-berlin/Leo Nachtlicht
         </p>
 
-        <p class="middle-body reveal" data-en>
+        <p class=”middle-body reveal” data-en>
           The Gourmenia Palace was one of the largest restaurants opened in the late 1920s. However, after only a few years of operation, the building was completely destroyed during the Second World War.
-          <br><br>
-          From 1933 onwards, Leo Nachtlicht, being Jewish, was banned from practising his profession and lost all his positions. He died on 22 September 1942, probably as a result of a suicide attempt.<br>
-          and was buried at the Jewish Cemetery in Berlin-Weißensee. His wife, Anna Nachtlicht (1880–1942), was deported to Riga in October 1942 and murdered there.
-          <br><br>
-          Text sources:
-          <br>
-          Text partly based on openpr.de “BIKINI BERLIN - Hommage an Leo Nachtlicht” and stolpersteine-berlin/Leo Nachtlicht
+        </p>
+        <p class=”middle-body reveal” data-en>
+          From 1933 onwards, Leo Nachtlicht, being Jewish, was banned from practising his profession and lost all his positions. He died on 22 September 1942, probably as a result of a suicide attempt, and was buried at the Jewish Cemetery in Berlin-Weißensee. His wife, Anna Nachtlicht (1880–1942), was deported to Riga in October 1942 and murdered there.
+        </p>
+        <p class=”middle-body reveal” data-en>
+          Text sources: Text partly based on openpr.de “BIKINI BERLIN - Hommage an Leo Nachtlicht” and stolpersteine-berlin/Leo Nachtlicht
         </p>
       </div>
 
@@ -168,11 +163,11 @@ const roomCount = allRooms.length;
 
         <div class="architect-gallery__row">
           <figure class="architect-gallery__image architect-gallery__image--small reveal">
-            <img src={`${base}das-haus/Block3links.JPG`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
+            <img src={`${base}das-haus/Block3links.jpg`} alt="Außenansicht der Stadtvilla" loading="lazy" decoding="async" />
           </figure>
 
           <figure class="architect-gallery__image architect-gallery__image--small reveal">
-            <img src={`${base}das-haus/Block3rechts.JPG`} alt="Holzverkleidetes Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
+            <img src={`${base}das-haus/Block3rechts.jpg`} alt="Holzverkleidetes Treppenhaus der Stadtvilla" loading="lazy" decoding="async" />
           </figure>
         </div>
       </div>
@@ -180,13 +175,14 @@ const roomCount = allRooms.length;
     </div>
   </section>
 
+</div>
 </Layout>
 
 <style>
 
 /* Einheitliche Abstände */
 
-:root {
+.haus-content {
   --haus-block-space: clamp(2.75rem, 4.5vw, 4.75rem);
   --haus-line-offset: calc(var(--haus-block-space) / 2);
 }
@@ -291,11 +287,6 @@ const roomCount = allRooms.length;
 }
 
 /* Shared image styling */
-
-figure {
-  margin: 0;
-}
-
 .intro-detail-card,
 .intro-main-image,
 .garden-image,
