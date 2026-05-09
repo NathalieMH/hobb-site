@@ -34,7 +34,7 @@ Zimmerfotos liegen in `public/zimmer/[zimmer-name]/`, z. B. `public/zimmer/1og-z
 | Zimmer | Cover | Weitere Fotos |
 |--------|-------|---------------|
 | 1. OG Zimmer 2 (Nr. 3.2) | `3.2-cover.webp` | `3.2-1.webp`, `3.2-2.webp` |
-| 2. OG Zimmer 4 (Nr. 4.4) | `4.4-cover.webp` | `4.4-1.webp`, `4.4-2.webp` |
+| 2. OG Zimmer 4 (kein Grundrisspräfix) | `cover.webp` | `1.webp`, `2.webp` |
 
 ---
 
@@ -228,15 +228,11 @@ Die Seite wird beim nächsten Deployment automatisch ohne diesen Eintrag neu ers
 4. Klicke auf **“Commit changes”**.
 
 ### 4.2 Neues Bild hinzufügen
-1. Lade das Foto hoch in:  
-   `public/rooms/`  
-   → z. B. `zimmer3b.jpg`
-2. Öffne die zugehörige `.md`-Datei des Zimmers.
-3. Füge den Dateinamen in der Bildliste hinzu:
-   ```yaml
-   images: ["/rooms/zimmer3a.jpg", "/rooms/zimmer3b.jpg"]
-   ```
-4. **Commit changes**.  
+1. Lade das Foto hoch in den richtigen Ordner:
+   - Zimmerfoto: `public/zimmer/[zimmer-name]/` → z. B. `public/zimmer/1og-zimmer-2/`
+   - Gemeinschaftsraum: `public/wohngemeinschaften/[wohnungsordner]/` → z. B. `public/wohngemeinschaften/wohnung-1OG/`
+2. Namensregeln beachten (→ Abschnitte A und B oben).
+3. **Commit changes**.  
    Nach dem nächsten Deployment ist das neue Foto sichtbar.
 
 ---
