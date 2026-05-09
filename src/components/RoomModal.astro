@@ -110,6 +110,8 @@ const renderedRooms = await Promise.all(
   width: min(100%, 980px);
   max-height: 90vh;
   overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   position: relative;
   padding: 2rem;
   padding-bottom: 0; /* Chrome clips padding-bottom on overflow:auto containers */
@@ -328,6 +330,23 @@ const renderedRooms = await Promise.all(
 </style>
 
 <script>
+  // ── Body scroll lock (position-fixed technique — works on iOS Safari) ──
+  let _scrollY = 0;
+  function lockBodyScroll() {
+    _scrollY = window.scrollY;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${_scrollY}px`;
+    document.body.style.width = '100%';
+  }
+  function unlockBodyScroll() {
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, _scrollY);
+  }
+
   // ── Inline zoom state (space modals only) ─────────────────────
   let zScale = 1, zOffX = 0, zOffY = 0;
   let zDragging = false, zDragX = 0, zDragY = 0, zOffX0 = 0, zOffY0 = 0;
@@ -391,7 +410,7 @@ const renderedRooms = await Promise.all(
     initFadeIn(body);
     overlay.classList.remove("hidden");
     overlay.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
+    lockBodyScroll();
   }
 
   // ── Drag-to-pan (module-level so it survives navigation) ───────
@@ -441,7 +460,7 @@ const renderedRooms = await Promise.all(
     if (target.matches(".modal-close") || target === overlay) {
       overlay.classList.add("hidden");
       overlay.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
+      unlockBodyScroll();
       return;
     }
 
@@ -488,7 +507,7 @@ const renderedRooms = await Promise.all(
       if (!overlay.classList.contains("hidden")) {
         overlay.classList.add("hidden");
         overlay.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
+        unlockBodyScroll();
       }
     }
   });

@@ -658,6 +658,24 @@ const taken = allRooms
 </style>
 
 <script>
+  let _rotScrollY = 0;
+
+  function lockBodyScroll() {
+    _rotScrollY = window.scrollY;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${_rotScrollY}px`;
+    document.body.style.width = '100%';
+  }
+
+  function unlockBodyScroll() {
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, _rotScrollY);
+  }
+
   function openRotationModal() {
     const overlay = document.getElementById("rotation-overlay");
     if (!overlay) return;
@@ -666,7 +684,7 @@ const taken = allRooms
     overlay.querySelector<HTMLElement>("[role=dialog]")?.setAttribute("aria-labelledby", `rotation-title-${lang}`);
     overlay.classList.remove("hidden");
     overlay.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
+    lockBodyScroll();
   }
 
   function closeRotationModal() {
@@ -675,7 +693,7 @@ const taken = allRooms
 
     overlay.classList.add("hidden");
     overlay.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
+    unlockBodyScroll();
   }
 
   document.addEventListener("click", (event) => {
