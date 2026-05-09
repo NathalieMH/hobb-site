@@ -1,46 +1,14 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import DecoRule from "../../components/DecoRule.astro";
-import { getCollection, render } from "astro:content";
-import fs from "node:fs/promises";
-import path from "node:path";
+import RoomModal from "../../components/RoomModal.astro";
+import { getCollection } from "astro:content";
+import { loadImages } from "../../utils/images";
 
 const base = import.meta.env.BASE_URL;
 
 function entrySlug(id: string) {
   return id.replace(/\.[^.]+$/, "").toLowerCase();
-}
-
-function normalizeKey(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/\s+/g, "")
-    .replace(/\./g, "")
-    .replace(/-/g, "");
-}
-
-async function loadImages(folder: string) {
-  const dir = path.resolve(process.cwd(), "public", folder);
-  try {
-    const files = await fs.readdir(dir);
-    const sortKey = (f: string) => {
-      const stem = f.replace(/\.[^.]+$/, "");
-      const us = stem.indexOf("_");
-      return us >= 0 ? stem.slice(us + 1) : stem;
-    };
-    return files
-      .filter((f) => /\.(jpe?g|png|webp|gif)$/i.test(f))
-      .sort((a, b) => {
-        const ka = sortKey(a).toLowerCase();
-        const kb = sortKey(b).toLowerCase();
-        if (ka === "cover" || ka.endsWith("-cover")) return -1;
-        if (kb === "cover" || kb.endsWith("-cover")) return 1;
-        return ka.localeCompare(kb, undefined, { numeric: true, sensitivity: "base" });
-      })
-      .map((f) => `${base}${folder}/${f}`);
-  } catch {
-    return [];
-  }
 }
 
 // Filename prefix → bilingual shared space names
@@ -68,49 +36,6 @@ function getPrefix(filename: string): string {
   return base;
 }
 
-const WOHNUNG_1_OG_ROOM_ORDER = [
-  "zimmer1",
-  "zimmer2",
-  "zimmer3",
-  "zimmer4",
-  "zimmer5",
-];
-
-const WOHNUNG_1_OG_SPACE_ORDER = [
-  "dining-room",
-  "balcony",
-  "kitchen",
-  "bathroom1",
-  "bathroom2",
-  "grundriss",
-  "digital-lock",
-  "laundry",
-];
-
-const WOHNUNG_1_OG_SPACE_LABELS: Record<string, { de: string; en: string }> = {
-  "dining-room":  { de: "Wohn-Esszimmer",      en: "Living-Dining Room" },
-  "balcony":      { de: "Balkon · 1. OG",      en: "Balcony · 1st Floor" },
-  "kitchen":      { de: "Küche · 1. OG",       en: "Kitchen · 1st Floor" },
-  "bathroom1":    { de: "Bad 1 · 1. OG",       en: "Bathroom 1 · 1st Floor" },
-  "bathroom2":    { de: "Bad 2 · 1. OG",       en: "Bathroom 2 · 1st Floor" },
-  "grundriss":    { de: "Grundriss",           en: "Floor Plan" },
-  "digital-lock": { de: "Digitales Schloss",   en: "Digital Lock" },
-  "laundry":      { de: "Laundry · 2. OG",     en: "Laundry · 2nd Floor" },
-};
-
-function roomSortIndex(room: any) {
-  const slug = normalizeKey(entrySlug(room.id));
-  const titleDe = normalizeKey(room.data.title_de ?? "");
-  const titleEn = normalizeKey(room.data.title_en ?? "");
-
-  const idx = WOHNUNG_1_OG_ROOM_ORDER.findIndex((key) => {
-    const k = normalizeKey(key);
-    return slug.includes(k) || titleDe.includes(k) || titleEn.includes(k);
-  });
-
-  return idx === -1 ? 999 : idx;
-}
-
 export async function getStaticPaths() {
   const apartments = await getCollection("apartments");
   return apartments.map((a) => ({
@@ -122,66 +47,43 @@ const { apartment } = Astro.params;
 const apartments = await getCollection("apartments");
 const apt = apartments.find((a) => entrySlug(a.id) === apartment);
 
-const isWohnung1OG = (() => {
-  const aptSlug = normalizeKey(apartment ?? "");
-  const titleDe = normalizeKey(apt?.data.title_de ?? "");
-  const titleEn = normalizeKey(apt?.data.title_en ?? "");
-
-  return (
-    aptSlug.includes("wohnung1og") ||
-    aptSlug.includes("1og") ||
-    titleDe.includes("wohnung1obergeschoss") ||
-    titleDe.includes("wohnung1og") ||
-    titleEn.includes("apartment1") ||
-    titleEn.includes("1stfloor")
-  );
-})();
-
-// Available rooms first, taken rooms last.
-// For Wohnung 1. OG the room order is fixed as:
-// Zimmer 1, Zimmer 2, Zimmer 3, Zimmer 4, Zimmer 5.
+// Sort rooms by frontmatter order, then available-first within same order value.
 const rooms = (await getCollection("rooms", (r) => r.data.apartment.toLowerCase() === apartment.toLowerCase()))
   .sort((a, b) => {
-    if (isWohnung1OG) {
-      const ai = roomSortIndex(a);
-      const bi = roomSortIndex(b);
-      if (ai !== bi) return ai - bi;
-    }
-
+    const ao = a.data.order ?? 999;
+    const bo = b.data.order ?? 999;
+    if (ao !== bo) return ao - bo;
     if (a.data.available === b.data.available) return 0;
     return a.data.available ? -1 : 1;
   });
 
-const renderedRooms = await Promise.all(
-  rooms.map(async (r) => {
-    const { Content } = await render(r);
-    const allImgs = await loadImages(`zimmer/${entrySlug(r.id)}`);
-    const isRoomCover = (url: string) => {
-      const stem = (url.split("/").pop() ?? "").replace(/\.[^.]+$/, "");
-      const key = stem.includes("_") ? stem.split("_").slice(1).join("_") : stem;
-      return key.toLowerCase() === "cover";
-    };
-    const coverUrl = allImgs.find(isRoomCover) ?? null;
-    const galleryImgs = allImgs.filter((url) => !isRoomCover(url));
-    const imgs = coverUrl ? [coverUrl, ...galleryImgs] : galleryImgs;
-    return { entry: r, Content, imgs };
-  })
-);
-
 const roomImages = Object.fromEntries(
-  renderedRooms.map(({ entry, imgs }) => [entrySlug(entry.id), imgs])
+  await Promise.all(
+    rooms.map(async (r) => {
+      const allImgs = await loadImages(base, `zimmer/${entrySlug(r.id)}`);
+      const isRoomCover = (url: string) => {
+        const stem = (url.split("/").pop() ?? "").replace(/\.[^.]+$/, "");
+        const key = stem.includes("_") ? stem.split("_").slice(1).join("_") : stem;
+        return key.toLowerCase() === "cover";
+      };
+      const coverUrl = allImgs.find(isRoomCover) ?? null;
+      const galleryImgs = allImgs.filter((url) => !isRoomCover(url));
+      const imgs = coverUrl ? [coverUrl, ...galleryImgs] : galleryImgs;
+      return [entrySlug(r.id), imgs];
+    })
+  )
 );
 
 // Apartment images from wohngemeinschaften/[image_folder]/
 const aptFolder = apt?.data.image_folder ? `wohngemeinschaften/${apt.data.image_folder}` : "";
-const allAptFiles = aptFolder ? await loadImages(aptFolder) : [];
+const allAptFiles = aptFolder ? await loadImages(base, aptFolder) : [];
 
 // Exclude only cover from space images; grundriss is handled as a named prefix
 const rawImages = allAptFiles.filter((url) => !/\/cover\.[^/]+$/i.test(url));
 
 // Space order and labels from apartment frontmatter
-const frontmatterSpaceOrder = (apt?.data.shared_spaces ?? []).map((s) => s.prefix);
-const frontmatterSpaceLabelMap = Object.fromEntries(
+const spaceOrder = (apt?.data.shared_spaces ?? []).map((s) => s.prefix);
+const spaceLabelMap = Object.fromEntries(
   (apt?.data.shared_spaces ?? []).map((s) => [s.prefix, { de: s.de, en: s.en }])
 );
 
@@ -194,23 +96,8 @@ for (const url of rawImages) {
   grouped[prefix].push(url);
 }
 
-const spaceOrder = isWohnung1OG ? WOHNUNG_1_OG_SPACE_ORDER : frontmatterSpaceOrder;
-
-const spaceLabelMap = isWohnung1OG
-  ? {
-      ...frontmatterSpaceLabelMap,
-      ...WOHNUNG_1_OG_SPACE_LABELS,
-    }
-  : frontmatterSpaceLabelMap;
-
-// Für Wohnung 1. OG werden alle gewünschten Kacheln angezeigt,
-// auch wenn keine Bilder vorhanden sind.
-// Für andere Wohnungen bleibt das alte Verhalten erhalten.
-const prefixesInOrder = isWohnung1OG
-  ? spaceOrder
-  : spaceOrder.filter((p: string) => grouped[p]);
-
-const spaceGroups = prefixesInOrder.map((prefix) => {
+// All spaces declared in shared_spaces are shown; placeholder renders when no photos exist yet.
+const spaceGroups = spaceOrder.map((prefix) => {
   const images = grouped[prefix] ?? [];
   const labels = spaceLabelMap[prefix] ?? PREFIX_MAP[prefix] ?? { de: prefix, en: prefix };
 
@@ -367,67 +254,11 @@ const spaceGroups = prefixesInOrder.map((prefix) => {
     </div>
   </section>
 
-  <!-- Room detail templates -->
-  {renderedRooms.map(({ entry, Content, imgs }) => {
-    const d = entry.data;
-    const cover = imgs[0] ?? null;
-    const hasGallery = imgs.length > 1;
-    return (
-      <template id={`tpl-${entrySlug(entry.id)}`}>
-        <article class="modal-content" data-images={JSON.stringify(imgs)}>
-          <div class="modal-left">
-            <div class="modal-img-wrap">
-              {cover
-                ? <img class="modal-cover" src={cover} alt={d.title_de} data-index="0" loading="lazy" decoding="async" />
-                : <div class="room-placeholder modal-cover" data-index="-1" />
-              }
-              <button class="modal-zoom-btn" aria-label="Bild vergrößern">
-                <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
-                  <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.3"/>
-                  <line x1="10" y1="10" x2="14" y2="14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="6.5" y1="4" x2="6.5" y2="9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="4" y1="6.5" x2="9" y2="6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-                </svg>
-              </button>
-              {hasGallery && <button class="nav prev modal-nav-prev" aria-label="Vorheriges Bild">‹</button>}
-              {hasGallery && <button class="nav next modal-nav-next" aria-label="Nächstes Bild">›</button>}
-              {hasGallery && <span class="modal-nav-counter modal-counter-overlay">{`1 / ${imgs.length}`}</span>}
-            </div>
-            {hasGallery && (
-              <div class="thumbs">
-                {imgs.map((url, i) => (
-                  <button class={`thumb${i === 0 ? " active" : ""}`} data-full={url} data-index={i} aria-label={`Bild ${i + 1}`}>
-                    <img src={url} alt="" loading="lazy" decoding="async" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          <div class="modal-right">
-            <div class="modal-title-row">
-              <h3>
-                <span data-de>{d.title_de}</span>
-                <span data-en>{d.title_en}</span>
-              </h3>
-              {!d.available && <span class="badge-taken" data-de>vergeben</span>}
-              {!d.available && <span class="badge-taken" data-en>taken</span>}
-            </div>
-            <ul class="room-facts">
-              {d.size_m2 && <li><span class="fact-label" data-de>Größe</span><span class="fact-label" data-en>Size</span><span class="fact-val">{d.size_m2} m²</span></li>}
-              {d.kaltmiete_eur && <li><span class="fact-label" data-de>Kaltmiete</span><span class="fact-label" data-en>Rent (excl. utilities)</span><span class="fact-val">{d.kaltmiete_eur} €/M</span></li>}
-              {d.nebenkosten_eur && <li><span class="fact-label" data-de>Nebenkosten</span><span class="fact-label" data-en>Utilities</span><span class="fact-val">{d.nebenkosten_eur} €/M</span></li>}
-              {d.gesamtmiete_eur && <li><span class="fact-label" data-de>Gesamtmiete</span><span class="fact-label" data-en>Total rent</span><span class="fact-val">{d.gesamtmiete_eur} €/M</span></li>}
-              {d.available_from && <li><span class="fact-label" data-de>Verfügbar ab</span><span class="fact-label" data-en>Available from</span><span class="fact-val">{d.available_from}</span></li>}
-              {apt?.data.shared_m2 && <li><span class="fact-label" data-de>Gemeinschaftsfläche</span><span class="fact-label" data-en>Communal area</span><span class="fact-val">ca. {apt.data.shared_m2} m²</span></li>}
-            </ul>
-            {d.teaser_de && <p class="modal-teaser" data-de>{d.teaser_de}</p>}
-            {d.teaser_en && <p class="modal-teaser" data-en>{d.teaser_en}</p>}
-            <div class="modal-body-text"><Content /></div>
-          </div>
-        </article>
-      </template>
-    );
-  })}
+  <RoomModal rooms={rooms.map(r => ({
+    entry: r,
+    imgs: roomImages[entrySlug(r.id)] ?? [],
+    sharedM2: apt?.data.shared_m2,
+  }))} />
 
   <!-- Space detail templates -->
   {spaceGroups.map(({ prefix, titleDe, titleEn, images }) => {
@@ -465,13 +296,6 @@ const spaceGroups = prefixesInOrder.map((prefix) => {
     );
   })}
 
-  <!-- Modal overlay -->
-  <div id="overlay" class="overlay hidden" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true">
-      <button class="modal-close" aria-label="Schließen">×</button>
-      <div id="modal-body"></div>
-    </div>
-  </div>
 
 </Layout>
 
@@ -577,567 +401,4 @@ const spaceGroups = prefixesInOrder.map((prefix) => {
   padding-bottom: 0.1rem;
 }
 .price-item-total .price-num { font-size: 0.58rem; }
-
-/* Modal */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(28, 26, 23, 0.55);
-  display: grid;
-  place-items: center;
-  padding: 2rem;
-  z-index: 200;
-}
-.overlay.hidden { display: none; }
-.modal-card {
-  background: var(--bg);
-  width: min(100%, 980px);
-  max-height: 90vh;
-  overflow: auto;
-  position: relative;
-  padding: 2rem;
-  border: 1px solid var(--border);
-  box-shadow: 0 24px 64px rgba(28, 26, 23, 0.2);
-}
-.modal-close {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  background: none;
-  border: 1px solid var(--gold);
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  line-height: 1;
-  color: var(--gold);
-  cursor: pointer;
-  transition: background var(--ease), color var(--ease);
-}
-.modal-close:hover { background: var(--gold); color: var(--bg); }
-.modal-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-}
-.modal-left { display: flex; flex-direction: column; gap: 0; }
-.modal-img-wrap {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 4 / 3;
-  background: var(--bg);
-}
-.modal-cover {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border: 1px solid var(--border);
-  display: block;
-}
-
-/* Overlaid nav arrows on image */
-.modal-nav-prev, .modal-nav-next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;
-  opacity: 0;
-  transition: opacity var(--ease), color var(--ease), border-color var(--ease);
-}
-.modal-nav-prev { left: 0.5rem; }
-.modal-nav-next { right: 0.5rem; }
-.modal-img-wrap:hover .modal-nav-prev,
-.modal-img-wrap:hover .modal-nav-next { opacity: 1; }
-
-/* Counter overlay bottom-left of image */
-.modal-counter-overlay {
-  position: absolute;
-  bottom: 0.5rem;
-  left: 0.5rem;
-  background: rgba(28, 26, 23, 0.5);
-  color: rgba(245, 242, 236, 0.92);
-  font-family: var(--font-sans);
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  padding: 0.2rem 0.55rem;
-  pointer-events: none;
-  line-height: 1.6;
-}
-.modal-zoom-btn {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: rgba(28,26,23,0.45);
-  border: none;
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  color: rgba(245,242,236,0.85);
-  cursor: pointer;
-  opacity: 0;
-  z-index: 3;
-  transition: opacity var(--ease), background var(--ease);
-}
-.modal-img-wrap:hover .modal-zoom-btn { opacity: 1; }
-.modal-zoom-btn:hover { background: rgba(28,26,23,0.75); color: #fff; }
-.modal-zoom-btn svg { width: 14px; height: 14px; }
-
-.thumbs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
-.thumb {
-  width: 80px; height: 60px;
-  border: none; padding: 0; background: none; cursor: pointer;
-  position: relative; overflow: hidden;
-}
-.thumb img { width: 100%; height: 100%; object-fit: cover; }
-.thumb::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0.5);
-  transition: opacity 0.2s;
-}
-.thumb.active::after { opacity: 0; }
-.thumb:hover::after { opacity: 0.2; }
-.nav {
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid var(--gold);
-  width: 34px;
-  height: 34px;
-  font-size: 1.2rem;
-  line-height: 1;
-  color: var(--gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background var(--ease);
-  flex-shrink: 0;
-}
-.nav:hover { background: #fff; }
-.modal-right { padding-top: 0.5rem; }
-.modal-title-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-.modal-title-row h3 { font-size: 1.6rem; font-weight: 300; flex: 1; }
-
-.room-facts {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 1.25rem;
-}
-
-.room-facts li {
-  display: grid;
-  grid-template-columns: 8rem 1fr;
-  column-gap: 1rem;
-  align-items: center;
-}
-
-.fact-label,
-.fact-val {
-  font-family: var(--font-serif);
-  font-size: 1rem;
-  font-weight: 300;
-  line-height: 1.35;
-  letter-spacing: 0;
-  font-variant-numeric: lining-nums;
-  font-feature-settings: "lnum";
-}
-
-.fact-label {
-  color: var(--muted);
-}
-
-.fact-val {
-  color: var(--ink);
-}
-
-.modal-teaser { color: var(--muted); font-style: italic; font-size: 0.85rem; white-space: pre-line; margin-bottom: 0.75rem; }
-
-/* Gold "vergeben" badge — modal only */
-.modal-content .badge-taken {
-  background: var(--gold);
-  color: #2a1f00;
-  border-color: #8B6E1A;
-  font-size: 1.3rem;
-  padding: 0.2em 0.7em;
-  margin-right: 0.7em;
-  flex-shrink: 0;
-  align-self: center;
-}
-
-/* Inline zoom on space modal images */
-.modal-img-wrap--zoomable .modal-cover {
-  transform-origin: 0 0;
-  will-change: transform;
-  transition: transform 0.15s ease;
-}
-.modal-img-wrap--zoomable.dragging .modal-cover { transition: none; }
-
-/* Space modal — full-width single column */
-.modal-content-space {
-  grid-template-columns: 1fr;
-}
-.modal-space-col {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-.modal-space-header h3 {
-  font-size: 1.6rem;
-  font-weight: 300;
-}
-
-@media (max-width: 800px) {
-  .modal-content { grid-template-columns: 1fr; }
-}
-@media (max-width: 600px) {
-  .overlay { padding: 0; align-items: flex-start; }
-  .modal-card {
-    width: 100%;
-    min-height: 100%;
-    max-height: none;
-    padding: 1.25rem;
-    padding-top: 2.75rem;
-    border: none;
-    box-shadow: none;
-  }
-  .modal-close { top: 0.6rem; right: 0.6rem; }
-  .modal-nav-prev, .modal-nav-next { display: none; }
-  .modal-counter-overlay { opacity: 1; }
-  .thumbs { display: none; }
-
-  .room-facts li {
-    grid-template-columns: 8rem 1fr;
-  }
-}
 </style>
-
-<script>
-  // ── Inline zoom state (space modals only) ─────────────────────
-  let zScale = 1, zOffX = 0, zOffY = 0;
-  let zDragging = false, zDragX = 0, zDragY = 0, zOffX0 = 0, zOffY0 = 0;
-
-  function zReset() { zScale = 1; zOffX = 0; zOffY = 0; zDragging = false; }
-
-  function zApply(wrap: HTMLElement) {
-    const img = wrap.querySelector<HTMLImageElement>('.modal-cover');
-    if (!img) return;
-    img.style.transform = (zScale === 1 && zOffX === 0 && zOffY === 0)
-      ? ''
-      : `translate(${zOffX}px,${zOffY}px) scale(${zScale})`;
-  }
-
-  function zClamp(wrap: HTMLElement) {
-    const w = wrap.offsetWidth, h = wrap.offsetHeight;
-    if (zScale >= 1) {
-      zOffX = Math.max(w * (1 - zScale), Math.min(0, zOffX));
-      zOffY = Math.max(h * (1 - zScale), Math.min(0, zOffY));
-    } else {
-      // centre the shrunken image
-      zOffX = w * (1 - zScale) / 2;
-      zOffY = h * (1 - zScale) / 2;
-    }
-  }
-
-  function zWrap(): HTMLElement | null {
-    return document.getElementById('modal-body')
-      ?.querySelector<HTMLElement>('.modal-img-wrap--zoomable') ?? null;
-  }
-
-  // ── Helpers ────────────────────────────────────────────────────
-  function openImgZoom(src: string, images: string[] = [], idx: number = 0) {
-    document.dispatchEvent(new CustomEvent('iz:open', { detail: { src, images, idx } }));
-  }
-
-  function initFadeIn(root: ParentNode) {
-    root.querySelectorAll<HTMLImageElement>('img').forEach(img => {
-      if (img.complete && img.naturalHeight > 0) {
-        img.classList.add('loaded');
-      } else {
-        img.addEventListener('load',  () => img.classList.add('loaded'));
-        img.addEventListener('error', () => img.classList.add('loaded'));
-      }
-    });
-  }
-
-  function openModal(tpl: HTMLTemplateElement) {
-    const overlay = document.getElementById("overlay")!;
-    const body = document.getElementById("modal-body")!;
-    zReset();
-    body.innerHTML = "";
-    const clone = tpl.content.cloneNode(true) as DocumentFragment;
-    clone.querySelectorAll<HTMLImageElement>('img').forEach(img => {
-      const src = img.getAttribute('src') ?? '';
-      if (!src) return;
-      img.loading = 'eager';
-      img.src = '';
-      img.src = src;
-    });
-    body.appendChild(clone);
-    initFadeIn(body);
-    overlay.classList.remove("hidden");
-    overlay.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
-  }
-
-  // ── Drag-to-pan (module-level so it survives navigation) ───────
-  document.addEventListener('mousemove', (e) => {
-    if (!zDragging) return;
-    const wrap = zWrap();
-    if (!wrap) return;
-    zOffX = zOffX0 + (e.clientX - zDragX);
-    zOffY = zOffY0 + (e.clientY - zDragY);
-    zClamp(wrap);
-    zApply(wrap);
-  });
-
-  document.addEventListener('mouseup', () => {
-    if (!zDragging) return;
-    zDragging = false;
-    const wrap = zWrap();
-    if (wrap) { wrap.classList.remove('dragging'); zApply(wrap); }
-  });
-
-  // ── Document-level event delegation ──
-  document.addEventListener("click", (e) => {
-    const target = e.target as Element;
-    const overlay = document.getElementById("overlay")!;
-    const body = document.getElementById("modal-body")!;
-
-    // Room card
-    const roomBtn = target.closest(".open-room") as HTMLElement | null;
-    if (roomBtn) {
-      e.preventDefault();
-      const slug = roomBtn.getAttribute("data-room");
-      const tpl = document.getElementById(`tpl-${slug}`) as HTMLTemplateElement | null;
-      if (tpl) openModal(tpl);
-      return;
-    }
-
-    // Space card
-    const spaceBtn = target.closest(".space-card") as HTMLElement | null;
-    if (spaceBtn) {
-      e.preventDefault();
-      const prefix = spaceBtn.getAttribute("data-space-prefix");
-      const tpl = document.getElementById(`tpl-space-${prefix}`) as HTMLTemplateElement | null;
-      if (tpl) openModal(tpl);
-      return;
-    }
-
-    if (target.matches(".modal-close") || target === overlay) {
-      overlay.classList.add("hidden");
-      overlay.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-      return;
-    }
-
-    const thumb = target.closest(".thumb") as HTMLElement | null;
-    if (thumb && body.contains(thumb)) {
-      const article = thumb.closest(".modal-content") as HTMLElement;
-      const cover = article.querySelector(".modal-cover") as HTMLImageElement;
-      const newIdx = thumb.getAttribute("data-index") || "0";
-      cover.setAttribute("src", thumb.getAttribute("data-full")!);
-      cover.setAttribute("data-index", newIdx);
-      article.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
-      thumb.classList.add("active");
-      const allImgs: string[] = JSON.parse(article.getAttribute("data-images") || "[]");
-      const counter = article.querySelector(".modal-nav-counter") as HTMLElement | null;
-      if (counter) counter.textContent = `${parseInt(newIdx, 10) + 1} / ${allImgs.length}`;
-      // reset inline zoom on image change
-      const wrap = article.querySelector<HTMLElement>('.modal-img-wrap--zoomable');
-      if (wrap) { zReset(); zApply(wrap); }
-      return;
-    }
-
-    const navBtn = target.closest(".nav") as HTMLElement | null;
-    if (navBtn && body.contains(navBtn)) {
-      const article = navBtn.closest(".modal-content") as HTMLElement;
-      const cover = article.querySelector(".modal-cover") as HTMLImageElement;
-      const allImgs: string[] = JSON.parse(article.getAttribute("data-images") || "[]");
-      if (allImgs.length < 2) return;
-      let idx = parseInt(cover.getAttribute("data-index") || "0", 10);
-      if (isNaN(idx) || idx < 0) idx = 0;
-      const newIdx = (idx + (navBtn.classList.contains("next") ? 1 : -1) + allImgs.length) % allImgs.length;
-      cover.setAttribute("src", allImgs[newIdx]);
-      cover.setAttribute("data-index", String(newIdx));
-      article.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
-      article.querySelector<HTMLElement>(`.thumb[data-index="${newIdx}"]`)?.classList.add("active");
-      const counter = article.querySelector(".modal-nav-counter") as HTMLElement | null;
-      if (counter) counter.textContent = `${newIdx + 1} / ${allImgs.length}`;
-      // reset inline zoom on image change
-      const wrap = article.querySelector<HTMLElement>('.modal-img-wrap--zoomable');
-      if (wrap) { zReset(); zApply(wrap); }
-    }
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      const overlay = document.getElementById("overlay")!;
-      if (!overlay.classList.contains("hidden")) {
-        overlay.classList.add("hidden");
-        overlay.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
-      }
-    }
-  });
-
-  document.addEventListener('click', (e) => {
-    const zBtn = (e.target as Element).closest('.modal-zoom-btn');
-    if (zBtn) {
-      const body = document.getElementById('modal-body')!;
-      const article = body.querySelector('.modal-content') as HTMLElement | null;
-      const cover = body.querySelector('.modal-cover') as HTMLImageElement | null;
-      if (cover?.src && article) {
-        const allImgs: string[] = JSON.parse(article.getAttribute('data-images') || '[]');
-        const idx = parseInt(cover.getAttribute('data-index') || '0', 10);
-        openImgZoom(cover.src, allImgs, isNaN(idx) ? 0 : idx);
-      }
-    }
-  });
-
-  // ── Per-navigation init ──────────────────────────────────────────
-  document.addEventListener('astro:page-load', () => {
-    const overlayEl = document.getElementById('overlay');
-    if (overlayEl) {
-      // ── Wheel zoom (space modals only) ───────────────────────
-      let wheelLocked = false;
-      overlayEl.addEventListener('wheel', (e) => {
-        const hasZoomable = !!document.getElementById('modal-body')?.querySelector('.modal-img-wrap--zoomable');
-        if (hasZoomable) { e.preventDefault(); e.stopPropagation(); }
-        const wrap = (e.target as Element).closest('.modal-img-wrap--zoomable') as HTMLElement | null;
-        if (!wrap || wheelLocked) return;
-        wheelLocked = true;
-        setTimeout(() => { wheelLocked = false; }, 80);
-        const rect = wrap.getBoundingClientRect();
-        const mx = e.clientX - rect.left;
-        const my = e.clientY - rect.top;
-        const newScale = Math.max(0.75, Math.min(2.5, zScale + (e.deltaY < 0 ? 0.173 : -0.173)));
-        if (newScale === zScale) return;
-        zOffX = mx - (mx - zOffX) * (newScale / zScale);
-        zOffY = my - (my - zOffY) * (newScale / zScale);
-        zScale = newScale;
-        zClamp(wrap);
-        zApply(wrap);
-      }, { passive: false });
-
-      // ── Mousedown to start drag ──────────────────────────────
-      overlayEl.addEventListener('mousedown', (e) => {
-        const wrap = (e.target as Element).closest('.modal-img-wrap--zoomable') as HTMLElement | null;
-        if (!wrap || zScale <= 1) return;
-        zDragging = true;
-        zDragX = e.clientX; zDragY = e.clientY;
-        zOffX0 = zOffX; zOffY0 = zOffY;
-        wrap.classList.add('dragging');
-        e.preventDefault();
-      });
-
-      // ── Touch: single-finger swipe (not zoomed) or pan (zoomed); two-finger pinch ──
-      let touchState: 'idle' | 'swipe' | 'pan' | 'pinch' = 'idle';
-      let swipeStartX = 0, panLastX = 0, panLastY = 0;
-      let pinchStartDist = 0, pinchStartScale = 1;
-
-      overlayEl.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 2) {
-          touchState = 'pinch';
-          pinchStartDist = Math.hypot(
-            e.touches[1].clientX - e.touches[0].clientX,
-            e.touches[1].clientY - e.touches[0].clientY
-          );
-          pinchStartScale = zScale;
-        } else if (e.touches.length === 1) {
-          swipeStartX = panLastX = e.touches[0].clientX;
-          panLastY = e.touches[0].clientY;
-          touchState = zScale > 1 ? 'pan' : 'swipe';
-        }
-      }, { passive: true });
-
-      overlayEl.addEventListener('touchmove', (e) => {
-        if (touchState === 'pinch' && e.touches.length === 2) {
-          const wrap = document.getElementById('modal-body')
-            ?.querySelector<HTMLElement>('.modal-img-wrap--zoomable');
-          if (!wrap || !pinchStartDist) return;
-          const dist = Math.hypot(
-            e.touches[1].clientX - e.touches[0].clientX,
-            e.touches[1].clientY - e.touches[0].clientY
-          );
-          const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-          const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-          const rect = wrap.getBoundingClientRect();
-          const newScale = Math.max(0.75, Math.min(2.5, pinchStartScale * (dist / pinchStartDist)));
-          const mx = midX - rect.left, my = midY - rect.top;
-          zOffX = mx - (mx - zOffX) * (newScale / zScale);
-          zOffY = my - (my - zOffY) * (newScale / zScale);
-          zScale = newScale;
-          zClamp(wrap);
-          zApply(wrap);
-          e.preventDefault();
-        } else if (touchState === 'pan' && e.touches.length === 1) {
-          const wrap = document.getElementById('modal-body')
-            ?.querySelector<HTMLElement>('.modal-img-wrap--zoomable');
-          if (!wrap) return;
-          zOffX += e.touches[0].clientX - panLastX;
-          zOffY += e.touches[0].clientY - panLastY;
-          panLastX = e.touches[0].clientX;
-          panLastY = e.touches[0].clientY;
-          zClamp(wrap);
-          zApply(wrap);
-          e.preventDefault();
-        }
-      }, { passive: false });
-
-      overlayEl.addEventListener('touchend', (e) => {
-        if (touchState === 'swipe') {
-          const dx = e.changedTouches[0].clientX - swipeStartX;
-          if (Math.abs(dx) >= 40) {
-            const bodyEl = document.getElementById('modal-body')!;
-            const article = bodyEl.querySelector('.modal-content') as HTMLElement | null;
-            const cover = bodyEl.querySelector('.modal-cover') as HTMLImageElement | null;
-            if (!article || !cover) return;
-            const allImgs: string[] = JSON.parse(article.getAttribute('data-images') || '[]');
-            if (allImgs.length < 2) return;
-            let idx = parseInt(cover.getAttribute('data-index') || '0', 10);
-            if (isNaN(idx) || idx < 0) idx = 0;
-            const newIdx = (idx + (dx < 0 ? 1 : -1) + allImgs.length) % allImgs.length;
-            cover.setAttribute('src', allImgs[newIdx]);
-            cover.setAttribute('data-index', String(newIdx));
-            article.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
-            article.querySelector<HTMLElement>(`.thumb[data-index="${newIdx}"]`)?.classList.add('active');
-            const counter = article.querySelector('.modal-nav-counter') as HTMLElement | null;
-            if (counter) counter.textContent = `${newIdx + 1} / ${allImgs.length}`;
-            const wrap = article.querySelector<HTMLElement>('.modal-img-wrap--zoomable');
-            if (wrap) { zReset(); zApply(wrap); }
-          }
-        }
-        if (e.touches.length === 0) touchState = 'idle';
-      }, { passive: true });
-    }
-
-    // ── Preload room + space images in the background ────────────
-    function preloadImages() {
-      const urls: string[] = [];
-      document.querySelectorAll<HTMLTemplateElement>('template[id^="tpl-"]').forEach(tpl => {
-        const article = tpl.content.querySelector<HTMLElement>('[data-images]');
-        if (article) {
-          const imgs: string[] = JSON.parse(article.getAttribute('data-images') || '[]');
-          urls.push(...imgs);
-        }
-      });
-      urls.forEach(src => { new Image().src = src; });
-    }
-
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(preloadImages);
-    } else {
-      window.addEventListener('load', preloadImages, { once: true });
-    }
-  });
-</script>

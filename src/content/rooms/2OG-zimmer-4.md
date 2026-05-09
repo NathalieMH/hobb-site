@@ -2,6 +2,7 @@
 title_de: "Zimmer 4 · 2. OG"
 title_en: "Room 4 · 2nd Floor"
 apartment: "2OG"
+order: 4
 size_m2: 27.2
 kaltmiete_eur: 965
 nebenkosten_eur: 135
