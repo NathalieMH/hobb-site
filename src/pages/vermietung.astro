@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import DecoRule from "../components/DecoRule.astro";
 import RotationModal from "../components/RotationModal.astro";
+import TextModal from "../components/TextModal.astro";
 import RoomModal from "../components/RoomModal.astro";
 import { getCollection } from "astro:content";
 import { promises as fs } from "fs";
@@ -356,50 +357,33 @@ const taken = allRooms
     </div>
   </section>
 
-  <div
-    id="nebenkosten-overlay"
-    class="text-modal-overlay hidden"
-    aria-hidden="true"
-  >
-    <div
-      class="text-modal-dialog"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="nebenkosten-title-de"
-    >
-      <button class="text-modal-close" type="button" aria-label="Schließen">
-        ×
-      </button>
-
-      <div class="text-modal-content">
-        <div data-de>
-          <h2 id="nebenkosten-title-de">Nebenkostenpauschale-Klausel</h2>
-          <p>
-            Aufgrund der aktuellen Weltlage, insbesondere der Energiepreise, kann es sein,
-            dass wir deinen Anteil an den Nebenkosten künftig während deiner Mietperiode
-            anpassen müssen.
-          </p>
-          <p>
-            Wir garantieren, dass wir aus solchen Nebenkostenerhöhungen niemals einen
-            Gewinn ziehen werden, sondern ausschließlich Kostensteigerungen im aktuellen
-            Markt abdecken.
-          </p>
-        </div>
-
-        <div data-en>
-          <h2 id="nebenkosten-title-en">Utility flat-rate clause</h2>
-          <p>
-            Due to the current global situation, especially energy prices, it may become
-            necessary to adjust your share of the utility costs during your rental period.
-          </p>
-          <p>
-            We guarantee that we will never make a profit from such utility increases.
-            Any adjustment will only cover actual cost increases in the current market.
-          </p>
-        </div>
-      </div>
+  <TextModal id="nebenkosten-overlay">
+    <div class="nk-content" data-de>
+      <h2 id="nebenkosten-title-de">Nebenkostenpauschale-Klausel</h2>
+      <p>
+        Aufgrund der aktuellen Weltlage, insbesondere der Energiepreise, kann es sein,
+        dass wir deinen Anteil an den Nebenkosten künftig während deiner Mietperiode
+        anpassen müssen.
+      </p>
+      <p>
+        Wir garantieren, dass wir aus solchen Nebenkostenerhöhungen niemals einen
+        Gewinn ziehen werden, sondern ausschließlich Kostensteigerungen im aktuellen
+        Markt abdecken.
+      </p>
     </div>
-  </div>
+
+    <div class="nk-content" data-en>
+      <h2 id="nebenkosten-title-en">Utility flat-rate clause</h2>
+      <p>
+        Due to the current global situation, especially energy prices, it may become
+        necessary to adjust your share of the utility costs during your rental period.
+      </p>
+      <p>
+        We guarantee that we will never make a profit from such utility increases.
+        Any adjustment will only cover actual cost increases in the current market.
+      </p>
+    </div>
+  </TextModal>
 
   <RotationModal />
 
@@ -449,71 +433,13 @@ const taken = allRooms
   text-align: left;
 }
 
-/* Modal für Nebenkostenpauschale */
-.text-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.25rem;
-  background: rgba(34, 31, 27, 0.28);
-}
-
-.text-modal-overlay.hidden {
-  display: none;
-}
-
-.text-modal-dialog {
-  position: relative;
-  width: min(680px, 100%);
-  max-height: min(72vh, 560px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-
-  padding: 2rem 2.25rem;
-  border-left: 2px solid var(--gold);
-  background: var(--paper, #f7f4ee);
-  color: var(--muted);
-  box-shadow: 0 18px 48px rgba(34, 31, 27, 0.16);
-}
-
-/* RotationModal zentral anzeigen und scrollbar machen */
-:global(#rotation-overlay) {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.25rem;
-}
-
-:global(#rotation-overlay.hidden) {
-  display: none;
-}
-
-:global(#rotation-overlay [role="dialog"]) {
-  width: min(680px, 100%);
-  max-height: min(72vh, 560px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-}
-
-:global(#rotation-overlay .text-modal-content) {
-  max-height: inherit;
-  overflow-y: visible;
-}
-
-.text-modal-content {
+.nk-content {
   font-size: 0.85rem;
   line-height: 1.75;
+  color: var(--muted);
 }
 
-.text-modal-content h2 {
+.nk-content h2 {
   margin: 0 0 1rem;
   font-family: var(--font-serif);
   font-size: clamp(1.35rem, 2.5vw, 1.85rem);
@@ -522,34 +448,12 @@ const taken = allRooms
   color: var(--ink);
 }
 
-.text-modal-content p {
+.nk-content p {
   margin: 0 0 1rem;
 }
 
-.text-modal-content p:last-child {
+.nk-content p:last-child {
   margin-bottom: 0;
-}
-
-.text-modal-close {
-  position: sticky;
-  top: 0;
-  float: right;
-  margin-top: -0.65rem;
-  margin-right: -0.75rem;
-
-  appearance: none;
-  border: none;
-  background: transparent;
-  color: var(--muted);
-  font-family: var(--font-serif);
-  font-size: 1.8rem;
-  line-height: 1;
-  cursor: pointer;
-  transition: color var(--ease);
-}
-
-.text-modal-close:hover {
-  color: var(--ink);
 }
 
 .avail-group {
@@ -794,22 +698,6 @@ const taken = allRooms
 }
 
 @media (max-width: 620px) {
-  .text-modal-overlay,
-  :global(#rotation-overlay) {
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-  }
-
-  .text-modal-dialog {
-    max-height: calc(100vh - 2rem);
-    padding: 1.5rem 1.4rem;
-  }
-
-  :global(#rotation-overlay [role="dialog"]) {
-    max-height: calc(100vh - 2rem);
-  }
-
   .room-row-main {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     column-gap: 0.5rem;
@@ -982,29 +870,15 @@ const taken = allRooms
       return;
     }
 
-    const nebenkostenOverlay = document.getElementById("nebenkosten-overlay");
-    const rotationOverlay = document.getElementById("rotation-overlay");
-
-    if (target.closest(".text-modal-close")) {
+    if (target.closest(".txt-close")) {
       event.preventDefault();
-
-      const customOverlay = target.closest(".text-modal-overlay") as HTMLElement | null;
-      const rotationCustomOverlay = target.closest("#rotation-overlay") as HTMLElement | null;
-
-      closeModal(customOverlay);
-      closeModal(rotationCustomOverlay);
+      closeModal(target.closest(".txt-overlay") as HTMLElement | null);
       return;
     }
 
-    if (target === nebenkostenOverlay) {
+    if ((target as HTMLElement).classList?.contains("txt-overlay")) {
       event.preventDefault();
-      closeNebenkostenModal();
-      return;
-    }
-
-    if (target === rotationOverlay) {
-      event.preventDefault();
-      closeRotationModal();
+      closeModal(target as HTMLElement);
     }
   });
 

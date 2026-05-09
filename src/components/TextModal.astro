@@ -1,0 +1,91 @@
+---
+interface Props {
+  id: string;
+}
+const { id } = Astro.props;
+---
+
+<div id={id} class="txt-overlay hidden" aria-hidden="true" data-lenis-prevent>
+  <div class="txt-card" role="dialog" aria-modal="true">
+    <button class="txt-close" type="button" aria-label="Schließen">×</button>
+    <div class="txt-body">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+.txt-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 26, 23, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  z-index: 300;
+  overscroll-behavior: contain;
+}
+.txt-overlay.hidden { display: none; }
+
+.txt-card {
+  background: var(--bg);
+  width: min(100%, 700px);
+  max-height: min(82vh, 680px);
+  max-height: min(82svh, 680px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 64px rgba(28, 26, 23, 0.2);
+}
+
+.txt-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: 1px solid var(--gold);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--gold);
+  cursor: pointer;
+  transition: background var(--ease), color var(--ease);
+  z-index: 1;
+  flex-shrink: 0;
+}
+.txt-close:hover { background: var(--gold); color: var(--bg); }
+
+.txt-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 2.5rem 3rem;
+}
+
+@media (max-width: 620px) {
+  .txt-overlay { padding: 0; align-items: flex-start; }
+  .txt-card {
+    width: 100%;
+    max-height: none;
+    min-height: 100dvh;
+    border: none;
+    box-shadow: none;
+  }
+  .txt-body {
+    padding: 1.35rem;
+    padding-top: 2.75rem;
+  }
+  .txt-close {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+}
+</style>
