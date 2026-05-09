@@ -480,6 +480,19 @@ const taken = allRooms
   box-shadow: 0 18px 48px rgba(34, 31, 27, 0.16);
 }
 
+/* Wichtig: RotationModal ebenfalls scrollbar machen */
+:global(#rotation-overlay [role="dialog"]) {
+  max-height: min(72vh, 560px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+:global(#rotation-overlay .text-modal-content) {
+  max-height: inherit;
+  overflow-y: visible;
+}
+
 .text-modal-content {
   font-size: 0.85rem;
   line-height: 1.75;
@@ -777,6 +790,10 @@ const taken = allRooms
     padding: 1.5rem 1.4rem;
   }
 
+  :global(#rotation-overlay [role="dialog"]) {
+    max-height: calc(100vh - 6rem);
+  }
+
   .room-row-main {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     column-gap: 0.5rem;
@@ -890,7 +907,7 @@ const taken = allRooms
     if (!overlay || !overlay.classList.contains("hidden")) return;
 
     const lang = document.documentElement.getAttribute("data-lang") ?? "de";
-    const dialog = overlay.querySelector<HTMLElement>("[role=dialog]");
+    const dialog = overlay.querySelector<HTMLElement>("[role='dialog']");
 
     if (overlay.id === "rotation-overlay") {
       dialog?.setAttribute("aria-labelledby", `rotation-title-${lang}`);
@@ -954,8 +971,12 @@ const taken = allRooms
 
     if (target.closest(".text-modal-close")) {
       event.preventDefault();
-      closeModal(target.closest(".text-modal-overlay") as HTMLElement | null);
-      closeModal(target.closest("#rotation-overlay") as HTMLElement | null);
+
+      const customOverlay = target.closest(".text-modal-overlay") as HTMLElement | null;
+      const rotationCustomOverlay = target.closest("#rotation-overlay") as HTMLElement | null;
+
+      closeModal(customOverlay);
+      closeModal(rotationCustomOverlay);
       return;
     }
 
@@ -971,14 +992,29 @@ const taken = allRooms
     }
   });
 
+  function getScrollableParent(start: Element | null, stopAt: HTMLElement): HTMLElement | null {
+    let el = start as HTMLElement | null;
+
+    while (el && el !== stopAt.parentElement) {
+      const style = window.getComputedStyle(el);
+      const canScrollY =
+        (style.overflowY === "auto" || style.overflowY === "scroll") &&
+        el.scrollHeight > el.clientHeight;
+
+      if (canScrollY) return el;
+
+      if (el === stopAt) break;
+      el = el.parentElement;
+    }
+
+    return null;
+  }
+
   function keepScrollInsideModal(overlay: HTMLElement | null) {
     if (!overlay) return;
 
-    const scrollBox =
-      overlay.querySelector<HTMLElement>(".text-modal-dialog") ??
-      overlay.querySelector<HTMLElement>("[role=dialog]");
-
-    if (!scrollBox) return;
+    const dialog = overlay.querySelector<HTMLElement>("[role='dialog']");
+    if (!dialog) return;
 
     overlay.addEventListener("wheel", (event) => {
       if (overlay.classList.contains("hidden")) return;
@@ -986,20 +1022,19 @@ const taken = allRooms
       const wheelEvent = event as WheelEvent;
       const target = wheelEvent.target as Element;
 
-      if (!scrollBox.contains(target)) {
+      if (!dialog.contains(target)) {
         wheelEvent.preventDefault();
         return;
       }
 
-      const canScroll = scrollBox.scrollHeight > scrollBox.clientHeight;
-      if (!canScroll) {
-        wheelEvent.preventDefault();
-        return;
-      }
+      const scrollable = getScrollableParent(target, dialog) ?? dialog;
 
-      const atTop = scrollBox.scrollTop <= 0;
+      const canScroll = scrollable.scrollHeight > scrollable.clientHeight;
+      if (!canScroll) return;
+
+      const atTop = scrollable.scrollTop <= 0;
       const atBottom =
-        Math.ceil(scrollBox.scrollTop + scrollBox.clientHeight) >= scrollBox.scrollHeight;
+        Math.ceil(scrollable.scrollTop + scrollable.clientHeight) >= scrollable.scrollHeight;
 
       if ((wheelEvent.deltaY < 0 && atTop) || (wheelEvent.deltaY > 0 && atBottom)) {
         wheelEvent.preventDefault();
@@ -1018,23 +1053,22 @@ const taken = allRooms
 
       const target = event.target as Element;
 
-      if (!scrollBox.contains(target)) {
+      if (!dialog.contains(target)) {
         event.preventDefault();
         return;
       }
+
+      const scrollable = getScrollableParent(target, dialog) ?? dialog;
+      const canScroll = scrollable.scrollHeight > scrollable.clientHeight;
+
+      if (!canScroll) return;
 
       const currentY = event.touches[0]?.clientY ?? 0;
       const deltaY = touchStartY - currentY;
-      const canScroll = scrollBox.scrollHeight > scrollBox.clientHeight;
 
-      if (!canScroll) {
-        event.preventDefault();
-        return;
-      }
-
-      const atTop = scrollBox.scrollTop <= 0;
+      const atTop = scrollable.scrollTop <= 0;
       const atBottom =
-        Math.ceil(scrollBox.scrollTop + scrollBox.clientHeight) >= scrollBox.scrollHeight;
+        Math.ceil(scrollable.scrollTop + scrollable.clientHeight) >= scrollable.scrollHeight;
 
       if ((deltaY < 0 && atTop) || (deltaY > 0 && atBottom)) {
         event.preventDefault();
