@@ -151,12 +151,12 @@ const taken = allRooms
             <div class="room-row row-header">
               <div class="room-row-main">
                 <span class="col-room"></span>
-                <span class="col-num">Größe</span>
-                <span class="col-num">Kalt</span>
+                <span class="col-num"><span data-de>Größe</span><span data-en>Size</span></span>
+                <span class="col-num"><span data-de>Kalt</span><span data-en>Rent</span></span>
                 <span class="col-num">NK</span>
-                <span class="col-num">Gesamt/M</span>
-                <span class="col-fp">Grundriss</span>
-                <span class="col-from">Verfügbar ab</span>
+                <span class="col-num"><span data-de>Gesamt/M</span><span data-en>Total/M</span></span>
+                <span class="col-fp"><span data-de>Grundriss</span><span data-en>Floorplan</span></span>
+                <span class="col-from"><span data-de>Verfügbar ab</span><span data-en>Available from</span></span>
               </div>
             </div>
 
@@ -190,22 +190,15 @@ const taken = allRooms
                     </div>
 
                     <span class="col-num room-num">
-                      <span class="mobile-col-label" data-de>Größe</span>
-                      <span class="mobile-col-label" data-en>Size</span>
                       <span>{r.data.size_m2 != null ? `${r.data.size_m2} m²` : '—'}</span>
                     </span>
                     <span class="col-num room-num">
-                      <span class="mobile-col-label" data-de>Kalt</span>
-                      <span class="mobile-col-label" data-en>Rent</span>
                       <span>{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
                     </span>
                     <span class="col-num room-num">
-                      <span class="mobile-col-label">NK</span>
                       <span>{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
                     </span>
                     <span class="col-num room-num room-total">
-                      <span class="mobile-col-label" data-de>Gesamt/M</span>
-                      <span class="mobile-col-label" data-en>Total/M</span>
                       <span>{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
                     </span>
 
@@ -291,22 +284,15 @@ const taken = allRooms
                     </div>
 
                     <span class="col-num room-num">
-                      <span class="mobile-col-label" data-de>Größe</span>
-                      <span class="mobile-col-label" data-en>Size</span>
                       <span>{r.data.size_m2 != null ? `${r.data.size_m2} m²` : '—'}</span>
                     </span>
                     <span class="col-num room-num">
-                      <span class="mobile-col-label" data-de>Kalt</span>
-                      <span class="mobile-col-label" data-en>Rent</span>
                       <span>{r.data.kaltmiete_eur != null ? `${r.data.kaltmiete_eur} €` : '—'}</span>
                     </span>
                     <span class="col-num room-num">
-                      <span class="mobile-col-label">NK</span>
                       <span>{r.data.nebenkosten_eur != null ? `${r.data.nebenkosten_eur} €` : '—'}</span>
                     </span>
                     <span class="col-num room-num room-total">
-                      <span class="mobile-col-label" data-de>Gesamt/M</span>
-                      <span class="mobile-col-label" data-en>Total/M</span>
                       <span>{r.data.gesamtmiete_eur != null ? `${r.data.gesamtmiete_eur} €` : '—'}</span>
                     </span>
 
@@ -555,10 +541,6 @@ const taken = allRooms
   font-weight: 400;
 }
 
-.mobile-col-label {
-  display: none;
-}
-
 .room-from {
   font-family: var(--font-sans);
   font-size: 0.78rem;
@@ -648,14 +630,26 @@ const taken = allRooms
 }
 
 @media (max-width: 620px) {
-  .row-header {
-    display: none;
-  }
-
   .room-row-main {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     column-gap: 0.5rem;
     row-gap: 0.5rem;
+  }
+
+  .row-header {
+    display: block;
+    padding-block: 0 0.15rem;
+  }
+
+  .row-header .room-row-main {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 0.5rem;
+  }
+
+  .row-header .col-room,
+  .row-header .col-fp,
+  .row-header .col-from {
+    display: none;
   }
 
   .room-meta {
@@ -672,22 +666,6 @@ const taken = allRooms
   .room-num {
     min-height: auto;
     font-size: 0.78rem;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.15rem;
-    line-height: 1.25;
-  }
-
-  .mobile-col-label {
-    display: block;
-    font-family: var(--font-sans);
-    font-size: 0.56rem;
-    font-weight: 400;
-    letter-spacing: 0.12em;
-    line-height: 1;
-    text-transform: uppercase;
-    color: var(--muted);
-    opacity: 0.72;
   }
 
   .room-actions {
