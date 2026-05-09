@@ -109,6 +109,7 @@ const renderedRooms = await Promise.all(
   background: var(--bg);
   width: min(100%, 980px);
   max-height: 90vh;
+  max-height: 90svh;
   overflow: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -305,10 +306,19 @@ const renderedRooms = await Promise.all(
 .modal-space-col { display: flex; flex-direction: column; gap: 0.75rem; }
 .modal-space-header h3 { font-size: 1.6rem; font-weight: 300; }
 
-@media (max-width: 800px) {
-  .modal-content { grid-template-columns: 1fr; }
+@media (min-width: 601px) and (max-width: 900px) {
+  .overlay { padding: 1.25rem; }
+  .modal-card { padding: 1.5rem; padding-bottom: 0; }
+  #modal-body { padding-bottom: 1.5rem; }
+  .modal-content { gap: 1.25rem; }
+  .modal-right {
+    max-height: calc(90vh - 3rem);
+    max-height: calc(90svh - 3rem);
+    overflow-y: auto;
+  }
 }
 @media (max-width: 600px) {
+  .modal-content { grid-template-columns: 1fr; }
   .overlay { padding: 0; align-items: flex-start; }
   .modal-card {
     width: 100%;
