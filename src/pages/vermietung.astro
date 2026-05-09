@@ -706,6 +706,17 @@ const taken = allRooms
     }
   });
 
+  const rotationOverlay = document.getElementById("rotation-overlay");
+  rotationOverlay?.addEventListener("wheel", (event) => {
+    if (rotationOverlay.classList.contains("hidden")) return;
+    event.stopPropagation();
+  }, { passive: true });
+
+  rotationOverlay?.addEventListener("touchmove", (event) => {
+    if (rotationOverlay.classList.contains("hidden")) return;
+    event.stopPropagation();
+  }, { passive: true });
+
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       closeRotationModal();
