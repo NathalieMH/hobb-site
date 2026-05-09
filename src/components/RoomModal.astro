@@ -383,8 +383,9 @@ const renderedRooms = await Promise.all(
   }
 
   function openModal(tpl: HTMLTemplateElement) {
-    const overlay = document.getElementById("overlay")!;
-    const body = document.getElementById("modal-body")!;
+    const overlay = document.getElementById("overlay");
+    const body = document.getElementById("modal-body");
+    if (!overlay || !body) return;
     zReset();
     body.innerHTML = "";
     const clone = tpl.content.cloneNode(true) as DocumentFragment;
@@ -423,8 +424,6 @@ const renderedRooms = await Promise.all(
   // ── Document-level event delegation ──
   document.addEventListener("click", (e) => {
     const target = e.target as Element;
-    const overlay = document.getElementById("overlay")!;
-    const body = document.getElementById("modal-body")!;
 
     // Room card
     const roomBtn = target.closest(".open-room") as HTMLElement | null;
@@ -435,6 +434,10 @@ const renderedRooms = await Promise.all(
       if (tpl) openModal(tpl);
       return;
     }
+
+    const overlay = document.getElementById("overlay");
+    const body = document.getElementById("modal-body");
+    if (!overlay || !body) return;
 
     // Space card
     const spaceBtn = target.closest(".space-card") as HTMLElement | null;
