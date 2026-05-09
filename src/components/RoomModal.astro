@@ -330,21 +330,11 @@ const renderedRooms = await Promise.all(
 </style>
 
 <script>
-  // ── Body scroll lock (position-fixed technique — works on iOS Safari) ──
-  let _scrollY = 0;
   function lockBodyScroll() {
-    _scrollY = window.scrollY;
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${_scrollY}px`;
-    document.body.style.width = '100%';
+    document.documentElement.style.overflow = 'hidden';
   }
   function unlockBodyScroll() {
-    document.body.style.overflow = '';
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    window.scrollTo(0, _scrollY);
+    document.documentElement.style.overflow = '';
   }
 
   // ── Inline zoom state (space modals only) ─────────────────────
