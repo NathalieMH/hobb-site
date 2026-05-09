@@ -112,8 +112,12 @@ const renderedRooms = await Promise.all(
   overflow: auto;
   position: relative;
   padding: 2rem;
+  padding-bottom: 0; /* Chrome clips padding-bottom on overflow:auto containers */
   border: 1px solid var(--border);
   box-shadow: 0 24px 64px rgba(28, 26, 23, 0.2);
+}
+#modal-body {
+  padding-bottom: 2rem; /* bottom space as child content — renders correctly in Chrome */
 }
 .modal-close {
   position: absolute;
