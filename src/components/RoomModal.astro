@@ -264,8 +264,7 @@ const renderedRooms = await Promise.all(
   align-items: center;
 }
 
-.fact-label,
-.fact-val {
+.fact-label {
   font-family: var(--font-serif);
   font-size: 1rem;
   font-weight: 300;
@@ -273,10 +272,20 @@ const renderedRooms = await Promise.all(
   letter-spacing: 0;
   font-variant-numeric: lining-nums;
   font-feature-settings: "lnum";
+  color: var(--muted);
 }
 
-.fact-label { color: var(--muted); }
-.fact-val { color: var(--ink); }
+.fact-val {
+  color: var(--muted);
+  font-style: normal;
+  font-size: 0.85rem;
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  font-variant-numeric: inherit;
+  font-feature-settings: inherit;
+}
 
 .modal-teaser { color: var(--muted); font-style: italic; font-size: 0.85rem; white-space: pre-line; margin-bottom: 0.75rem; }
 
