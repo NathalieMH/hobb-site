@@ -39,8 +39,12 @@ npm run preview  # preview production build
 ```
 src/
   components/
+    BilingualText.astro — reusable DE/EN text wrapper
     Header.astro       — sticky nav, language toggle (DE/EN), hamburger on mobile
     ImageZoom.astro    — site-wide lightbox/zoom overlay (present in Layout)
+    FloorplanZoom.astro — dedicated floorplan zoom overlay for Grundriss buttons
+    RoomModal.astro    — shared room/common-space modal used by WG pages and Vermietung photo buttons
+    RotationModal.astro — scrollable text modal for the occupancy rotation policy
     DecoRule.astro     — gold decorative divider line used across pages
   layouts/
     Layout.astro       — root layout: Header + main slot + ImageZoom + footer
@@ -49,7 +53,7 @@ src/
     home.astro         — hero + intro + 3 nav cards + CTA (Verfügbarkeit / Kontakt)
     haus.astro         — "Das Haus" page, building history/photos
     lage.astro         — Location page with Google Maps embed
-    verfuegbarkeit.astro — Availability table
+    vermietung.astro   — room/pricing table + floorplan/photo actions + rotation modal
     impressum-kontakt.astro — Legal / contact
     wohngemeinschaften/
       index.astro      — apartment listing with floorplan cards
@@ -61,6 +65,8 @@ src/
     rooms/             — MDX files, one per room
   styles/
     global.css         — design tokens, reset, typography, container, section
+  utils/
+    images.ts          — loadImages helper; filters supported image formats and sorts cover first
 public/
   first-image.png      — villa exterior (home hero)
   das-haus/            — photos for haus.astro
@@ -112,12 +118,37 @@ Site-wide lightbox included in Layout. Opens via:
 
 Settings: zoom range 75%–250%, scroll step 0.12, button step 0.3.
 
-### Room modal (`[apartment].astro`)
+### Room modal (`src/components/RoomModal.astro`)
 
-Opened by clicking a `.open-room` button. Clones a `<template id="tpl-{slug}">` into `#modal-body`. Navigation:
+Shared modal used by both apartment detail pages and Vermietung photo buttons. It clones a `<template id="tpl-{slug}">` into `#modal-body`.
+
+Open triggers:
+- Apartment room cards: `.open-room data-room="{slug}"`
+- Vermietung photo buttons: `data-room-modal-open="{slug}"`
+
+The `data-room-modal-open` trigger is only a different trigger shape; it opens the exact same RoomModal view as the WG room cards.
+
+Navigation:
 - **Desktop:** overlaid `‹ ›` arrow buttons on image sides (appear on hover)
 - **Mobile:** touch swipe left/right; arrows hidden; `x / y` counter overlaid on image bottom-left
 - Thumbnails shown on desktop, hidden on mobile (`@media max-width: 600px`)
+
+Common spaces on apartment detail pages also use this modal pattern. Their templates are generated as `tpl-space-{prefix}` in `[apartment].astro` and opened from `.space-card` tiles.
+
+### Text modal / Rotation modal (`src/components/RotationModal.astro`)
+
+`RotationModal.astro` is currently content-specific: it contains the Belegungs-Rotationsprinzip text directly. The reusable part is the modal pattern/classes:
+- `text-overlay`
+- `text-modal-card`
+- `text-modal-close`
+
+For any long text popup, the overlay must be the scroll container and must prevent page/background scrolling:
+- overlay has `data-lenis-prevent`
+- overlay CSS includes `overflow-y: auto`, `overscroll-behavior: contain`, and `-webkit-overflow-scrolling: touch`
+- page script stops `wheel` and `touchmove` propagation while open
+- page script locks `document.documentElement.style.overflow = "hidden"` while open
+
+If adding another text popup, prefer extracting a generic `TextModal.astro` with props/slot content instead of duplicating the hardcoded RotationModal.
 
 ---
 
@@ -180,13 +211,31 @@ To add a room:
 
 `loadImages` only serves `jpg`, `png`, `webp`, `gif` — HEIC files are silently ignored.
 
-To convert iPhone HEIC photos to webp (use this pipeline to preserve EXIF orientation):
+To convert any photo to webp, use a single magick call — do NOT pipe through an intermediate PNG as it can corrupt colors:
 ```bash
-magick -auto-orient source.HEIC -resize 1600x /tmp/tmp.png
-cwebp -q 82 /tmp/tmp.png -o output.webp
-rm /tmp/tmp.png
+# HEIC / JPG from iPhone (needs -auto-orient to bake in EXIF rotation)
+magick source.HEIC -auto-orient -resize 1600x -quality 82 output.webp
+
+# PNG or already-oriented JPG
+magick source.png -resize 1600x -quality 82 output.webp
 ```
-Target ~150–400 KB for covers. Portrait photos from iPhones require `-auto-orient` to bake in the rotation — skipping it produces a sideways image.
+Target ~150–400 KB for covers. Portrait photos from iPhones require `-auto-orient` to bake in the rotation — skipping it produces a sideways image. Never route through `cwebp` with an intermediate PNG — the two-step pipeline causes color space corruption (images come out washed out/bright).
+
+### Vermietung table conventions
+
+Desktop table header is bilingual and includes all data columns:
+- Größe / Size
+- Kalt / Rent
+- NK / Utilities
+- Gesamt/M / Total/M
+- Grundriss / Floorplan
+- Verfügbar ab / Available from
+
+Mobile keeps the header only for values that remain in the first row: size, cold rent, utilities, total rent. Wrapped action items self-label via their buttons. When a room is available and the date no longer fits in the first row, the second/action row shows `Verfügbar ab 18.05` / `Available from 18.05` next to the floorplan/photo buttons, without the year.
+
+### Impressum / contact conventions
+
+The Impressum page should render statically, without `reveal` classes or staggered entrance animation. Contact email is `info@haderslebener.de`. Do not reintroduce the old placeholder block for "Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV".
 
 ---
 
