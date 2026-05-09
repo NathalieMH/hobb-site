@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import DecoRule from "../components/DecoRule.astro";
 import RotationModal from "../components/RotationModal.astro";
+import RoomModal from "../components/RoomModal.astro";
 import { getCollection } from "astro:content";
 import { promises as fs } from "fs";
 import path from "path";
@@ -215,12 +216,8 @@ const taken = allRooms
                       </button>
 
                       <button
-                        class={`floorplan-btn photos-btn${hasPhotos ? '' : ' fp-placeholder'}`}
-                        data-photos-open
-                        data-photo-src={photoCover}
-                        data-photo-images={JSON.stringify(fotos)}
-                        data-photo-title-de={r.data.title_de ?? apt?.title_de ?? ''}
-                        data-photo-title-en={r.data.title_en ?? apt?.title_en ?? ''}
+                        class={`floorplan-btn photos-btn open-room${hasPhotos ? '' : ' fp-placeholder'}`}
+                        data-room={slug}
                         aria-label="Fotos ansehen"
                       >
                         <span class="fp-icon" aria-hidden="true">
@@ -303,12 +300,8 @@ const taken = allRooms
                       </button>
 
                       <button
-                        class={`floorplan-btn photos-btn${hasPhotos ? '' : ' fp-placeholder'}`}
-                        data-photos-open
-                        data-photo-src={photoCover}
-                        data-photo-images={JSON.stringify(fotos)}
-                        data-photo-title-de={r.data.title_de ?? apt?.title_de ?? ''}
-                        data-photo-title-en={r.data.title_en ?? apt?.title_en ?? ''}
+                        class={`floorplan-btn photos-btn open-room${hasPhotos ? '' : ' fp-placeholder'}`}
+                        data-room={slug}
                         aria-label="Fotos ansehen"
                       >
                         <span class="fp-icon" aria-hidden="true">
@@ -336,7 +329,11 @@ const taken = allRooms
   </section>
 
   <RotationModal />
-
+  <RoomModal rooms={allRooms.map(r => ({
+    entry: r,
+    imgs: roomImages[entrySlug(r.id)] ?? [],
+    sharedM2: aptMap[r.data.apartment.toLowerCase()]?.shared_m2,
+  }))} />
 
 </Layout>
 
@@ -661,50 +658,6 @@ const taken = allRooms
 </style>
 
 <script>
-  document.addEventListener("click", (event) => {
-    const target = event.target as Element;
-    const button = target.closest("[data-photos-open]") as HTMLElement | null;
-
-    if (!button) return;
-
-    event.preventDefault();
-    event.stopImmediatePropagation();
-
-    if (button.classList.contains("fp-placeholder")) return;
-
-    const src = button.getAttribute("data-photo-src") ?? "";
-    const imagesRaw = button.getAttribute("data-photo-images") ?? "[]";
-
-    const titleDe = button.getAttribute("data-photo-title-de") ?? "";
-    const titleEn = button.getAttribute("data-photo-title-en") ?? "";
-
-    let images: string[] = [];
-
-    try {
-      images = JSON.parse(imagesRaw);
-    } catch {
-      images = src ? [src] : [];
-    }
-
-    if (!src && images.length === 0) return;
-
-    document.dispatchEvent(
-      new CustomEvent("iz:open", {
-        detail: {
-          src: src || images[0],
-          images,
-          idx: 0,
-
-          titleDe,
-          titleEn,
-          title_de: titleDe,
-          title_en: titleEn,
-          title: titleDe
-        }
-      })
-    );
-  }, true);
-
   function openRotationModal() {
     const overlay = document.getElementById("rotation-overlay");
     if (!overlay) return;
