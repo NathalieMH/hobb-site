@@ -9,7 +9,7 @@ shared_spaces:
   - {prefix: kitchen, de: Küche, en: Kitchen}
   - {prefix: bathroom1, de: Bad mit sep. WC, en: Bathroom with sep. WC}
   - {prefix: grundriss, de: Grundriss, en: Floor Plan}
-  - {prefix: laundry, de: Waschküche, en: Laundry Room}
+  - {prefix: laundry, de: Wäscheraum, en: Laundry Room}
   - {prefix: digital-lock, de: Digitales Schloss, en: Digital Lock}
 shared_m2: 87
 order: 20

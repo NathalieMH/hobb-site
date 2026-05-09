@@ -10,7 +10,7 @@ shared_spaces:
   - {prefix: bathroom1, de: "Bad 1 · 1. OG", en: "Bathroom 1 · 1st Floor"}
   - {prefix: bathroom2, de: "Bad 2 · 1. OG", en: "Bathroom 2 · 1st Floor"}
   - {prefix: grundriss, de: Grundriss, en: Floor Plan}
-  - {prefix: laundry, de: Waschküche, en: "Laundry · 2nd Floor"}
+  - {prefix: laundry, de: "Wäscheraum · 2. OG", en: "Laundry · 2nd Floor"}
   - {prefix: digital-lock, de: Digitales Schloss, en: Digital Lock}
 shared_m2: 86
 order: 10
