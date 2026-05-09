@@ -106,6 +106,7 @@ const spaceGroups = spaceOrder.map((prefix) => {
       const base = (url.split("/").pop() ?? "").replace(/\.[^.]+$/, "");
       return base.endsWith("-cover");
     }) ?? images[0] ?? null;
+  const modalImages = cover ? [cover, ...images.filter((url) => url !== cover)] : images;
 
   return {
     prefix,
@@ -113,6 +114,7 @@ const spaceGroups = spaceOrder.map((prefix) => {
     titleEn: labels.en,
     cover,
     images,
+    modalImages,
   };
 });
 ---
@@ -154,6 +156,11 @@ const spaceGroups = spaceOrder.map((prefix) => {
                   ? <img src={cover} alt={data.title_de} loading="lazy" decoding="async" />
                   : <div class="room-placeholder" />
                 }
+                <span class="gallery-cue" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2Zm-11-4 2.03 2.71L16 11l4 5H8l3-4ZM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2Z" />
+                  </svg>
+                </span>
                 {!data.available && <span class="taken-overlay" data-de>vergeben</span>}
                 {!data.available && <span class="taken-overlay" data-en>taken</span>}
               </div>
@@ -236,6 +243,11 @@ const spaceGroups = spaceOrder.map((prefix) => {
                   ? <img src={cover} alt={titleDe} loading="lazy" decoding="async" />
                   : <div class="room-placeholder" />
                 }
+                <span class="gallery-cue" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2Zm-11-4 2.03 2.71L16 11l4 5H8l3-4ZM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2Z" />
+                  </svg>
+                </span>
               </div>
               <div class="room-meta">
                 <span class="room-title" data-de>{titleDe}</span>
@@ -254,48 +266,21 @@ const spaceGroups = spaceOrder.map((prefix) => {
     </div>
   </section>
 
-  <RoomModal rooms={rooms.map(r => ({
-    entry: r,
-    imgs: roomImages[entrySlug(r.id)] ?? [],
-    sharedM2: apt?.data.shared_m2,
-  }))} />
-
-  <!-- Space detail templates -->
-  {spaceGroups.map(({ prefix, titleDe, titleEn, images }) => {
-    const hasGallery = images.length > 1;
-    const firstImage = images[0] ?? null;
-
-    return (
-      <template id={`tpl-space-${prefix}`}>
-        <article class="modal-content modal-content-space" data-images={JSON.stringify(images)}>
-          <div class="modal-space-col">
-            <div class="modal-space-header">
-              <h3><span data-de>{titleDe}</span><span data-en>{titleEn}</span></h3>
-            </div>
-            <div class="modal-img-wrap modal-img-wrap--zoomable">
-              {firstImage
-                ? <img class="modal-cover" src={firstImage} alt={titleDe} data-index="0" loading="lazy" decoding="async" />
-                : <div class="room-placeholder modal-cover" data-index="-1" />
-              }
-              {hasGallery && <button class="nav prev modal-nav-prev" aria-label="Vorheriges Bild">‹</button>}
-              {hasGallery && <button class="nav next modal-nav-next" aria-label="Nächstes Bild">›</button>}
-              {hasGallery && <span class="modal-nav-counter modal-counter-overlay">{`1 / ${images.length}`}</span>}
-            </div>
-            {hasGallery && (
-              <div class="thumbs">
-                {images.map((url, i) => (
-                  <button class={`thumb${i === 0 ? " active" : ""}`} data-full={url} data-index={i} aria-label={`Bild ${i + 1}`}>
-                    <img src={url} alt="" loading="lazy" decoding="async" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </article>
-      </template>
-    );
-  })}
-
+  <RoomModal
+    rooms={rooms.map(r => ({
+      entry: r,
+      imgs: roomImages[entrySlug(r.id)] ?? [],
+      sharedM2: apt?.data.shared_m2,
+    }))}
+    spaces={spaceGroups
+      .filter(({ prefix }) => prefix !== "grundriss")
+      .map(({ prefix, titleDe, titleEn, modalImages }) => ({
+        prefix,
+        titleDe,
+        titleEn,
+        imgs: modalImages,
+      }))}
+  />
 
 </Layout>
 
@@ -340,6 +325,37 @@ const spaceGroups = spaceOrder.map((prefix) => {
   aspect-ratio: 4/3;
   background: var(--border);
 }
+.gallery-cue {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  z-index: 2;
+  width: 1.68rem;
+  height: 1.68rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(184, 149, 42, 0.5);
+  background: rgba(245, 242, 236, 0.75);
+  filter: drop-shadow(0 1px 2px rgba(28, 26, 23, 0.22));
+  opacity: 0.92;
+  pointer-events: none;
+  transition: opacity var(--ease), transform var(--ease), filter var(--ease);
+}
+.gallery-cue svg {
+  width: 1.34rem;
+  height: 1.34rem;
+  fill: var(--gold);
+}
+.room-card.open-room:hover .gallery-cue,
+.room-card.space-card:hover .gallery-cue,
+.room-card.open-room:focus-visible .gallery-cue,
+.room-card.space-card:focus-visible .gallery-cue {
+  opacity: 1;
+  background: rgba(250, 248, 243, 0.75);
+  border-color: rgba(184, 149, 42, 0.76);
+  filter: drop-shadow(0 1px 3px rgba(28, 26, 23, 0.28));
+  transform: translate(1px, -1px);
+}
 .room-img-wrap img {
   display: block;
   width: 100%;
@@ -353,6 +369,7 @@ const spaceGroups = spaceOrder.map((prefix) => {
 .taken-overlay {
   position: absolute;
   inset: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;

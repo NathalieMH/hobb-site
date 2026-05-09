@@ -8,9 +8,15 @@ interface Props {
     imgs: string[];
     sharedM2?: number;
   }>;
+  spaces?: Array<{
+    prefix: string;
+    titleDe: string;
+    titleEn: string;
+    imgs: string[];
+  }>;
 }
 
-const { rooms } = Astro.props;
+const { rooms, spaces = [] } = Astro.props;
 
 function entrySlug(id: string) {
   return id.replace(/\.[^.]+$/, '').toLowerCase();
@@ -24,18 +30,77 @@ const renderedRooms = await Promise.all(
     return { entry, imgs, sharedM2, Content, cover, hasGallery };
   })
 );
+
+const modalItems = [
+  ...renderedRooms.map(({ entry, imgs, sharedM2, Content, cover, hasGallery }) => {
+    const d = entry.data;
+    const slug = entrySlug(entry.id);
+    return {
+      templateId: `tpl-${slug}`,
+      className: "modal-content",
+      imgs,
+      cover,
+      hasGallery,
+      titleDe: d.title_de,
+      titleEn: d.title_en,
+      isAvailable: d.available,
+      sharedM2,
+      facts: {
+        sizeM2: d.size_m2,
+        kaltmieteEur: d.kaltmiete_eur,
+        nebenkostenEur: d.nebenkosten_eur,
+        gesamtmieteEur: d.gesamtmiete_eur,
+        availableFrom: d.available_from,
+      },
+      teaserDe: d.teaser_de,
+      teaserEn: d.teaser_en,
+      Content,
+      showRightPanel: true,
+    };
+  }),
+  ...spaces.map(({ prefix, titleDe, titleEn, imgs }) => ({
+    templateId: `tpl-space-${prefix}`,
+    className: "modal-content modal-content--media-only",
+    imgs,
+    cover: imgs[0] ?? null,
+    hasGallery: imgs.length > 1,
+    titleDe,
+    titleEn,
+    isAvailable: true,
+    sharedM2: undefined,
+    facts: {},
+    teaserDe: undefined,
+    teaserEn: undefined,
+    Content: null,
+    showRightPanel: false,
+  })),
+];
 ---
 
-{renderedRooms.map(({ entry, imgs, sharedM2, Content, cover, hasGallery }) => {
-  const d = entry.data;
-  const slug = entrySlug(entry.id);
+{modalItems.map((item) => {
+  const {
+    templateId,
+    className,
+    imgs,
+    cover,
+    hasGallery,
+    titleDe,
+    titleEn,
+    isAvailable,
+    sharedM2,
+    facts,
+    teaserDe,
+    teaserEn,
+    Content,
+    showRightPanel,
+  } = item;
   return (
-    <template id={`tpl-${slug}`}>
-      <article class="modal-content" data-images={JSON.stringify(imgs)}>
+    <template id={templateId}>
+      <article class={className} data-images={JSON.stringify(imgs)}>
         <div class="modal-left">
           <div class="modal-img-wrap">
             {cover
-              ? <img class="modal-cover" src={cover} alt={d.title_de} data-index="0" loading="lazy" decoding="async" />
+              ? <img class="modal-cover" src={cover} alt={titleDe} data-index="0" loading="lazy" decoding="async" />
               : <div class="room-placeholder modal-cover" data-index="-1" />
             }
             <button class="modal-zoom-btn" aria-label="Bild vergrößern">
@@ -60,27 +125,29 @@ const renderedRooms = await Promise.all(
             </div>
           )}
         </div>
-        <div class="modal-right">
-          <div class="modal-title-row">
-            <h3>
-              <span data-de>{d.title_de}</span>
-              <span data-en>{d.title_en}</span>
-            </h3>
-            {!d.available && <span class="badge-taken" data-de>vergeben</span>}
-            {!d.available && <span class="badge-taken" data-en>taken</span>}
+        {showRightPanel && (
+          <div class="modal-right">
+            <div class="modal-title-row">
+              <h3>
+                <span data-de>{titleDe}</span>
+                <span data-en>{titleEn}</span>
+              </h3>
+              {!isAvailable && <span class="badge-taken" data-de>vergeben</span>}
+              {!isAvailable && <span class="badge-taken" data-en>taken</span>}
+            </div>
+            <ul class="room-facts">
+              {facts.sizeM2 && <li><span class="fact-label" data-de>Größe</span><span class="fact-label" data-en>Size</span><span class="fact-val">{facts.sizeM2} m²</span></li>}
+              {facts.kaltmieteEur && <li><span class="fact-label" data-de>Kaltmiete</span><span class="fact-label" data-en>Rent (excl. utilities)</span><span class="fact-val">{facts.kaltmieteEur} €/M</span></li>}
+              {facts.nebenkostenEur && <li><span class="fact-label" data-de>Nebenkosten</span><span class="fact-label" data-en>Utilities</span><span class="fact-val">{facts.nebenkostenEur} €/M</span></li>}
+              {facts.gesamtmieteEur && <li><span class="fact-label" data-de>Gesamtmiete</span><span class="fact-label" data-en>Total rent</span><span class="fact-val">{facts.gesamtmieteEur} €/M</span></li>}
+              {facts.availableFrom && <li><span class="fact-label" data-de>Verfügbar ab</span><span class="fact-label" data-en>Available from</span><span class="fact-val">{facts.availableFrom}</span></li>}
+              {sharedM2 && <li><span class="fact-label" data-de>Gemeinschaftsfläche</span><span class="fact-label" data-en>Communal area</span><span class="fact-val">ca. {sharedM2} m²</span></li>}
+            </ul>
+            {teaserDe && <p class="modal-teaser" data-de>{teaserDe}</p>}
+            {teaserEn && <p class="modal-teaser" data-en>{teaserEn}</p>}
+            {Content && <div class="modal-body-text"><Content /></div>}
           </div>
-          <ul class="room-facts">
-            {d.size_m2 && <li><span class="fact-label" data-de>Größe</span><span class="fact-label" data-en>Size</span><span class="fact-val">{d.size_m2} m²</span></li>}
-            {d.kaltmiete_eur && <li><span class="fact-label" data-de>Kaltmiete</span><span class="fact-label" data-en>Rent (excl. utilities)</span><span class="fact-val">{d.kaltmiete_eur} €/M</span></li>}
-            {d.nebenkosten_eur && <li><span class="fact-label" data-de>Nebenkosten</span><span class="fact-label" data-en>Utilities</span><span class="fact-val">{d.nebenkosten_eur} €/M</span></li>}
-            {d.gesamtmiete_eur && <li><span class="fact-label" data-de>Gesamtmiete</span><span class="fact-label" data-en>Total rent</span><span class="fact-val">{d.gesamtmiete_eur} €/M</span></li>}
-            {d.available_from && <li><span class="fact-label" data-de>Verfügbar ab</span><span class="fact-label" data-en>Available from</span><span class="fact-val">{d.available_from}</span></li>}
-            {sharedM2 && <li><span class="fact-label" data-de>Gemeinschaftsfläche</span><span class="fact-label" data-en>Communal area</span><span class="fact-val">ca. {sharedM2} m²</span></li>}
-          </ul>
-          {d.teaser_de && <p class="modal-teaser" data-de>{d.teaser_de}</p>}
-          {d.teaser_en && <p class="modal-teaser" data-en>{d.teaser_en}</p>}
-          <div class="modal-body-text"><Content /></div>
-        </div>
+        )}
       </article>
     </template>
   );
@@ -115,6 +182,7 @@ const renderedRooms = await Promise.all(
   -webkit-overflow-scrolling: touch;
   position: relative;
   padding: 2rem;
+  padding-top: 3.25rem;
   padding-bottom: 0; /* Chrome clips padding-bottom on overflow:auto containers */
   border: 1px solid var(--border);
   box-shadow: 0 24px 64px rgba(28, 26, 23, 0.2);
@@ -310,14 +378,15 @@ const renderedRooms = await Promise.all(
 }
 .modal-img-wrap--zoomable.dragging .modal-cover { transition: none; }
 
-/* Space modal — full-width single column */
-.modal-content-space { grid-template-columns: 1fr; }
-.modal-space-col { display: flex; flex-direction: column; gap: 0.75rem; }
-.modal-space-header h3 { font-size: 1.6rem; font-weight: 300; }
+.modal-content--media-only { grid-template-columns: 1fr; }
+.modal-content--media-only .modal-left {
+  width: min(100%, calc((90svh - 11rem) * 4 / 3));
+  margin-inline: auto;
+}
 
 @media (min-width: 601px) and (max-width: 900px) {
   .overlay { padding: 1.25rem; }
-  .modal-card { padding: 1.5rem; padding-bottom: 0; }
+  .modal-card { padding: 1.5rem; padding-top: 3rem; padding-bottom: 0; }
   #modal-body { padding-bottom: 1.5rem; }
   .modal-content { gap: 1.25rem; }
   .modal-right {
@@ -371,13 +440,8 @@ const renderedRooms = await Promise.all(
 
   function zClamp(wrap: HTMLElement) {
     const w = wrap.offsetWidth, h = wrap.offsetHeight;
-    if (zScale >= 1) {
-      zOffX = Math.max(w * (1 - zScale), Math.min(0, zOffX));
-      zOffY = Math.max(h * (1 - zScale), Math.min(0, zOffY));
-    } else {
-      zOffX = w * (1 - zScale) / 2;
-      zOffY = h * (1 - zScale) / 2;
-    }
+    zOffX = Math.max(w * (1 - zScale), Math.min(0, zOffX));
+    zOffY = Math.max(h * (1 - zScale), Math.min(0, zOffY));
   }
 
   function zWrap(): HTMLElement | null {
@@ -558,7 +622,7 @@ const renderedRooms = await Promise.all(
         const rect = wrap.getBoundingClientRect();
         const mx = e.clientX - rect.left;
         const my = e.clientY - rect.top;
-        const newScale = Math.max(0.75, Math.min(2.5, zScale + (e.deltaY < 0 ? 0.173 : -0.173)));
+        const newScale = Math.max(1, Math.min(2.5, zScale + (e.deltaY < 0 ? 0.173 : -0.173)));
         if (newScale === zScale) return;
         zOffX = mx - (mx - zOffX) * (newScale / zScale);
         zOffY = my - (my - zOffY) * (newScale / zScale);
@@ -610,7 +674,7 @@ const renderedRooms = await Promise.all(
           const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
           const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
           const rect = wrap.getBoundingClientRect();
-          const newScale = Math.max(0.75, Math.min(2.5, pinchStartScale * (dist / pinchStartDist)));
+          const newScale = Math.max(1, Math.min(2.5, pinchStartScale * (dist / pinchStartDist)));
           const mx = midX - rect.left, my = midY - rect.top;
           zOffX = mx - (mx - zOffX) * (newScale / zScale);
           zOffY = my - (my - zOffY) * (newScale / zScale);
