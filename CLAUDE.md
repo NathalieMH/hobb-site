@@ -117,11 +117,11 @@ Site-wide lightbox included in Layout. Opens via:
 - HTML: `data-iz-open data-iz-src="url"` on any element
 - JS: `document.dispatchEvent(new CustomEvent('iz:open', { detail: { src, images?, idx?, titleDe?, titleEn? } }))`
 
-Settings: zoom range 75%–250%, scroll step 0.12, button step 0.3.
+Settings: zoom range 100%–250%, scroll step 0.12, button step 0.3.
 
 ### Room modal (`src/components/RoomModal.astro`)
 
-Shared modal used by both apartment detail pages and Vermietung photo buttons. It clones a `<template id="tpl-{slug}">` into `#modal-body`.
+Shared modal used by apartment detail pages and Vermietung photo buttons. It renders room templates as `tpl-{slug}` and common-space templates as `tpl-space-{prefix}`, then clones the selected template into `#modal-body`.
 
 Open triggers:
 - Apartment room cards: `.open-room data-room="{slug}"`
@@ -134,7 +134,7 @@ Navigation:
 - **Mobile:** touch swipe left/right; arrows hidden; `x / y` counter overlaid on image bottom-left
 - Thumbnails shown on desktop, hidden on mobile (`@media max-width: 600px`)
 
-Common spaces on apartment detail pages also use this modal pattern. Their templates are generated as `tpl-space-{prefix}` in `[apartment].astro` and opened from `.space-card` tiles.
+Common-space tiles pass data into `RoomModal` via the `spaces` prop and open from `.space-card`; keep carousel, thumbnails, swipe, zoom, and image layout changes in `RoomModal` so room/common-space behavior stays shared.
 
 ### Text modal (`src/components/TextModal.astro`)
 
