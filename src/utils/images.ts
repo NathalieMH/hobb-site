@@ -4,11 +4,7 @@ import path from "node:path";
 export async function loadImages(base: string, folder: string): Promise<string[]> {
   const dir = path.resolve(process.cwd(), "public", folder);
 
-  const sortKey = (f: string) => {
-    const stem = f.replace(/\.[^.]+$/, "");
-    const us = stem.indexOf("_");
-    return us >= 0 ? stem.slice(us + 1) : stem;
-  };
+  const sortKey = (f: string) => f.replace(/\.[^.]+$/, "");
 
   try {
     const files = await fs.readdir(dir);

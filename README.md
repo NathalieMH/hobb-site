@@ -27,14 +27,14 @@ Zimmerfotos liegen in `public/zimmer/[zimmer-name]/`, z. B. `public/zimmer/1og-z
 3. Zum Ersetzen einfach ein neues Foto mit **demselben Namen** hochladen.
 
 **Namensregeln:**
-- Das Titelbild heißt immer **`cover.webp`** — bei Zimmern mit Grundrissnummer z. B. **`3.2_cover.webp`** (die Nummer vor dem `_` entspricht der Zimmernummer im Grundriss).
-- Weitere Fotos einfach durchnummerieren: `1.webp`, `2.webp` ... bzw. `3.2_1.webp`, `3.2_2.webp` ...
+- Das Titelbild heißt immer **`cover.webp`** — bei Zimmern mit Grundrissnummer z. B. **`3.2-cover.webp`** (die Nummer vor dem `-` entspricht der Zimmernummer im Grundriss).
+- Weitere Fotos einfach durchnummerieren: `1.webp`, `2.webp` ... bzw. `3.2-1.webp`, `3.2-2.webp` ...
 - `cover` erscheint immer als erstes, danach in numerischer Reihenfolge.
 
 | Zimmer | Cover | Weitere Fotos |
 |--------|-------|---------------|
-| 1. OG Zimmer 2 (Nr. 3.2) | `3.2_cover.webp` | `3.2_1.webp`, `3.2_2.webp` |
-| 2. OG Zimmer 4 (Nr. 4.4) | `4.4_cover.webp` | `4.4_1.webp`, `4.4_2.webp` |
+| 1. OG Zimmer 2 (Nr. 3.2) | `3.2-cover.webp` | `3.2-1.webp`, `3.2-2.webp` |
+| 2. OG Zimmer 4 (Nr. 4.4) | `4.4-cover.webp` | `4.4-1.webp`, `4.4-2.webp` |
 
 ---
 
