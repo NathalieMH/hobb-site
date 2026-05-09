@@ -44,7 +44,8 @@ src/
     ImageZoom.astro    — site-wide lightbox/zoom overlay (present in Layout)
     FloorplanZoom.astro — dedicated floorplan zoom overlay for Grundriss buttons
     RoomModal.astro    — shared room/common-space modal used by WG pages and Vermietung photo buttons
-    RotationModal.astro — scrollable text modal for the occupancy rotation policy
+    RotationModal.astro — Belegungs-Rotationsprinzip document content, wraps TextModal
+    TextModal.astro    — generic text panel component (overlay + scrollable card + close button)
     DecoRule.astro     — gold decorative divider line used across pages
   layouts/
     Layout.astro       — root layout: Header + main slot + ImageZoom + footer
@@ -135,20 +136,16 @@ Navigation:
 
 Common spaces on apartment detail pages also use this modal pattern. Their templates are generated as `tpl-space-{prefix}` in `[apartment].astro` and opened from `.space-card` tiles.
 
-### Text modal / Rotation modal (`src/components/RotationModal.astro`)
+### Text modal (`src/components/TextModal.astro`)
 
-`RotationModal.astro` is currently content-specific: it contains the Belegungs-Rotationsprinzip text directly. The reusable part is the modal pattern/classes:
-- `text-overlay`
-- `text-modal-card`
-- `text-modal-close`
+Generic component for any text panel. Renders a dimmed overlay, a centered scrollable card (`max-height: min(82svh, 680px)`), and a gold-bordered × close button inside the card top-right. Use it via `<TextModal id="some-id">` with slot content.
 
-For any long text popup, the overlay must be the scroll container and must prevent page/background scrolling:
-- overlay has `data-lenis-prevent`
-- overlay CSS includes `overflow-y: auto`, `overscroll-behavior: contain`, and `-webkit-overflow-scrolling: touch`
-- page script stops `wheel` and `touchmove` propagation while open
-- page script locks `document.documentElement.style.overflow = "hidden"` while open
+The page using it is responsible for open/close logic. Standard pattern (see `vermietung.astro`):
+- Open: remove `hidden`, set `aria-hidden="false"`, lock body scroll
+- Close: triggered by `.txt-close` click or backdrop click (`.txt-overlay`)
+- Scroll containment: `keepScrollInsideModal(overlay)` prevents page scroll bleed-through
 
-If adding another text popup, prefer extracting a generic `TextModal.astro` with props/slot content instead of duplicating the hardcoded RotationModal.
+`RotationModal.astro` wraps `TextModal` with the Belegungs-Rotationsprinzip document. `vermietung.astro` uses it for the Nebenkostenpauschale panel too. Any future text popup should use `TextModal`.
 
 ---
 
