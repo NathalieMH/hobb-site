@@ -1,5 +1,407 @@
 ---
-// Redirect root to /home/
+import Layout from "../layouts/Layout.astro";
+import DecoRule from "../components/DecoRule.astro";
 const base = import.meta.env.BASE_URL;
-return Astro.redirect(`${base}home/`);
 ---
+<Layout title="Haderslebener 26 — Berlin" noPadding={true}>
+
+  <!-- Hero -->
+  <section class="hero" data-blend-move>
+    <div class="hero-image-wrap" id="hero-img-wrap">
+      <img
+        class="hero-img"
+        src={`${base}home-hero.webp`}
+        alt="Haderslebener 26, Berlin Steglitz-Dahlem"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+    <div class="hero-overlay">
+      <span class="eyebrow" data-de>Berlin · Steglitz · Dahlem</span>
+      <span class="eyebrow" data-en>Berlin · Steglitz · Dahlem</span>
+      <h1 class="hero-title">Haderslebener 26</h1>
+      <DecoRule />
+      <p class="hero-tagline" data-de>WGs für Studierende bei der FU Berlin<br>in einer Stadtvilla der 1920er Jahre</p>
+      <p class="hero-tagline" data-en>Student shared apartments near FU Berlin<br>in a 1920s Berlin villa</p>
+    </div>
+  </section>
+
+  <!-- Intro -->
+  <section class="section intro-section">
+    <div class="container intro-wrap">
+      <div class="intro-text">
+        <span class="eyebrow reveal">Haderslebener Str. 26, 12163 Berlin</span>
+        <h2 class=”reveal” data-de>Eine Stadtvilla mit Geschichte</h2>
+        <h2 class=”reveal” data-en>A Villa with History</h2>
+        <p class=”reveal” data-de>
+          Unser Haus in der Haderslebener Str. 26 ist ein wunderschöner Altbau aus den 1920er Jahren mit Anbau in Berlin-Steglitz an der Grenze zu Dahlem. Das Haus liegt zwischen dem Breitenbachplatz und dem Botanischen Garten und damit in direkter Nähe zum FU-Campus und der Medical School Berlin (MSB).<br><br>
+          Die „Haderslebener 26” startet im Mai 2026 mit 2 frisch renovierten Wohngemeinschaften für Studierende mit 4 bzw. 5 Zimmern und jeweils gemeinsamer Küche, einem großzügigen Wohn-Esszimmer mit Balkon sowie ein bis zwei Bädern. Die Zimmer sind hochwertig möbliert. In der Miete ist alles inklusive.
+        </p>
+        <p class=”reveal” data-en>
+          Our house at Haderslebener Str. 26 is a beautiful historic 1920s building with an annex, in Berlin-Steglitz on the border with Dahlem. It sits between Breitenbachplatz and the Botanical Garden, just a short distance from the FU campus and Medical School Berlin (MSB).<br><br>
+          “Haderslebener 26” launches in May 2026 with 2 newly renovated shared apartments for students — with 4 and 5 rooms respectively, each with a shared kitchen, a generous living-dining room with balcony, and one or two bathrooms. Rooms are fully furnished. Rent is all-inclusive.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Three nav cards -->
+  <section class="cards-section" id="cards-section">
+    <div class="cards-inner">
+      <div class="cards reveal-stagger">
+        <a class="card reveal-child" href={`${base}wohngemeinschaften/`} data-astro-prefetch>
+          <div class="card-img-wrap tile-image-wrap">
+            <img src={`${base}home/titelbild-fuer-home.webp`} alt="" loading="lazy" decoding="async" style="object-position: center bottom;" />
+          </div>
+          <div class="card-caption">
+            <span class="card-title" data-de>Die Wohngemeinschaften</span>
+            <span class="card-title" data-en>Shared Apartments</span>
+            <span class="card-sub" data-de>Neugegründete WGs in frisch sanierten Wohnungen</span>
+            <span class="card-sub" data-en>Newly formed shared apartments in freshly renovated units</span>
+          </div>
+        </a>
+
+        <a class="card reveal-child" href={`${base}lage/`} data-astro-prefetch>
+          <div class="card-img-wrap tile-image-wrap">
+            <img src={`${base}home/HomeLage.webp`} alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="card-caption">
+            <span class="card-title" data-de>Die Lage</span>
+            <span class="card-title" data-en>Location</span>
+            <span class="card-sub" data-de>Steglitz-Zehlendorf, direkt an der Grenze zu Dahlem</span>
+            <span class="card-sub" data-en>Steglitz-Zehlendorf, right on the border with Dahlem</span>
+          </div>
+        </a>
+
+        <a class="card reveal-child" href={`${base}haus/`} data-astro-prefetch>
+          <div class="card-img-wrap tile-image-wrap">
+            <img src={`${base}das-haus/IMG_4231.webp`} alt="" loading="lazy" decoding="async" />
+          </div>
+          <div class="card-caption">
+            <span class="card-title" data-de>Das Haus</span>
+            <span class="card-title" data-en>The Villa</span>
+            <span class="card-sub" data-de>Authentisches Wohnen in historischer Stadtvilla</span>
+            <span class="card-sub" data-en>Authentic living in a historic Berlin villa</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA section -->
+  <section class="section cta-section">
+    <div class="container cta-inner">
+      <DecoRule class="reveal" />
+      <div class="cta-row reveal">
+        <a class="cta-btn" href={`${base}vermietung/`}>
+          <span data-de>Zimmer & Vermietung</span>
+          <span data-en>Rooms & Rental</span>
+        </a>
+        <a class="cta-btn cta-btn--secondary" href={`${base}impressum-kontakt/`}>
+          <span data-de>Kontakt aufnehmen</span>
+          <span data-en>Get in Touch</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <script>
+    import gsap from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    gsap.registerPlugin(ScrollTrigger);
+
+    let ctx: gsap.Context | null = null;
+
+    function initTileStagger() {
+      ctx?.revert();
+      ctx = null;
+
+      const parent = document.querySelector('.cards');
+      if (!parent) return;
+      const children = [...parent.querySelectorAll<HTMLElement>('.reveal-child')];
+      if (!children.length) return;
+
+      ctx = gsap.context(() => {
+        gsap.set(children, { opacity: 0, y: 40 });
+
+        const tl = gsap.timeline({ paused: true });
+        tl.to(children, {
+          opacity: 1, y: 0,
+          duration: 1.2,
+          ease: 'power3.out',
+          stagger: 0.225,
+        });
+
+        // Restart animation each time cards scroll into view
+        ScrollTrigger.create({
+          trigger: parent,
+          start: 'top 85%',
+          onEnter: () => tl.restart(),
+        });
+
+        // Reset only when 95%+ of the cards section has scrolled off the top
+        // "bottom 5%" fires when the bottom edge of .cards is 5% from the viewport top
+        ScrollTrigger.create({
+          trigger: parent,
+          start: 'bottom 5%',
+          onLeaveBack: () => tl.pause(0),
+        });
+      });
+    }
+
+    document.addEventListener('astro:page-load', initTileStagger);
+    document.addEventListener('astro:after-swap', () => { ctx?.revert(); ctx = null; });
+  </script>
+
+  <script>
+    import gsap from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    gsap.registerPlugin(ScrollTrigger);
+
+    function fitHeroTitle() {
+      const title = document.querySelector<HTMLElement>('.hero-title');
+      if (!title) return;
+      title.style.fontSize = '';
+      title.style.whiteSpace = 'nowrap';
+      const overlay = title.parentElement!;
+      const overlayStyle = getComputedStyle(overlay);
+      const available = overlay.getBoundingClientRect().width
+        - parseFloat(overlayStyle.paddingLeft)
+        - parseFloat(overlayStyle.paddingRight);
+      const natural = title.getBoundingClientRect().width;
+      if (natural > available) {
+        const cssSize = parseFloat(getComputedStyle(title).fontSize);
+        title.style.fontSize = `${cssSize * (available / natural)}px`;
+      }
+      title.style.whiteSpace = '';
+    }
+
+    function initHero() {
+      fitHeroTitle();
+      window.addEventListener('resize', fitHeroTitle);
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const heroWrap = document.querySelector('.hero-image-wrap');
+      if (!heroWrap) return;
+
+      const heroSection = heroWrap.closest('section');
+
+      gsap.killTweensOf(heroWrap);
+      gsap.to(heroWrap, {
+        yPercent: 12, ease: 'none',
+        scrollTrigger: {
+          trigger: heroSection || heroWrap,
+          start: 'top top', end: 'bottom top', scrub: true,
+        },
+      });
+
+      if (heroSection) {
+        const h1 = heroSection.querySelector('h1');
+        const taglines = heroSection.querySelectorAll('p');
+        const eyebrows = heroSection.querySelectorAll('.eyebrow');
+
+        gsap.killTweensOf([h1, ...taglines, ...eyebrows]);
+        eyebrows.forEach(el => gsap.from(el, { opacity: 0, y: 15, duration: 0.8, ease: 'power2.out', delay: 0.1 }));
+        if (h1) gsap.from(h1, { opacity: 0, y: 25, duration: 1.2, ease: 'power3.out', delay: 0.3 });
+        taglines.forEach(el => gsap.from(el, { opacity: 0, y: 20, duration: 1.0, ease: 'power3.out', delay: 0.9 }));
+      }
+    }
+
+    document.addEventListener('astro:page-load', initHero);
+  </script>
+</Layout>
+
+<style>
+/* ── Hero ───────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  height: clamp(480px, 85vh, 900px);
+  overflow: hidden;
+  background: #fff;
+  margin-top: 0;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: none;
+  pointer-events: none;
+  z-index: 1;
+}
+.hero-image-wrap {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  filter: brightness(0.62) blur(4px);
+  transform: scale(1.04);
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  color: var(--ink-light);
+  text-align: center;
+  padding-inline: 1.5rem;
+  z-index: 2;
+}
+.hero-overlay .eyebrow { color: rgba(245, 242, 236, 0.7); }
+.hero-title {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(3.5rem, 9vw, 7.5rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  line-height: 1;
+  font-variant-numeric: lining-nums;
+}
+.hero-tagline {
+  font-family: var(--font-sans);
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  letter-spacing: 0.1em;
+  color: rgba(245, 242, 236, 0.85);
+  max-width: none;
+}
+
+/* ── Intro ──────────────────────────────────────────────────── */
+.intro-section { text-align: center; padding-top: 2.5rem; padding-bottom: 0; }
+.intro-wrap {
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.intro-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.intro-text h2 { margin-top: 0.5rem; }
+.intro-text p {
+  max-width: 58ch;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ── Cards ──────────────────────────────────────────────────── */
+.cards-section {
+  margin-top: clamp(1rem, 2vw, 1.75rem);
+  margin-bottom: clamp(1rem, 2vw, 1.75rem);
+  padding-inline: clamp(2rem, 6vw, 5rem);
+}
+.cards-inner {
+  background: #F5F3EE;
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: clamp(2rem, 4vw, 3.5rem);
+  padding-block: clamp(2.5rem, 5vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+.cards {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.67rem, 1.33vw, 1.17rem);
+}
+.card {
+  min-width: 0;
+  text-decoration: none;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.card-img-wrap {
+  width: 100%;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+}
+.card-img-wrap img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease, opacity 0.7s ease;
+}
+.card:hover .card-img-wrap img { transform: scale(1.03); }
+.card-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem 0.25rem 0;
+}
+.card-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+.card-sub {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+  line-height: 1.45;
+}
+
+/* ── CTA ────────────────────────────────────────────────────── */
+.cta-section { padding-top: 0; }
+.cta-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+.cta-row {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.cta-btn {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.85rem 2.5rem;
+  flex: 1;
+  min-width: 240px;
+  text-align: center;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  transition: background var(--ease), color var(--ease), border-color var(--ease);
+  white-space: nowrap;
+}
+.cta-btn:hover { background: var(--gold); color: var(--bg); }
+.cta-btn--secondary {
+  border-color: var(--border);
+  color: var(--muted);
+}
+.cta-btn--secondary:hover { background: var(--ink); color: var(--ink-light); border-color: var(--ink); }
+
+@media (max-width: 800px) {
+  .cards { grid-template-columns: 1fr; gap: 2rem; }
+  .cards-inner { padding-inline: clamp(1.5rem, 6vw, 3rem); }
+  .card-img-wrap { aspect-ratio: 4 / 3; width: 100%; }
+  .cta-row { flex-direction: column; align-items: center; }
+  .hero { background: #969999; }
+}
+</style>
