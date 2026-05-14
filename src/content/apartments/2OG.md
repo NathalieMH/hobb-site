@@ -11,7 +11,7 @@ shared_spaces:
   - {prefix: grundriss, de: Grundriss, en: Floor Plan}
   - {prefix: laundry, de: Wäscheraum, en: Laundry Room}
   - {prefix: digital-lock, de: Digitales Schloss, en: Digital Lock}
-shared_m2: 87
+shared_m2: ca. 59
 order: 20
 image_folder: wohnung-2OG
 ---
