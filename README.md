@@ -274,7 +274,7 @@ Everything is generated automatically — no CMS, no backend — just Markdown c
 ## 🧱 Folder Structure
 
 ```
-hobb-site/
+project-root/
 ├─ .github/
 │  └─ workflows/
 │     └─ deploy.yml          # CI/CD: builds Astro & deploys to GitHub Pages
@@ -299,8 +299,7 @@ hobb-site/
 │  │  └─ Layout.astro        # Base layout applied to all pages (includes header)
 │  │
 │  └─ pages/
-│     ├─ index.astro         # Welcome “Enter HoBB” page (no header)
-│     ├─ home.astro          # Home page (with banner, 2 columns, 3 tiles)
+│     ├─ index.astro         # Root homepage with hero, intro, nav cards, and CTA
 │     ├─ wohngemeinschaften/
 │     │  ├─ index.astro      # Lists all apartments
 │     │  └─ [apartment].astro # Apartment detail page, auto-shows its rooms
@@ -325,7 +324,7 @@ Deployment is automatic via **GitHub Actions**.
 1. When you **commit or edit a file** in the `main` branch, GitHub builds the site using Astro.
 2. The resulting HTML files are uploaded to GitHub Pages.
 3. You can view the live site at:  
-   **https://nathaliemh.github.io/hobb-site/**
+   **https://haderslebener.de/**
 
 If the workflow ever fails, check:
 - `.github/workflows/deploy.yml` (correct branch + folder)
@@ -333,8 +332,8 @@ If the workflow ever fails, check:
 - That `astro.config.mjs` has the correct base path:  
   ```js
   export default {
-    site: 'https://nathaliemh.github.io/hobb-site/',
-    base: '/hobb-site/',
+    site: 'https://haderslebener.de',
+    base: '/',
   };
   ```
 
@@ -348,21 +347,18 @@ Defines the global page structure — includes:
 - A footer
 - The main content slot (`<slot />`)
 
-Every standard page (`home`, `lage`, `haus`, etc.) wraps content inside `<Layout>`.
+Every standard page (`index`, `lage`, `haus`, etc.) wraps content inside `<Layout>`.
 
 ### Header.astro
 Contains:
-- The HoBB logo (linking to `/home/`)
+- The wordmark logo linking to `/`
 - A responsive hamburger menu for mobile
-- Navigation links: Home, Wohngemeinschaften, Lage, Haus, Impressum/Kontakt
+- Navigation links: Home, Wohngemeinschaften, Lage, Haus, Vermietung, Impressum/Kontakt
 
 ### index.astro
-A full black “welcome” page with white text saying **“Enter HoBB”** linking to `/home/`.
-
-### home.astro
-The main home page showing:
-- Two columns (German & English intro)
-- Three clickable image tiles linking to the main subpages:
+The root home page showing:
+- Hero, intro, and CTA sections
+- Clickable image tiles linking to the main subpages:
   - die Wohngemeinschaften
   - die Lage
   - das Haus
@@ -425,7 +421,7 @@ npm run dev
 ```
 
 Visit:  
-👉 `http://localhost:4321/hobb-site/home/`
+👉 `http://localhost:4321/`
 
 When ready to publish:
 ```bash
@@ -537,7 +533,7 @@ The new room will now automatically appear on that apartment’s page.
 
 | Path | Description | Source |
 |------|--------------|--------|
-| `/home/` | Two-column text + three image tiles | `src/pages/home.astro` |
+| `/` | Root homepage with hero, intro, nav cards, and CTA | `src/pages/index.astro` |
 | `/wohngemeinschaften/` | Lists all apartments | Pulls from `/src/content/apartments/` |
 | `/wohngemeinschaften/[apartment]/` | Apartment detail page | Generated per apartment file |
 | `/zimmer/[slug]/` | Room detail page | Generated per room file |

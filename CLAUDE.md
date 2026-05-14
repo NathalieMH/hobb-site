@@ -8,7 +8,7 @@ Project context for agents picking up work on this codebase.
 
 A static Astro site for **Haderslebener 26**, a student shared-apartment property in Berlin Steglitz-Dahlem. It markets rooms/apartments to students and provides info about the building, location, and availability.
 
-- **Live URL:** https://nathaliemh.github.io/hobb-site/
+- **Live URL:** https://haderslebener.de/
 - **Repo:** https://github.com/NathalieMH/hobb-site
 - **Owner:** Nathalie (family@eloundagroup.com)
 
@@ -20,7 +20,7 @@ A static Astro site for **Haderslebener 26**, a student shared-apartment propert
 - **TypeScript** inside `<script>` blocks
 - **No test suite, no lint scripts** — `npm run build` is the verification step
 - **Deploy:** GitHub Pages via GitHub Actions on push to `main`
-- Base URL is `/hobb-site/` — always use `${base}` (from `import.meta.env.BASE_URL`) for links/image srcs
+- Production base URL is `/` for the custom domain. Use `${base}` / `import.meta.env.BASE_URL` for internal links and asset paths so code stays base-aware.
 
 ---
 
@@ -50,8 +50,7 @@ src/
   layouts/
     Layout.astro       — root layout: Header + main slot + ImageZoom + footer
   pages/
-    index.astro        — redirects to /home/
-    home.astro         — hero + intro + 3 nav cards + CTA (Verfügbarkeit / Kontakt)
+    index.astro        — root homepage with hero + intro + nav cards + CTA
     haus.astro         — "Das Haus" page, building history/photos
     lage.astro         — Location page with Google Maps embed
     vermietung.astro   — room/pricing table + floorplan/photo actions + rotation modal
