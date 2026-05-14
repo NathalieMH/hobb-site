@@ -4,9 +4,9 @@ title_en: "Room 3 · 1st Floor"
 apartment: "1OG"
 order: 3
 size_m2: 13.1
-kaltmiete_eur: 715
-nebenkosten_eur: 95
-gesamtmiete_eur: 810
+kaltmiete_eur: 750
+nebenkosten_eur: 100
+gesamtmiete_eur: 850
 available_from: "23.05.2026"
 available: true
 teaser_de: "Ruhiges Zimmer mit schönem Altbaucharakter\nBett 90 x 200."
