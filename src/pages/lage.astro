@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import DecoRule from "../components/DecoRule.astro";
+const base = import.meta.env.BASE_URL;
+const mapSrc = "https://maps.google.com/maps?q=Haderslebener+Stra%C3%9Fe+26,+12163+Berlin&output=embed&z=14";
 ---
 <Layout title="Haderslebener 26 — Die Lage">
 
@@ -93,46 +95,83 @@ import DecoRule from "../components/DecoRule.astro";
         </div>
       </div>
 
-      <!-- Map
-           For a map with multiple custom pins (villa + transit stops + FU etc.):
-           1. Go to mymaps.google.com and create a new map
-           2. Add pins for each location
-           3. Click Share → Embed on my site → copy the src="..." value
-           4. Replace the src below with your custom map URL
-
-           The current embed shows only the villa location.
-      -->
-      <div class="map-wrap reveal">
-        <iframe
-          class="map-iframe"
-          src="https://maps.google.com/maps?q=Haderslebener+Stra%C3%9Fe+26,+12163+Berlin&output=embed&z=14"
-          width="100%"
-          height="100%"
-          style="border:0;"
-          allowfullscreen
+      <div
+        class="map-wrap map-consent reveal"
+        data-map-src={mapSrc}
+        data-map-title="Karte: Haderslebener 26, Berlin Steglitz-Dahlem"
+      >
+        <img
+          class="map-placeholder"
+          src={`${base}lage/google-maps-static-placeholder.webp`}
+          alt="Statischer Kartenausschnitt der Umgebung von Haderslebener Straße 26 in Berlin"
           loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          title="Karte: Haderslebener 26, Berlin Steglitz-Dahlem"
-        ></iframe>
+          decoding="async"
+        />
+        <div class="map-consent-panel">
+          <p data-de>
+            Um die interaktive Karte anzuzeigen, wird Google Maps geladen. Dabei können Daten an Google übertragen werden.
+          </p>
+          <p data-en>
+            To display the interactive map, Google Maps will be loaded. Data may be transferred to Google.
+          </p>
+          <div class="map-actions">
+            <button type="button" class="map-load-btn">
+              <span data-de>Ja, Google Maps laden</span>
+              <span data-en>Yes, load Google Maps</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
 
 <script>
-  function initMap() {
+  function loadGoogleMap(mapWrap: HTMLElement) {
+    if (mapWrap.querySelector('iframe')) return;
+
+    var src = mapWrap.dataset.mapSrc;
+    if (!src) return;
+
+    var iframe = document.createElement('iframe');
+    iframe.className = 'map-iframe';
+    iframe.src = src;
+    iframe.width = '100%';
+    iframe.height = '100%';
+    iframe.style.border = '0';
+    iframe.allowFullscreen = true;
+    iframe.loading = 'lazy';
+    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    iframe.title = mapWrap.dataset.mapTitle || 'Google Maps';
+    mapWrap.appendChild(iframe);
+    mapWrap.classList.add('map-loaded');
+
+    iframe.addEventListener('load', function() {
+      iframe.classList.add('loaded');
+    }, { once: true });
+    setTimeout(function() {
+      iframe.classList.add('loaded');
+    }, 2000);
+  }
+
+  function initMapConsent() {
+    document.querySelectorAll<HTMLElement>('.map-consent').forEach(function(mapWrap) {
+      mapWrap.querySelector('.map-load-btn')?.addEventListener('click', function() {
+        loadGoogleMap(mapWrap);
+      }, { once: true });
+    });
+
     document.querySelectorAll('.map-wrap iframe').forEach(function(iframe) {
       iframe.addEventListener('load', function() {
         iframe.classList.add('loaded');
       }, { once: true });
-      // Fallback: if load already fired (cached), reveal after 2s
       setTimeout(function() {
         iframe.classList.add('loaded');
       }, 2000);
     });
   }
-  initMap();
-  document.addEventListener('astro:page-load', initMap);
+  initMapConsent();
+  document.addEventListener('astro:page-load', initMapConsent);
 </script>
 
 </Layout>
@@ -211,14 +250,80 @@ import DecoRule from "../components/DecoRule.astro";
 .map-wrap {
   aspect-ratio: 3 / 2;
   position: relative;
+  overflow: hidden;
 }
+.map-placeholder,
 .map-wrap iframe {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
+.map-placeholder {
+  object-fit: cover;
+  filter: saturate(0.86) contrast(0.94);
+}
+.map-consent-panel {
+  position: absolute;
+  inset: auto 1rem 1rem 1rem;
+  padding: 1rem;
+  background: rgba(250, 248, 243, 0.94);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.map-consent-panel p {
+  max-width: none;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.map-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+}
+.map-actions button,
+.map-actions a {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid var(--gold);
+  padding: 0.62rem 0.8rem;
+  background: transparent;
+  color: var(--ink);
+  line-height: 1;
+  transition: color var(--ease), border-color var(--ease), background var(--ease);
+}
+.map-actions button:hover,
+.map-actions a:hover {
+  color: var(--gold);
+  border-color: var(--ink);
+}
+.map-loaded .map-placeholder,
+.map-loaded .map-consent-panel {
+  display: none;
+}
 @media (max-width: 900px) {
   .lage-inner { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .map-consent-panel {
+    inset: auto 0.75rem 0.75rem 0.75rem;
+    padding: 0.85rem;
+  }
+  .map-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .map-actions button,
+  .map-actions a {
+    text-align: center;
+  }
 }
 </style>

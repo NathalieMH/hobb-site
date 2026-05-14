@@ -248,9 +248,9 @@ text-transform: lowercase;
 </style>
 
 <script>
-  function applyLang(lang: string) {
+  function applyLang(lang: string, persist = false) {
     document.documentElement[lang === 'en' ? 'setAttribute' : 'removeAttribute']('data-lang', 'en');
-    localStorage.setItem('vt-lang', lang);
+    if (persist) localStorage.setItem('vt-lang', lang);
     ['lang-de', 'lang-en'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.toggle('active', id.includes(lang === 'en' ? 'en' : 'de'));
@@ -269,7 +269,7 @@ text-transform: lowercase;
 
     applyLang(localStorage.getItem('vt-lang') || 'de');
     document.getElementById('lang-toggle')?.addEventListener('click', () => {
-      applyLang(document.documentElement.getAttribute('data-lang') === 'en' ? 'de' : 'en');
+      applyLang(document.documentElement.getAttribute('data-lang') === 'en' ? 'de' : 'en', true);
     });
   });
 
