@@ -48,7 +48,9 @@ const { title = "Haderslebener 26", description = "WGs für Studierende in einer
     <ImageZoom />
     <footer class="site-footer">
       <div class="container reveal">
-        <span class="footer-wordmark">Haderslebener 26</span>
+        <a class="footer-wordmark" href={`${import.meta.env.BASE_URL}datenschutzerklaerung/`}>
+          Datenschutzerklärung
+        </a>
         <nav class="footer-nav">
           <a href={`${import.meta.env.BASE_URL}impressum-kontakt/`} data-de>Impressum & Kontakt</a>
           <a href={`${import.meta.env.BASE_URL}impressum-kontakt/`} data-en>Legal Notice & Contact</a>
@@ -224,6 +226,11 @@ const { title = "Haderslebener 26", description = "WGs für Studierende in einer
   letter-spacing: 0.2em;
   text-transform: uppercase;
   font-weight: 300;
+  text-decoration: none;
+  color: var(--ink);
+}
+.footer-wordmark:hover {
+  color: var(--gold);
 }
 .footer-nav a {
   font-size: 0.8rem;
