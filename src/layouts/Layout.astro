@@ -21,6 +21,20 @@ const { title = "Haderslebener 26", description = "WGs für Studierende in einer
         if (lang === 'en') document.documentElement.setAttribute('data-lang', 'en');
       })();
     </script>
+    <!-- Privacy-friendly analytics by Plausible -->
+    <script async src="https://plausible.io/js/pa-gWFH6bqTwIXWbT7VKoi4T.js"></script>
+    <script is:inline>
+      window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+      plausible.init()
+      // Folgeseiten bei Astro-View-Transition-Navigation zählen
+      document.addEventListener('astro:page-load', function () {
+        if (window.__plausibleFirstLoad) {
+          plausible('pageview');
+        } else {
+          window.__plausibleFirstLoad = true;
+        }
+      });
+    </script>
   </head>
   <body>
     <script is:inline>
