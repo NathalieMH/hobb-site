@@ -522,18 +522,23 @@ const roomCount = allRooms.length;
   }
 
   .intro-detail-card {
-    width: min(58%, 300px);
+    width: 100%;
     margin-left: 0;
     aspect-ratio: 1.12 / 1;
   }
 
   .intro-image-stage {
-    height: clamp(420px, 72vw, 620px);
+    height: auto;
   }
 
   .intro-main-image {
+    position: relative;
     width: 100%;
-    height: 92%;
+    height: auto;
+  }
+
+  .intro-main-image img {
+    height: auto;
   }
 
   .architect-gallery {
@@ -562,22 +567,13 @@ const roomCount = allRooms.length;
   }
 
   .intro-detail-card {
-    width: 66%;
-  }
-
-  .intro-image-stage {
-    height: 112vw;
+    width: 100%;
   }
 
   .intro-image-stage::before {
     width: 82%;
     height: 82%;
     transform: translate(0.6rem, 0.6rem);
-  }
-
-  .intro-main-image {
-    width: 100%;
-    height: 88%;
   }
 
   .garden-image--main {
