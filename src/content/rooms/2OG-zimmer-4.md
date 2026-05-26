@@ -9,6 +9,6 @@ nebenkosten_eur: 110
 gesamtmiete_eur: 970
 available_from: "ab sofort"
 available: true
-teaser_de: "Großes Zimmer für 1-2 Personen mit begehbarem Kleiderschrank\nBett 140 x 200 - Zuschlag 2. Person 100 Euro"
-teaser_en: "Large room suitable for 1-2 occupants with walk-in closet\nBed 140 x 200 - surcharge for a second person 100 Euro"
+teaser_de: "Großes Zimmer für 1-2 Personen mit begehbarem Kleiderschrank\nBett 140 x 200 - Zuschlag 2. Person 100 Euro/M"
+teaser_en: "Large room suitable for 1-2 occupants with walk-in closet\nBed 140 x 200 - surcharge for a second person 100 Euro per month"
 ---
