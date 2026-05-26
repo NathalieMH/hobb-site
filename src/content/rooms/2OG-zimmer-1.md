@@ -10,5 +10,5 @@ gesamtmiete_eur: 990
 available_from: "sofort"
 available: true
 teaser_de: "Großzügiges Zimmer für 1-2 Personen\nBett 140 x 200 - Zuschlag 2. Person 100 Euro/M"
-teaser_en: "Generous room suitable for 1-2 occupants\nBed 140 x 200 - surcharge for a second person 100 Euro per month"
+teaser_en: "Generous room suitable for 1-2 occupants\nBed 140 x 200 - surcharge for a 2nd person 100 Euro/M"
 ---
