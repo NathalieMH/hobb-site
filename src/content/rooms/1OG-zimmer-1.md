@@ -9,6 +9,6 @@ nebenkosten_eur: 120
 gesamtmiete_eur: 990
 available_from: "sofort"
 available: true
-teaser_de: "Großzügiges Zimmer für 1-2 Personen\nZuschlag 2.Person +100 Euro\nBett 140 x 200."
-teaser_en: "Generous room suitable for 1-2 occupants\nsurcharge for a second person 100 Euro\nBed 140 x 200."
+teaser_de: "Großzügiges Zimmer für 1-2 Personen\nZuschlag 2.Person +100 Euro   Bett 140 x 200."
+teaser_en: "Generous room suitable for 1-2 occupants\nsurcharge for a second person 100 Euro   Bed 140 x 200."
 ---
