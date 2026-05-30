@@ -109,43 +109,83 @@ const taken = allRooms
   <section class="section" style="padding-top:1.5rem">
     <div class="container avail-wrap">
 
-      <p class="pricing-note" data-de>
-        Nebenkosten (Strom, Wasser, Heizung, Internet) sind im Mietpreis inbegriffen — die Miete ist also alles inclusive.<br>
-        <button class="text-modal-link" type="button" data-open-nebenkosten>
-          Nebenkostenpauschale-Klausel
-        </button><br>
-        <br>
-        <span style="font-weight:500;">Unterlagen für die Bewerbung:</span><br>
-        Immatrikulationsbescheinigung für Studierende<br>
-        Einkommensnachweis (Praktikums-/Werkstudentenvertrag oder Bürgschaft der Eltern mit Einkommensnachweisen der letzten 3 Monate)<br>
-        Schuldbeitrittserklärung des Bürgen<br>
-        Mietschuldenfreiheitsbescheinigung<br>
-        <br>
-        bei Abschluss des Mietvertrags: Personalausweis des Mieters und des Bürgen<br>
-        <br>
-        <span style="font-weight:500;">Außerdem wichtig:</span><br>
-        Kaution: nach Vereinbarung<br>
-        <button class="text-modal-link" type="button" data-open-rotation>
-          Belegungs-Rotationsprinzip
-        </button>
-      </p>
+      <div class="pricing-note" data-de>
+        <p class="pn-lead">
+          Nebenkosten (Strom, Wasser, Heizung, Internet) sind im Mietpreis inbegriffen — die Miete ist also alles inclusive.<br>
+          <button class="text-modal-link" type="button" data-open-nebenkosten>
+            Nebenkostenpauschale-Klausel
+          </button>
+        </p>
 
-      <p class="pricing-note" data-en>
-        Utilities (electricity, water, heating, internet) are included in the rent — all-inclusive.<br>
-        <button class="text-modal-link" type="button" data-open-nebenkosten>
-          Utility flat-rate clause
-        </button><br>
-        <br>
-        <span style="font-weight:500;">Application documents:</span><br>
-        University enrollment certificate for students<br>
-        Proof of income (internship/working student contract or parental guarantor with employment contract)<br>
-        <br>
-        <span style="font-weight:500;">Additional information:</span><br>
-        Security deposit: by appointment<br>
-        <button class="text-modal-link" type="button" data-open-rotation>
-          Occupancy rotation principle
-        </button>
-      </p>
+        <p class="docs-intro"><span class="docs-head">Unterlagen für die Bewerbung:</span> Diese Unterlagen werden erst im Bewerbungsschritt benötigt – nicht bereits zur Besichtigung.</p>
+
+        <p class="docs-subhead">Studenten</p>
+        <ul class="docs-list">
+          <li>Immatrikulationsbescheinigung</li>
+          <li>Einkommensnachweis: Praktikums-/Werkstudentenvertrag – oder Bürgschaft der Eltern mit Einkommensnachweisen der letzten 3 Monate oder Schuldbeitrittserklärung des Bürgen</li>
+          <li>Mietschuldenfreiheitsbescheinigung</li>
+          <li>Mieterselbstauskunft</li>
+        </ul>
+
+        <p class="docs-subhead">Absolventen und Berufseinsteiger</p>
+        <ul class="docs-list">
+          <li>Einkommensnachweis (Arbeitsvertrag und/oder die letzten 3 Gehaltsabrechnungen)</li>
+          <li>Schufa-Bonitätsauskunft</li>
+          <li>Mieterselbstauskunft</li>
+        </ul>
+
+        <p class="docs-subhead">Bei Abschluss des Mietvertrags:</p>
+        <ul class="docs-list">
+          <li>Personalausweis des Mieters – bei Studenten zusätzlich der des Bürgen</li>
+        </ul>
+
+        <p class="docs-subhead">Außerdem wichtig:</p>
+        <ul class="docs-list">
+          <li>Kaution: nach Vereinbarung</li>
+          <li>
+            <button class="text-modal-link" type="button" data-open-rotation>Belegungs-Rotationsprinzip</button> (gilt für die Studenten-WG im 1. OG)
+          </li>
+        </ul>
+      </div>
+
+      <div class="pricing-note" data-en>
+        <p class="pn-lead">
+          Utilities (electricity, water, heating, internet) are included in the rent — all-inclusive.<br>
+          <button class="text-modal-link" type="button" data-open-nebenkosten>
+            Utility flat-rate clause
+          </button>
+        </p>
+
+        <p class="docs-intro"><span class="docs-head">Application documents:</span> These documents are only required at the application stage – not yet for the viewing.</p>
+
+        <p class="docs-subhead">Students</p>
+        <ul class="docs-list">
+          <li>University enrollment certificate</li>
+          <li>Proof of income: internship/working-student contract – or parental guarantee with proof of income for the last 3 months, or a declaration of debt accession by the guarantor</li>
+          <li>Certificate of freedom from rent arrears</li>
+          <li>Tenant self-disclosure form</li>
+        </ul>
+
+        <p class="docs-subhead">Graduates and career starters</p>
+        <ul class="docs-list">
+          <li>Proof of income (employment contract and/or the last 3 payslips)</li>
+          <li>SCHUFA credit report</li>
+          <li>Tenant self-disclosure form</li>
+        </ul>
+
+        <p class="docs-subhead">Upon signing the lease:</p>
+        <ul class="docs-list">
+          <li>Tenant's ID card – for students, additionally the guarantor's</li>
+        </ul>
+
+        <p class="docs-subhead">Also important:</p>
+        <ul class="docs-list">
+          <li>Security deposit: by appointment</li>
+          <li>
+            <button class="text-modal-link" type="button" data-open-rotation>Occupancy rotation principle</button> (applies to the student flat-share on the 1st floor)
+          </li>
+        </ul>
+      </div>
 
       {available.length > 0 && (
         <div class="avail-group">
@@ -404,6 +444,52 @@ const taken = allRooms
   padding: 0.9rem 1.25rem;
   border-left: 2px solid var(--gold);
   background: rgba(184, 149, 42, 0.04);
+}
+
+.pricing-note .pn-lead {
+  margin: 0 0 1rem;
+}
+
+.pricing-note .docs-intro {
+  margin: 0 0 0.9rem;
+}
+
+.pricing-note .docs-head {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.pricing-note .docs-subhead {
+  margin: 0.9rem 0 0.3rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.pricing-note .docs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pricing-note .docs-list li {
+  position: relative;
+  padding-left: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.pricing-note .docs-list li:last-child {
+  margin-bottom: 0;
+}
+
+.pricing-note .docs-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 4px;
+  height: 4px;
+  background: var(--gold);
+  border-radius: 50%;
 }
 
 .pricing-note a,
