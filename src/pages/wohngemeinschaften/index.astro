@@ -96,7 +96,7 @@ const coverMap = Object.fromEntries(
               {cover
                 ? <img
                     src={`${base}${cover}`}
-                    alt={`Wohngemeinschaft ${data.title_de} in der Stadtvilla Haderslebener 26`}
+                    alt={data.title_de?.includes("1. Obergeschoss") ? "Wohn-Esszimmer der Studenten-WG im 1. Obergeschoss – Stadtvilla Haderslebener 26" : "Wohn-Esszimmer der WG für junge Berufstätige im 2. Obergeschoss – Stadtvilla Haderslebener 26"}
                     loading="lazy"
                     decoding="async"
                   />
