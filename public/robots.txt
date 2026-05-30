@@ -4,4 +4,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://haderslebener.de/sitemap-index.xml
+Sitemap: https://haderslebener.de/sitemap.xml
