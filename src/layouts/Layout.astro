@@ -3,7 +3,7 @@ import Header from "../components/Header.astro";
 import ImageZoom from "../components/ImageZoom.astro";
 import { ViewTransitions } from "astro:transitions";
 import "../styles/global.css";
-const { title = "Haderslebener 26", description = "Studenten-WGs in einer Berliner Stadtvilla aus den 1920er Jahren.", noPadding = false } = Astro.props;
+const { title = "Haderslebener 26 — WG-Zimmer in einer Berliner Stadtvilla", description = "Möblierte WG-Zimmer für Studierende, Absolventen und junge Berufstätige in einer Berliner Stadtvilla aus den 1920er Jahren.", noPadding = false } = Astro.props;
 
 const SITE = "https://haderslebener.de";
 const base = import.meta.env.BASE_URL;
@@ -41,7 +41,7 @@ const ogImage = new URL(`${base}das-haus/og-bild.jpg`, SITE).href;
       "@context": "https://schema.org",
       "@type": "LodgingBusiness",
       "name": "Haderslebener 26",
-      "description": "Studenten-WGs in einer Berliner Stadtvilla aus den 1920er Jahren.",
+      "description": "Möblierte WG-Zimmer für Studierende, Absolventen und junge Berufstätige in einer Berliner Stadtvilla aus den 1920er Jahren.",
       "url": SITE,
       "image": ogImage,
       "email": "kontakt@haderslebener.de",
