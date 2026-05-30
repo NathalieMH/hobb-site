@@ -26,20 +26,18 @@ const base = import.meta.env.BASE_URL;
         <h2 data-de>Kontakt</h2>
         <h2 data-en>Contact</h2>
         <p data-de>
-          Die Wohnungen werden durch den freundlichen Eigentümer verwaltet und vermietet. Für Zimmeranfragen und allgemeine Fragen wenden Sie sich bitte per E-Mail oder WhatsApp an uns:
+          Das Haus wird privat und persönlich vom Eigentümer geführt und vermietet. Für Zimmeranfragen und allgemeine Fragen wenden Sie sich bitte per E-Mail oder WhatsApp an uns:
         </p>
         <p data-en>
-          The apartments are run and rent by the friendly owner. For room inquiries and general questions, please contact us by email or WhatsApp:
+          The house is run and rented privately and personally by the owner. For room inquiries and general questions, please contact us by email or WhatsApp:
         </p>
-        <a class="email-link" href="mailto:kontakt@haderslebener.de">
-          hager@haderslebener.de<br />
-          +49 151 21859673<br />
-        </a>
-        <p class="email-note" data-de>  </p>
-        <p class="email-note" data-en>  </p>
+        <p class="contact-lines">
+          <a class="email-link" href="mailto:hager@haderslebener.de">hager@haderslebener.de</a><br />
+          <a class="email-link" href="https://wa.me/message/5O7HHCM43QPXM1"><span data-de>(nur Textnachrichten): +49 151 21859673</span><span data-en>(text messages only): +49 151 21859673</span></a>
+        </p>
       </div>
 
-      <div style="margin-block: -1.5rem;">
+      <div style="margin-block: 2rem -1.5rem;">
         <DecoRule />
       </div>
 
@@ -222,19 +220,21 @@ const base = import.meta.env.BASE_URL;
 }
 .legal-block { display: flex; flex-direction: column; gap: 1rem; }
 .legal-block h2 { font-size: 1.75rem; }
-.email-link {
-  display: inline-block;
+.contact-lines {
   font-family: var(--font-serif);
-  font-size: 1.35rem;
+  font-size: 0.95rem;
   letter-spacing: 0.04em;
   color: var(--ink);
-  text-decoration: none;
-  border-bottom: 1px solid var(--gold);
-  padding-bottom: 0.15rem;
-  transition: color var(--ease), border-color var(--ease);
+  line-height: 1.7;
+  margin: 0;
+}
+.email-link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  transition: color var(--ease);
 }
 .email-link:hover { color: var(--gold); }
-.email-note { font-size: 0.85rem; color: var(--muted); max-width: none; }
 .impressum-body {
   display: flex;
   flex-direction: column;
