@@ -1,0 +1,7 @@
+# robots.txt — haderslebener.de
+# Erlaubt allen Suchmaschinen, die komplette Seite zu durchsuchen.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://haderslebener.de/sitemap-index.xml
