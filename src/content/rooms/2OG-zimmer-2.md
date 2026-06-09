@@ -7,8 +7,8 @@ size_m2: 9.3
 kaltmiete_eur: 615
 nebenkosten_eur: 85
 gesamtmiete_eur: 700
-available_from: "sofort"
-available: true
+available_from: "vermietet"
+available: rented
 teaser_de: "Zimmer mit Dachfenster\nErhöhtes Bett 100 x 200."
 teaser_en: "Room with skylight\nElevated bed 100 x 200."
 ---
