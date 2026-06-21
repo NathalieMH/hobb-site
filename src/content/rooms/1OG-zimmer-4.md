@@ -3,7 +3,7 @@ title_de: "Zimmer 4 · 1. OG"
 title_en: "Room 4 · 1st Floor"
 apartment: "1OG"
 order: 4
-size_m2: 18 (inkl. Balkonhälfte)
+size_m2: 18
 kaltmiete_eur: 795
 nebenkosten_eur: 100
 gesamtmiete_eur: 895
