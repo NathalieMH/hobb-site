@@ -9,6 +9,6 @@ nebenkosten_eur: 90
 gesamtmiete_eur: 850
 available_from: "sofort"
 available: true
-teaser_de: "Zimmer 10.4 qm mit eigenem Balkon\nBett 90 x 200."
+teaser_de: "Zimmer (10.4 m2) mit eigenem Balkon\nBett 90 x 200."
 teaser_en: "Room with private balcony\nBed 90 x 200."
 ---
