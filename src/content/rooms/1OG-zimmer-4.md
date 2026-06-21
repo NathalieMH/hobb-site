@@ -4,9 +4,9 @@ title_en: "Room 4 · 1st Floor"
 apartment: "1OG"
 order: 4
 size_m2: 14.4
-kaltmiete_eur: 830
+kaltmiete_eur: 795
 nebenkosten_eur: 100
-gesamtmiete_eur: 930
+gesamtmiete_eur: 895
 available_from: "sofort"
 available: true
 teaser_de: "Zimmer mit eigenem Balkon\nBett 90 x 200."
