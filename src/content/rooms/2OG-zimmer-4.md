@@ -4,9 +4,9 @@ title_en: "Room 4 · 2nd Floor"
 apartment: "2OG"
 order: 4
 size_m2: 27.2
-kaltmiete_eur: 860
-nebenkosten_eur: 110
-gesamtmiete_eur: 970
+kaltmiete_eur: 754
+nebenkosten_eur: 141
+gesamtmiete_eur: 895
 available_from: "ab sofort"
 available: true
 teaser_de: "Großes Zimmer für 1-2 Personen mit begehbarem Kleiderschrank\nBett 140 x 200 - Zuschlag 2. Person 100 Euro/M"
