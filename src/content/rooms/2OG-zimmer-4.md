@@ -7,7 +7,7 @@ size_m2: 27.2
 kaltmiete_eur: 754
 nebenkosten_eur: 141
 gesamtmiete_eur: 895
-available_from: "vermietet"
+available_from: "01.04.2027"
 available: true
 teaser_de: "Großes Zimmer für 1-2 Personen mit begehbarem Kleiderschrank\nBett 140 x 200 - Zuschlag 2. Person 100 Euro/M"
 teaser_en: "Large room suitable for 1-2 occupants with walk-in closet\nBed 140 x 200 - surcharge 2nd person 100 Euro/M"
