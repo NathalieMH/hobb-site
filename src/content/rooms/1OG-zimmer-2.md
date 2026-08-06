@@ -4,8 +4,8 @@ title_en: "Room 2 · 1st Floor"
 apartment: "1OG"
 order: 2
 size_m2: 12,1
-kaltmiete_eur: 670
-nebenkosten_eur: 90
+kaltmiete_eur: 653
+nebenkosten_eur: 107
 gesamtmiete_eur: 760
 available_from: "vermietet"
 available: true
