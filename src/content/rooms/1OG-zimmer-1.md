@@ -7,7 +7,7 @@ size_m2: 24.5
 kaltmiete_eur: 850
 nebenkosten_eur: 100
 gesamtmiete_eur: 950
-available_from: vermietet
+available_from: "vermietet"
 available: true
 teaser_de: "Großzügiges Zimmer für 1-2 Personen\nBett 140 x 200 - Zuschlag 2. Person 100 Euro/M"
 teaser_en: "Generous room suitable for 1-2 occupants\nBed 140 x 200 - surcharge 2nd person 100 Euro/M"
