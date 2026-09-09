@@ -7,7 +7,7 @@ size_m2: 18.1
 kaltmiete_eur: 795
 nebenkosten_eur: 100
 gesamtmiete_eur: 895
-available_from: "sofort"
+available_from: "vermietet"
 available: true
 teaser_de: "Zimmer (14.4 m2) mit eigenem Balkon\nBett 90 x 200."
 teaser_en: "Room with private balcony\nBed 90 x 200."
